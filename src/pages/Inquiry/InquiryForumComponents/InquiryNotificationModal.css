@@ -1,0 +1,57 @@
+.notification-modal {
+  --height: auto;
+  --width: 85%;
+  --background: #ffffff;
+  --border-radius: 16px;
+  padding: 20px;
+  text-align: center;
+}
+
+.modal-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+
+.modal-icon {
+  font-size: 3rem;
+  color: #073b4c;
+  margin-bottom: 1rem;
+}
+
+.modal-header {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #073b4c;
+  margin-bottom: 0.5rem;
+}
+
+.modal-subtitle {
+  font-size: 0.95rem;
+  color: #444;
+  line-height: 1.4;
+  margin-bottom: 1.2rem;
+}
+
+.modal-content ion-button {
+  --background: #0a3f59;
+  --color: #fff;
+  --border-radius: 10px;
+  font-weight: 600;
+}
+
+@media (max-width: 768px) {
+  .modal-header {
+    font-size: 1.2rem;
+  }
+
+  .modal-subtitle {
+    font-size: 0.85rem;
+  }
+
+  .modal-icon {
+    font-size: 2.5rem;
+  }
+}

@@ -1,0 +1,129 @@
+.login-screen {
+  --background: #e9f8fc;
+  position: absolute; 
+}
+
+/* New wrapper to guarantee dead-center alignment in Ionic */
+.full-height-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  position: relative;
+  z-index: 10;
+  padding: 15px;
+}
+
+.login-ellipse-top,
+.login-ellipse-bottom {
+  position: absolute;
+  z-index: 1; 
+  object-fit: contain; 
+  pointer-events: none;
+  opacity: 0.8; 
+}
+
+.login-ellipse-top {
+  width: 140vw; 
+  height: 140vw; 
+  top: -120vw;
+  left: -20vw;
+}
+
+.login-ellipse-bottom {
+  width: 120vw;
+  height: 120vw;
+  bottom: -100vw;
+  right: -10vw;
+}
+
+/* THE WHITE GRADIENT BOX applied to IonGrid */
+.login-container-grid {
+  background: linear-gradient(145deg, #ffffff 1%, #f4fbfc 100%);
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(10, 63, 89, 0.1);
+  width: 100%; 
+  max-width: 380px; 
+  padding: 20px 15px 15px 15px;;
+}
+
+form {
+  width: 100%;
+}
+
+.JJMClogo {
+  width: 120px;
+  margin: 0 auto 5px auto;
+  display: block;
+}
+
+.login-title {
+  font-size: 1.5rem; 
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #0A3F59;
+  font-family: 'Poppins', sans-serif;
+  text-align: center;
+  display: block;
+}
+
+.input-item {
+--padding-start: 10px;
+  margin-bottom: 10px;
+  border: 1.5px solid #000000; /* Added outline */
+  border-radius: 8px;
+  --highlight-color-focused: #74C2D5; 
+  box-shadow: none; /* Removed shadow for clean outline look */
+}
+
+
+.login-button {
+--background: #74C2D5;
+  --color: #0A3F59;
+  --border-radius: 10px;
+  font-weight: 600;
+  height: 50px;
+  margin-top: 0px;
+  width: 100%;
+}
+
+.signup-button {
+  --background: #0A3F59;
+  --color: #fff;
+  --border-radius: 10px;
+  font-weight: 600;
+  height: 50px;
+  width: 100%;
+}
+
+.forgot-password-text,
+.signup-text {
+font-size: 0.85em;
+  margin: 0;
+  color: #0A3F59;
+  font-family: 'Poppins', sans-serif;
+  font-weight: bold;
+}
+
+.forgot-password-text {
+text-align: right; 
+  padding-right: 5px; /* Aligns perfectly with the edge of the text box */
+  margin-top: -5px; /* Pulls it closer to the text box */
+  margin-bottom: 10px;
+}
+
+.signup-text {
+text-align: center;
+  margin-bottom: 8px; /* Adds space above the button */
+  font-weight: normal;
+  display: block;
+}
+
+.error-message {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  text-align: center;
+  font-weight: 500;
+  color: var(--ion-color-danger);
+}

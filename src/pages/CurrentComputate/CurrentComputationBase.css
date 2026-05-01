@@ -1,0 +1,252 @@
+/* Import Poppins font */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+.computation-content {
+  --background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  position: relative;
+  overflow: hidden;
+  font-family: 'Poppins', sans-serif !important;
+}
+
+/* Apply Poppins to all elements */
+* {
+  font-family: 'Poppins', sans-serif !important;
+}
+
+ion-content, ion-text, ion-label, ion-input, ion-card-title, ion-button, ion-item {
+  font-family: 'Poppins', sans-serif !important;
+}
+
+.ellipse-bg {
+  position: absolute;
+  width: 140vw;
+  height: 140vw;
+  top: -50vw;
+  left: -20vw;
+  z-index: 0;
+}
+
+.history-title {
+  font-size: 1.8rem;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 1rem;
+  color: #2c3e50;
+  width: 100%;
+  display: block;
+  font-family: 'Poppins', sans-serif !important;
+}
+
+/* History Cards - Rounded white cards with subtle drop shadows */
+.history-card {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 15px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  margin-bottom: 1.5rem;
+  z-index: 1;
+  position: relative;
+  font-family: 'Poppins', sans-serif !important;
+}
+
+/* Card headers - left aligned */
+ion-card-header {
+  text-align: left;
+  padding: 16px 16px 8px 16px;
+}
+
+.computation-Header {
+  padding-bottom: 8px;
+  text-align: left;
+}
+
+/* Card subtitle - small, regular, gray - LEFT ALIGNED */
+.card-subtitle {
+  font-size: 0.9rem;
+  color: #666;
+  display: block;
+  margin-top: 0.5rem;
+  font-weight: 400;
+  font-family: 'Poppins', sans-serif !important;
+  text-align: left;
+}
+
+/* Card title - bold, bigger, black - LEFT ALIGNED */
+ion-card-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #000000;
+  margin-bottom: 0.5rem;
+  font-family: 'Poppins', sans-serif !important;
+  text-align: left;
+  display: block;
+  width: 100%;
+}
+
+/* COMPLETELY remove all input borders and styling */
+ion-input {
+  --background: transparent !important;
+  --padding-start: 0 !important;
+  --padding-end: 0 !important;
+  --border: none !important;
+  --box-shadow: none !important;
+  --border-color: transparent !important;
+  --border-radius: 0 !important;
+  --border-style: none !important;
+  --border-width: 0 !important;
+  color: #888888 !important;
+  font-weight: 400;
+  font-family: 'Poppins', sans-serif !important;
+}
+
+/* Target the native input element inside ion-input */
+ion-input .native-input {
+  border: none !important;
+  background: transparent !important;
+  outline: none !important;
+  box-shadow: none !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  appearance: none !important;
+  font-family: 'Poppins', sans-serif !important;
+}
+
+/* Remove focus and hover states */
+ion-input:hover,
+ion-input:focus,
+ion-input:focus-within {
+  --background: transparent !important;
+  --border: none !important;
+  --box-shadow: none !important;
+}
+
+/* Label styling - DARKER GRAY for titles */
+ion-label {
+  color: #555555 !important; /* Darker gray for labels */
+  font-weight: 500;
+  font-size: 0.95rem;
+  font-family: 'Poppins', sans-serif !important;
+}
+
+/* Grid spacing - space between rows */
+.ion-margin-bottom {
+  margin-bottom: 20px;
+}
+
+/* Footer - Dark teal/blue rounded top navigation bar */
+.footer-bar {
+  background-color: #0a3f59;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  padding: 0.5rem 0;
+  font-family: 'Poppins', sans-serif !important;
+}
+
+/* Menu Styles */
+.logo-placeholder {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 16px;
+  border-radius: 12px;
+}
+
+.logo-title {
+  display: block;
+  font-size: 24px;
+  font-weight: bold;
+  color: var(--ion-color-primary);
+  font-family: 'Poppins', sans-serif !important;
+}
+
+.logo-subtitle {
+  display: block;
+  font-size: 14px;
+  color: var(--ion-color-medium);
+  margin-top: 4px;
+  font-family: 'Poppins', sans-serif !important;
+}
+
+.menu-btn {
+  --background: transparent;
+  --border-radius: 8px;
+  margin: 4px 0;
+  font-family: 'Poppins', sans-serif !important;
+}
+
+.logout-btn {
+  margin: 16px 0;
+  font-family: 'Poppins', sans-serif !important;
+}
+
+/* Ensure proper alignment */
+ion-col {
+  display: flex;
+  align-items: center;
+}
+
+/* Ensure the content area has proper spacing */
+ion-content {
+  --padding-start: 16px;
+  --padding-end: 16px;
+  --padding-top: 16px;
+  --padding-bottom: 16px;
+  font-family: 'Poppins', sans-serif !important;
+}
+
+/* Center align the main title */
+ion-col[size="12"] {
+  text-align: center;
+  justify-content: center;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .history-title {
+    font-size: 1.5rem;
+  }
+  
+  .history-card {
+    margin-bottom: 1rem;
+  }
+  
+  .ellipse-bg {
+    width: 160vw;
+    height: 160vw;
+    top: -60vw;
+    left: -30vw;
+  }
+}
+
+/* Bottom navigation icons - ensure good contrast */
+.footer-bar ion-button {
+  --color: white;
+  font-family: 'Poppins', sans-serif !important;
+}
+
+/* Menu item styling */
+ion-item {
+  --background: transparent;
+  font-family: 'Poppins', sans-serif !important;
+}
+
+/* Additional border removal for the input container */
+.input-wrapper {
+  border: none !important;
+  background: transparent !important;
+  font-family: 'Poppins', sans-serif !important;
+}
+
+/* Remove any inner elements borders */
+.input-cover {
+  border: none !important;
+  font-family: 'Poppins', sans-serif !important;
+}
+
+/* Apply Poppins to button text */
+ion-button {
+  font-family: 'Poppins', sans-serif !important;
+}
+
+/* Apply Poppins to menu items */
+ion-menu, ion-menu-toggle, ion-header, ion-toolbar, ion-title {
+  font-family: 'Poppins', sans-serif !important;
+}

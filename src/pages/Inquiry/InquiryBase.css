@@ -1,0 +1,124 @@
+/* === PAGE BACKGROUND === */
+.inquiry-content {
+  position: relative;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding-bottom: 5rem; /* ensures space before footer */
+  z-index: 10;
+}
+
+.ellipse-bg {
+position: absolute;
+  width: 140vw; 
+  height: 140vw; 
+  top: -65vw;
+  left: -20vw;
+  z-index: 0;
+}
+
+/* === HEADER TEXT === */
+.inquiry-title {
+  font-size: 1.8rem;
+  font-weight: bold;
+  text-align: center;
+  margin-top: 1rem;
+  margin-bottom: 0.3rem;
+  color: #073b4c;
+}
+
+.inquiry-subtitle {
+  font-size: 1rem;
+  text-align: center;
+  color: #444;
+  margin-bottom: 2rem;
+  line-height: 1.4;
+}
+
+/* === ACCORDION SECTION === */
+.inquiry-accordion {
+  margin-bottom: 2rem;
+}
+
+.accordion-header {
+  --background: #e9f9fb;
+  --border-radius: 12px;
+  margin-bottom: 0.7rem;
+  border-radius: 12px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+  font-weight: 500;
+  z-index: 10 ;
+}
+
+.ion-accordion-toggle-icon {
+  display: none !important; /* hides the extra dropdown icon */
+}
+
+.accordion-content {
+  --background: #ffffff;
+  border-radius: 10px;
+  z-index: 2;
+}
+
+/* === QUESTION CARD SECTION === */
+.card-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  text-align: center;
+  color: #1d3557;
+  margin-bottom: 1rem;
+}
+
+.forum-button {
+  --border-radius: 40px;
+  --background: #0A3F59;
+  --color: #B7E0EB;
+  font-weight: 600;
+  margin-top: 8px;
+  height: 50px;
+}
+
+/* === FOOTER BAR === */
+.footer-bar {
+  background-color: #0a3f59;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  padding: 0.5rem 0;
+}
+
+/* === MENU STYLES (optional consistency) === */
+.logo-title {
+  font-family: poppins, sans-serif;
+  font-weight: 700;
+  font-size: 2rem;
+  display: block;
+  color: #073b4c;
+  margin-top: 0.5rem;
+}
+
+.logo-subtitle {
+  font-size: 0.9rem;
+  color: #777;
+}
+
+/* === RESPONSIVE ADJUSTMENTS === */
+@media (max-width: 768px) {
+  .inquiry-title {
+    font-size: 1.6rem;
+  }
+
+  .inquiry-subtitle {
+    font-size: 0.9rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .accordion-header {
+    margin-bottom: 0.4rem;
+  }
+
+  .forum-button {
+    font-size: 0.9rem;
+  }
+}
+

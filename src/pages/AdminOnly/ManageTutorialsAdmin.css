@@ -1,0 +1,300 @@
+/* AdminTutorials.css */
+
+/* Main content styles */
+.tutorial-content {
+  --background: #e8f9fc;
+  position: relative;
+  overflow: hidden;
+}
+
+.tutorial-card-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 20px 30px;
+  position: relative;
+  z-index: 2;
+}
+
+/* Title styles - Responsive font size */
+.tutorial-title {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #0A3F59;
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+.tutorial-subheader {
+  font-size: 1rem;
+  color: #000000;
+  margin-bottom: 24px;
+}
+
+@media (max-width: 576px) {
+  .tutorial-title {
+    font-size: 1.5rem; /* Smaller on mobile */
+  }
+}
+
+
+/* Searchbar styles */
+.tutorial-searchbar {
+  --border-radius: 40px;
+  --background: white;
+  --box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  margin-bottom: 12px;
+}
+
+/* Video count styles */
+.video-count {
+  font-weight: bold;
+  font-size: 2rem;
+  color: #0A3F59;
+  margin: 8px 0 20px;
+  display: inline-block;
+  background: #E9FBFC;
+  padding: 4px 12px;
+  border-radius: 20px;
+}
+
+/* Video card styles */
+.video-card {
+  border-radius: 20px;
+  box-shadow: 0 4px 12px rgba(10, 63, 89, 0.08);
+  margin: 0;
+  overflow: hidden;
+  transition: transform 0.2s;
+}
+
+.video-card-content {
+  padding: 16px;
+}
+
+
+.video-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Video thumbnail styles - Ensure responsive */
+.video-thumbnail {
+  border-radius: 10px;
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  min-height: 70px; /* Prevent squishing */
+}
+
+/* Video title styles */
+.video-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #0A3F59;
+  margin-bottom: 6px;
+}
+
+.video-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+}
+
+.video-description {
+  font-size: 0.85rem;
+  color: #4a627a;
+  margin-bottom: 12px;
+}
+
+.video-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: auto;
+}
+
+.edit-btn, .delete-btn {
+  --border-radius: 30px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  height: 34px;
+  margin: 0;
+}
+
+.edit-btn {
+  --background: #E9FBFC;
+  --color: #0A3F59;
+}
+
+.edit-btn:hover {
+  --background: #0A3F59 !important;
+  --color: #B7E0EB !important;
+  transform: translateY(-2px);
+  transition: all 0.2s ease;
+}
+
+.delete-btn {
+  --background: #ffebee;
+  --color: #c62828;
+}
+
+.delete-btn:hover {
+  --background: #c62828 !important;
+  --color: white !important;
+  transform: translateY(-2px);
+  transition: all 0.2s ease;
+}
+/* Upload button (below cards) */
+.upload-button-wrapper {
+  margin-top: 24px;
+  text-align: center;
+}
+
+.upload-tutorial-btn {
+  --background: #0A3F59;
+  --color: #B7E0EB;
+  --border-radius: 10px;
+  font-weight: 600;
+  width: 100%;
+  height: 78px;
+}
+
+@media (max-width: 576px) {
+  .video-title {
+    font-size: 0.9rem; /* Slightly smaller on mobile */
+  }
+}
+
+/* Video description styles */
+.video-description {
+  font-size: 0.85rem;
+  color: #555;
+}
+
+/* Footer bar styles */
+.footer-bar {
+  --background: #0b3954;
+}
+
+/* Footer buttons - Ensure touch-friendly */
+.footer-bar ion-button {
+  min-height: 50px; /* Better touch targets */
+  --padding: 10px;
+}
+
+/* Upload Modal Styles */
+.modal-input {
+  --background: white;
+  --border-radius: 10px;
+  --padding-start: 15px;
+  --padding-end: 15px;
+  --padding-top: 10px;
+  --padding-bottom: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ddd;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  font-family: poppins, sans-serif;
+  border-radius: 10px;
+}
+
+/* Upload Modal Styling */
+.upload-modal-content {
+  padding: 20px;
+}
+
+/* File input styling – match IonInput */
+.modal-file-input {
+  border: 1px solid #e0e6ed;
+  border-radius: 14px;
+  padding: 12px 16px;
+  margin: 16px 0;
+  width: 100%;
+  font-family: 'Poppins', sans-serif;
+  background: white;
+}
+
+/* Buttons container */
+.modal-buttons {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+  flex-wrap: column;
+}
+
+/* Upload button – smaller, match admin theme */
+.upload-submit-btn {
+  --background: #0A3F59;
+  --color: white;
+  --border-radius: 40px;
+  font-weight: 600;
+  height: 44px;
+  flex: 1;
+  margin: 0;
+
+}
+
+/* Cancel button – red background, white text */
+.modal-cancel-btn {
+  --background: #c62828;
+  --color: white;
+  --border-radius: 40px;
+  font-weight: 600;
+  height: 44px;
+  flex: 1;
+  margin: 0;
+}
+
+.upload-submit-btn,
+.modal-cancel-btn {
+  --border-radius: 40px;
+  font-weight: 600;
+  height: 48px;
+  margin: 0 0 20px;
+  width: 100%;
+}
+
+.modal-cancel-btn:hover {
+  --background: #b71c1c !important;
+  transform: translateY(-1px);
+  transition: all 0.2s;
+}
+
+.upload-submit-btn:hover {
+  transform: translateY(-1px);
+  transition: all 0.2s;
+}
+
+
+@media (max-width: 576px) {
+  .modal-input {
+    --padding-start: 10px;
+    --padding-end: 10px;
+  }
+}
+
+.modal-upload-btn {
+  --background: #0b3954;
+  --color: white;
+  --border-radius: 10px;
+  font-weight: 600;
+  margin-top: 20px;
+}
+
+/* Modal container styles */
+.ion-modal {
+  --border-radius: 15px;
+  --background: #f9f9f9;
+
+}
+
+.ion-modal .ion-content {
+  --padding: 20px;
+}
+
+@media (max-width: 576px) {
+  .ion-modal .ion-content {
+    --padding: 15px; /* Less padding on small screens */
+  }
+}

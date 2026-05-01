@@ -1,0 +1,208 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+.employee-list-content {
+  --background: transparent;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* Client Employee List - Semi Bold 26 Poppins 0A3F59 */
+.employee-list-title {
+  font-family: 'Poppins', sans-serif;
+  font-size: 26px;
+  font-weight: 600;
+  color: #0A3F59;
+  text-align: center;
+  margin: 20px 0 0 0;
+  padding: 0;
+}
+
+/* Search bar: w 391 h 50, corner radius 20, padding 16 13, fill FFFFFF, stroke 0A3F59 */
+.employee-searchbar {
+  --background: #FFFFFF;
+  --border-radius: 20px;
+  --box-shadow: 0 0 0 1px #0A3F59;
+  --placeholder-color: #7F7F7F;
+  --placeholder-font-weight: 500;
+  --placeholder-font-size: 16px;
+  height: 50px;
+  margin: 16px 0;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* Table container for scrolling */
+.table-scroll-container {
+  overflow-x: auto;
+  border: 1px solid #000000;
+  border-radius: 5px;
+  margin: 20px 0;
+  background: white;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Employee table: w 2400, h 50 */
+.employee-table {
+  width: 2400px;
+  border-collapse: collapse;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* Table header: Fill E9FBFC, Poppins Semibold 24, Color 0A3F59 */
+.table-header-row {
+  background-color: #E9FBFC;
+  height: 50px;
+}
+
+.table-header-cell {
+  color: #0A3F59;
+  font-size: 24px;
+  font-weight: 600;
+  padding: 12px 16px;
+  text-align: left;
+  white-space: nowrap;
+  border: 1px solid #000000;
+  border-bottom: 2px solid #000000;
+}
+
+/* Table body: Fill FFFFFF, Poppins Regular 24, Color 000000 */
+.table-body-row {
+  background-color: #FFFFFF;
+  height: 50px;
+}
+
+.table-body-cell {
+  color: #000000;
+  font-size: 24px;
+  font-weight: 400;
+  padding: 12px 16px;
+  border: 1px solid #000000;
+  white-space: nowrap;
+}
+
+.net-pay-cell {
+  font-weight: 600;
+  color: #28a745;
+}
+
+/* Remove bottom border from last row */
+.table-body-row:last-child .table-body-cell {
+  border-bottom: 1px solid #000000;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .employee-list-title {
+    font-size: 22px;
+  }
+  
+  .employee-searchbar {
+    height: 45px;
+    margin: 12px 0;
+  }
+  
+  .table-header-cell {
+    font-size: 18px;
+    padding: 10px 12px;
+  }
+  
+  .table-body-cell {
+    font-size: 16px;
+    padding: 10px 12px;
+  }
+  
+  .employee-table {
+    width: 2000px;
+  }
+}
+
+@media (max-width: 480px) {
+  .employee-list-title {
+    font-size: 20px;
+  }
+  
+  .employee-searchbar {
+    height: 42px;
+    margin: 10px 0;
+  }
+  
+  .table-header-cell {
+    font-size: 14px;
+    padding: 8px 10px;
+  }
+  
+  .table-body-cell {
+    font-size: 12px;
+    padding: 8px 10px;
+  }
+  
+  .employee-table {
+    width: 1800px;
+  }
+  
+  .table-scroll-container {
+    margin: 16px 0;
+  }
+}
+
+/* Custom scrollbar for better appearance */
+.table-scroll-container::-webkit-scrollbar {
+  height: 8px;
+}
+
+.table-scroll-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.table-scroll-container::-webkit-scrollbar-thumb {
+  background: #0A3F59;
+  border-radius: 4px;
+}
+
+.table-scroll-container::-webkit-scrollbar-thumb:hover {
+  background: #083048;
+}
+/* Error Message Styles */
+.error-message-card {
+  background: #ffe6e6;
+  border: 1px solid #ff4444;
+  border-radius: 8px;
+  margin: 10px 0;
+}
+
+.error-message-content {
+  padding: 12px 16px;
+}
+
+.error-message-text {
+  color: #d32f2f;
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.error-buttons {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.retry-button {
+  --background: #d32f2f;
+  --color: white;
+  font-size: 12px;
+}
+
+.error-close-button {
+  --color: #d32f2f;
+  --padding-start: 8px;
+  --padding-end: 8px;
+}
+
+.loading-text {
+  font-family: 'Poppins', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  color: #7F7F7F;
+  text-align: center;
+  padding: 20px;
+}

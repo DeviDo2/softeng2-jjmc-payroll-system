@@ -1,0 +1,124 @@
+.welcome-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: white;
+  font-family: Arial, sans-serif;
+  padding: 5vw;
+  box-sizing: border-box;
+}
+
+.full-height {
+  height: 100%;
+  z-index: 10;
+  position: relative;
+}
+
+.welcome-title {
+  font-size: 8vh;
+  font-weight: bold;
+  margin: 1.5rem auto 2.5rem;
+  color: #0A3F59;
+  font-family: POPPINS, sans-serif;
+  text-align: center;
+}
+
+.welcome-img {
+  width: 220px;
+  margin: 1.5rem auto 2.5rem;
+}
+
+ion-button {
+  font-weight: 600;
+  --background: #74C2D5;
+  --color: #0A3F59;
+  --border-radius: 12px;
+  --box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  
+}
+
+/* Centering dropdown list */
+ion-list {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background-color: #74C2D5;
+  border: 0.5vh solid #74C2D5;
+  border-radius: 2vh;
+  z-index: 1000;
+  margin-top: 1.5vh;
+}
+.dropdown-item {
+  padding: 4vh 4vw;
+  color: #0A3F59;
+  cursor: pointer;
+  font-weight: bold;
+  background-color: #74C2D5;
+  text-align: left;
+  font-size: 4vh;
+}
+
+
+.ellipse-top,
+.ellipse-bottom {
+  position: absolute;
+  z-index: 1; 
+  object-fit: contain; 
+  pointer-events: none; 
+  opacity: 0.9; 
+}
+
+
+.ellipse-top {
+  width: 140vw; 
+  height: 150vw; 
+  top: -120vw;
+  left: 20vw;
+}
+
+
+.ellipse-bottom {
+  width: 120vw;
+  height: 100vw;
+  bottom: -70vw;
+  right: 40vw;
+  z-index: 1;
+  position: absolute;
+  pointer-events: none;
+}
+
+/* Mobile adjustments */
+@media (max-width: 576px) {
+  .welcome-title {
+    font-size: 1.8rem;
+    text-align: center;
+  }
+  .welcome-subtitle {
+    font-size: 0.9rem;
+    text-align: center;
+  }
+  .welcome-buttons {
+    flex-direction: column;
+    gap: 12px;
+  }
+  .welcome-buttons ion-button {
+    width: 100%;
+    margin: 0;
+  }
+  .welcome-container {
+    padding: 20px;
+  }
+}
+
+/* Tablet and desktop adjustments */
+@media (min-width: 768px) {
+  .welcome-title {
+    font-size: 2.8rem;
+  }
+
+  .welcome-img {
+    width: 300px;
+  }
+}

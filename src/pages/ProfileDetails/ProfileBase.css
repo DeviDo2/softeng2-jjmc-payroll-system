@@ -1,0 +1,307 @@
+
+
+.ion-menu { 
+  background: #E9FBFC;
+  border-radius: 20px;
+  padding: 1.5rem 1.5rem 2rem; 
+  width: 280px; 
+  box-sizing: border-box;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+
+.logo-card {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(82, 115, 140, 0.2);
+  padding: 2.5rem 1.5rem 2.5rem;
+  margin-bottom: 2.5rem;
+  text-align: center;
+}
+
+
+.logo-placeholder {
+  width: 120px;
+  height: auto;
+  max-height: 100px;
+  margin: 0 auto 1rem auto;
+  display: block;
+  object-fit: contain;
+}
+
+/* Title below logo */
+.logo-title {
+  font-family: poppins, sans-serif  ;
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: #0a3f59;
+  margin-bottom: 0.3rem;
+}
+
+/* Subtitle under title */
+.logo-subtitle {
+  font-weight: 400;
+  font-size: 1rem;
+  color: #0a3f59;
+  line-height: 1.4;
+  display: block ;
+}
+
+/* Menu buttons container: transparent background */
+.menu-buttons {
+  background: transparent ;
+  color: #E9FBFC;
+}
+
+/* Style for each menu button item */
+.menu-btn {
+  --padding-start: 14px;
+  --padding-end: 14px;
+  --padding-top: 14px;
+  --padding-bottom: 14px;
+  justify-content: flex-start;
+  font-weight: 700;
+  font-size: 1rem;
+  color: #0a3f59;
+  text-transform: none;
+  width: 100%;
+  margin-bottom: 1rem;
+  --background: transparent; /* Transparent background on buttons */
+}
+
+/* Icon style */
+.menu-btn ion-icon {
+  margin-right: 12px;
+  font-size: 22px;
+  color: #173f53;
+}
+
+/* Remove button hover background but add subtle text color change */
+.menu-btn:hover {
+  --background: transparent;
+  color: #07425a;
+  cursor: pointer;
+}
+
+/* Log out button: block, dark blue background, white text */
+.logout-btn {
+  --background: #0A3F59;
+  --color: #B7E0EB;
+  font-weight: 600;
+  font-size: 1.1rem;
+  border-radius: 10px;
+  height: 50px;
+  width: 100%;
+  margin-top: 2rem;
+  bottom: 100px;
+}
+
+
+/* Footer bar (optional if you want to keep footer similar) */
+.footer-bar {
+  background-color: #0a3f59;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  padding: 0.5rem 0;
+}
+
+.footer-bar ion-button {
+  --color: #74c2d5;
+}
+
+.footer-bar ion-button.activated {
+  transform: scale(0.9);
+  transition: transform 0.1s ease;
+}
+
+/* Responsive tweak for small screens */
+@media (max-width: 576px) {
+  .logo-card {
+    padding: 2rem 1rem 2rem;
+  }
+  .logout-btn {
+    font-size: 1rem;
+    height: 45px;
+  }
+}
+/* Main content area */
+.home-content {
+  --background: #ffffff;
+  position: relative;
+  overflow: hidden;
+    padding-bottom: 90px;
+}
+
+.ellipse-bg {
+  position: absolute;
+  width: 140vw; 
+  height: 140vw; 
+  top: -65vw;
+  left: -20vw;
+  z-index: 0;
+}
+
+.myprofile-title {
+  color: #0a3f59;
+  font-weight: 700;
+  font-size: 2rem;
+  margin-top: 3.5rem;
+  font-family: poppins, sans-serif;
+  text-align: left;
+}
+
+
+/* Cards */
+.dashboard-card {
+  border-radius: 20px;
+  box-shadow: 0 4px 12px rgba(10, 63, 89, 0.12);
+  text-align: center;
+  margin-bottom: 1.5rem;
+  height: auto;              /* was 50vw – removed */
+  max-width: 400px;          /* ADDED: limit card width */
+  width: 100%;
+  padding: 20px;
+  position: relative;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.profile-photo {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+  margin: 0 auto 12px;
+}
+.username {
+  display: block;
+  font-family: poppins, sans-serif;
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin-bottom: 12px;
+  color: #0A3F59;
+  text-align: center;
+}
+
+/* Edit Profile Picture Button */
+.edit-profile-pic-btn {
+  border-radius: 12px;
+  background: #fff;
+  color: #0A3F59;
+  box-shadow: 0 2px 5px rgb(0 0 0 / 0.1);
+  margin-bottom: 1rem;
+  font-weight: 500;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  --padding-start: 20px;
+  --padding-end: 20px;
+  font-family: poppins, sans-serif;
+}
+
+
+.dashboard-card ion-card-title {
+  color: #0a3f59;
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin-bottom: 12px;
+  color: #000;
+}
+
+.dashboard-card p {
+  color: #0a3f59;
+  margin: 0;
+}
+
+.edit-detail-btn {
+  --background: #fff;
+  --color: #214f6d;
+  border-radius: 12px;
+  font-family: poppins, sans-serif;
+  font-weight: 600;
+  box-shadow: 0 3px 7px rgba(38, 47, 54, 0.3);
+  margin-bottom: 1rem;
+  justify-content: space-between;
+  align-items: left;
+  --padding-start: 20px;
+  --padding-end: 20px;
+  width: 100%;
+}
+
+.edit-detail-btn ion-icon {
+  font-size: 20px;
+  color: #000;
+}
+
+.edit-profile-pic-btn:hover {
+  --background: #0A3F59 !important;
+  color: #E9FBFC !important;
+}
+/* Ensure icon follows text color */
+.edit-profile-pic-btn:hover ion-icon {
+  color: #E9FBFC !important;
+}
+
+.edit-detail-btn:hover {
+  --background: #B7E0EB !important;
+  --color: #0A3F59 !important;
+}
+.edit-detail-btn:hover ion-icon {
+  color: #0A3F59 !important;
+}
+
+/* Save changes button */
+.save-changes-btn {
+  --background: #104763;
+  --color: #fff;
+  border-radius: 14px;
+  font-family: poppins, sans-serif;
+  font-weight: 500;
+  margin-bottom: 1rem;
+    --padding-start: 20px;
+  --padding-end: 20px;
+  z-index: 10;
+  width: 100%;
+}
+
+.save-changes-btn:hover {
+  --background: #B7E0EB !important;
+  --color: #0A3F59 !important;
+}
+.save-changes-btn:hover ion-icon {
+  color: #0A3F59 !important;
+}
+
+
+/* Footer navigation bar */
+.footer-bar {
+  background-color: #0a3f59;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  padding: 0.5rem 0;
+}
+
+.footer-bar ion-button {
+  --color: #74c2d5;
+}
+
+.footer-bar ion-button.activated {
+  transform: scale(0.9);
+  transition: transform 0.1s ease;
+}
+
+    @media (max-width: 576px) {
+      .edit-profile-pic-btn {
+        height: 44px; /* Smaller on mobile */
+        font-size: 1rem;
+      }
+      .edit-detail-btn {
+        height: 50px;
+      }
+      .save-changes-btn {
+        height: 54px;
+        font-size: 1.1rem;
+      }
+    }
+    

@@ -1,0 +1,145 @@
+
+.signup-screen {
+  --background: #e9f8fc;
+
+  overflow-x: hidden; 
+}
+
+.full-height-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;   /* title stays at top */
+  min-height: 100%;
+  width: 100%;
+  padding: 15px;
+  position: relative;
+  z-index: 10;
+  padding: 15px;
+}
+
+
+.signup-ellipse-top,
+.signup-ellipse-bottom {
+  position: absolute;
+  z-index: 1;
+  object-fit: contain;
+  pointer-events: none; 
+  opacity: 0.8;
+}
+
+
+.signup-ellipse-top {
+  width: 140vw; 
+  height: 140vw; 
+  top: -120vw;
+  left: -20vw;
+}
+
+
+.signup-ellipse-bottom {
+  width: 120vw;
+  height: 120vw;
+  bottom: -100vw;
+  right: -10vw;
+}
+
+
+
+.signup-container-grid {
+background: linear-gradient(145deg, #ffffff 1%, #f4fbfc 100%);
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(10, 63, 89, 0.1);
+  width: 100%;
+  max-width: 500px;          /* slightly wider than login to fit two columns */
+  padding: 20px 15px 15px 15px;
+}
+
+
+.signup-title {
+  font-size: 2rem; 
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #0A3F59;
+  font-family: 'Poppins', sans-serif;
+  text-align: center;
+  display: block; 
+}
+
+
+ion-item,
+ion-input {
+ --padding-start: 10px;
+  margin-bottom: 10px;
+  border: 1.5px solid #000000;
+  border-radius: 8px;
+  --highlight-color-focused: #74C2D5;
+  box-shadow: none;
+}
+
+ion-label[position="stacked"] {
+  white-space: nowrap;
+  overflow: visible;
+  color: #0A3F59 !important;
+}
+
+.next-button {
+  --background: #0A3F59 !important; /* Darker blue from reference */
+  --color: #fff;
+  --border-radius: 14px;
+  font-weight: 600;
+  height: 50px;
+   margin-top: 8px;
+  --box-shadow: 0 4px 8px rgba(10, 63, 89, 0.2);
+  width: 100%;
+}
+
+/* Back Button */
+.back-button {
+  --background: transparent;
+  --color: #0A3F59;
+  --border-color: #0A3F59;
+  --border-width: 1.5px;
+  --border-radius: 10px;
+  font-weight: 600;
+  height: 50px;
+  width: 100%;
+}
+
+form {
+  width: 100%;
+}
+
+@media (max-width: 1024px) {
+  .signup-container {
+    padding: 20px 16px 24px 16px;
+    max-width: 100%;
+    margin: 0 12px;
+  }
+  .signup-title {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+  }
+  .next-button, .back-button {
+    height: 48px;
+    font-size: 0.9rem;
+  }
+}
+
+/* ADDED: tablet/desktop – keep card centered and limited width */
+@media (min-width: 768px) {
+  .signup-container {
+    max-width: 520px;
+    padding: 30px 28px;
+  }
+  .signup-title {
+    white-space: normal;
+    font-size: 1.3rem;
+  }
+}
+
+/* ADDED: fix modal datetime styling */
+ion-modal ion-datetime {
+  --background: white;
+  padding: 16px;
+}
+

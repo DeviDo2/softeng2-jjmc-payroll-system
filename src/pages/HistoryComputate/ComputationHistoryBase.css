@@ -1,0 +1,153 @@
+.computation-history-content {
+  --background: #e9f8fc;
+  position: relative;
+  overflow: hidden;
+}
+
+.ellipse-bg {
+  position: absolute;
+  width: 140vw; 
+  height: 140vw; 
+  top: -50vw;
+  left: -20vw;
+
+}
+
+.history-card-container {
+  background: linear-gradient(145deg, #ffffff 0%, #f4fbfc 100%);
+  border-radius: 28px;
+  box-shadow: 0 10px 30px rgba(10, 63, 89, 0.1);
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 24px 20px 30px;
+  position: relative;
+  z-index: 2;
+}
+
+.history-title {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #0A3F59;
+  margin: 0 0 8px 0;
+  text-align: left;
+}
+
+.month-button {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  border-radius: 10px;
+}
+
+
+.sort-item {
+  --background: transparent;
+  --border-color: #e0e0e0;
+  margin-bottom: 1rem;
+}
+
+.history-card {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 15px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  margin-bottom: 1.5rem;
+  z-index: 1;
+  position: relative;
+}
+
+.period-btn {
+  --border-radius: 40px;
+  font-weight: 600;
+  height: 44px;
+  margin: 0;
+}
+
+.period-btn-active {
+  --background: #0A3F59;
+  --color: #B7E0EB;
+}
+
+.period-btn-inactive {
+  --background: #E9FBFC;
+  --color: #0A3F59;
+  --border-color: #0A3F59;
+  --border-width: 1px;
+}
+
+/* CHANGED: Cards – clean, rounded, shadow */
+.history-card {
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 4px 12px rgba(10, 63, 89, 0.08);
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+
+.history-card ion-card-header {
+  background: #f8f9fa;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.history-card ion-card-title {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #0A3F59;
+}
+
+.card-subtitle {
+  font-size: 0.8rem;
+  color: #6c757d;
+}
+
+/* CHANGED: Inputs inside card – readonly, light background */
+.history-card ion-input {
+  --background: #f8f9fa;
+  --padding-start: 12px;
+  border-radius: 8px;
+  margin-top: 4px;
+}
+
+/* ADDED: Empty state card */
+.empty-state-card {
+  background: #f8f9fa;
+  border: 2px dashed #dee2e6;
+  border-radius: 20px;
+  padding: 40px 20px;
+  text-align: center;
+}
+
+.empty-state-card h3 {
+  color: #0A3F59;
+  margin-bottom: 8px;
+}
+
+.empty-state-card p {
+  color: #6c757d;
+}
+
+.card-subtitle {
+  font-size: 0.9rem;
+  color: #666;
+  display: block;
+  margin-top: 0.5rem;
+}
+
+.footer-bar {
+  background-color: #0a3f59;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  padding: 0.5rem 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .history-title {
+    font-size: 1.5rem;
+  }
+  
+  .history-card {
+    margin-bottom: 1rem;
+  }
+}

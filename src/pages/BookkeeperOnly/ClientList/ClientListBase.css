@@ -1,0 +1,579 @@
+/* Import Poppins font */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+.computation-content {
+  --background: #e8f9fc;
+  position: relative;
+}
+
+.ellipse-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  z-index: 0;
+}
+
+/* Modal Overlay - FIXED POSITIONING */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+/* Computing Client Staff Data: poppins, semibold, 26, 0A3F59 */
+.computation-main-title {
+  font-family: 'Poppins', sans-serif;
+  font-size: 26px;
+  font-weight: 600;
+  color: #0A3F59;
+  text-align: center;
+  margin: 20px 0 0 0;
+  padding: 0;
+  position: relative;
+  z-index: 1;
+}
+
+/* Start computing our client's data: poppins regular 16, 000000 */
+.computation-main-subtitle {
+  font-family: 'Poppins', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  color: #000000;
+  text-align: center;
+  margin: 8px 0 0 0;
+  padding: 0;
+  position: relative;
+  z-index: 1;
+}
+
+/* Buttons with exact specifications */
+.main-add-csv-btn,
+.upload-modal-btn,
+.compute-confirm-btn,
+.save-draft-final-btn,
+.send-to-client-btn,
+.close-modal-btn {
+  --background: #0a3f59;
+  --color: #e9fbfc;
+  --border-radius: 10px;
+  --padding-start: 19px;
+  --padding-end: 19px;
+  width: 349px;
+  height: 75px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 24px;
+  font-weight: 400;
+  margin: 16px 0;
+}
+
+/* Upload modal: w 373 h 564, white, corner radius 10 */
+.upload-modal-card {
+  border-radius: 10px;
+  width: 373px;
+  height: 564px;
+  background: #ffffff;
+  margin: 0;
+  position: relative;
+  z-index: 1001;
+}
+
+.upload-modal-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 40px 20px;
+}
+
+/* Upload csv file here: poppins, semi bold, 22, 000000 */
+.upload-modal-title {
+  font-family: 'Poppins', sans-serif;
+  font-size: 22px;
+  font-weight: 600;
+  color: #000000;
+  text-align: center;
+  margin: 0 0 40px 0;
+}
+
+/* Upload box: colored B7E0EB, w 294 h 231, corner radius 5 */
+.upload-box {
+  background: #b7e0eb;
+  border-radius: 5px;
+  width: 294px;
+  height: 231px;
+  margin: 0 0 40px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.upload-box-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 0;
+}
+
+.upload-box-icon {
+  font-size: 64px;
+  color: #0a3f59;
+  margin-bottom: 16px;
+}
+
+.upload-box-text {
+  font-family: 'Poppins', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  color: #000000;
+  text-align: center;
+  margin: 0;
+}
+
+/* Compute confirmation: white box w 373 h 320 */
+.compute-confirm-card {
+  border-radius: 10px;
+  width: 373px;
+  height: 320px;
+  background: #ffffff;
+  margin: 0;
+  position: relative;
+  z-index: 1001;
+}
+
+.compute-confirm-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 40px 20px;
+}
+
+/* Compute uploaded file?: poppins, medium, 26, black */
+.compute-confirm-title {
+  font-family: 'Poppins', sans-serif;
+  font-size: 26px;
+  font-weight: 500;
+  color: #000000;
+  text-align: center;
+  margin: 0 0 60px 0;
+}
+
+/* Table container */
+.table-scroll-container {
+  overflow-x: auto;
+  border-radius: 10px;
+  margin: 20px 0;
+  border: 1px solid #e0e0e0;
+  background: white;
+  -webkit-overflow-scrolling: touch;
+}
+
+.results-data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'Poppins', sans-serif;
+  min-width: 1200px;
+  border: 1px solid #d0d0d0;
+}
+
+/* Table header: h 50, fill E9FBFC, poppins semibold 24, color 0A3F59 */
+.table-header-row th {
+  background-color: #e9fbfc;
+  color: #0a3f59;
+  font-size: 24px;
+  font-weight: 600;
+  padding: 15px 10px;
+  text-align: left;
+  white-space: nowrap;
+  border-bottom: 2px solid #0a3f59;
+  border-right: 1px solid #d0d0d0;
+  height: 50px;
+}
+
+/* Remove right border from last header column */
+.table-header-row th:last-child {
+  border-right: none;
+}
+
+/* Table data: white fill, poppins regular 24 black */
+.table-data-row td {
+  background-color: #ffffff;
+  color: #000000;
+  font-size: 24px;
+  font-weight: 400;
+  padding: 12px 10px;
+  border-bottom: 1px solid #e0e0e0;
+  border-right: 1px solid #e0e0e0;
+  white-space: nowrap;
+}
+
+/* Remove right border from last data column */
+.table-data-row td:last-child {
+  border-right: none;
+}
+
+/* Remove bottom border from last row */
+.table-data-row:last-child td {
+  border-bottom: none;
+}
+
+/* Submit Draft text */
+.draft-submit-text {
+  font-family: 'Poppins', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  color: #000000;
+  text-align: center;
+  margin: 30px 0 20px 0;
+}
+
+/* Draft submitted box: w 373, h 293 color E9FBFC */
+.draft-submitted-card {
+  border-radius: 10px;
+  width: 373px;
+  height: 293px;
+  background: #e9fbfc;
+  margin: 0;
+  position: relative;
+  z-index: 1001;
+}
+
+.draft-submitted-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 40px 20px;
+}
+
+/* Draft submitted text */
+.draft-submitted-title {
+  font-family: 'Poppins', sans-serif;
+  font-size: 26px;
+  font-weight: 700;
+  color: #000000;
+  text-align: center;
+  margin: 0 0 40px 0;
+  line-height: 1.3;
+}
+
+/* Draft approved box: w 373, h 561 color E9FBFC */
+.draft-approved-card {
+  border-radius: 10px;
+  width: 373px;
+  height: 561px;
+  background: #e9fbfc;
+  margin: 0;
+  position: relative;
+  z-index: 1001;
+}
+
+.draft-approved-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 40px 20px;
+}
+
+/* Draft approved title */
+.draft-approved-main-title {
+  font-family: 'Poppins', sans-serif;
+  font-size: 42px;
+  font-weight: 700;
+  color: #000000;
+  text-align: center;
+  margin: 0 0 60px 0;
+  line-height: 1.2;
+}
+
+/* Send to client text */
+.send-to-client-text {
+  font-family: 'Poppins', sans-serif;
+  font-size: 26px;
+  font-weight: 400;
+  color: #000000;
+  text-align: center;
+  margin: 0 0 40px 0;
+  line-height: 1.3;
+}
+
+/* Footer */
+.footer-bar {
+  --background: #0b3954;
+}
+
+/* Additional styles for new features */
+
+/* Search Bar */
+.search-bar {
+  margin-bottom: 1rem;
+}
+
+/* Empty State */
+.empty-state {
+  padding: 3rem 1rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 2px dashed #dee2e6;
+  font-family: 'Poppins', sans-serif;
+  font-size: 18px;
+  color: #6c757d;
+  text-align: center;
+}
+
+/* Net Pay Cell */
+.net-pay-cell {
+  font-weight: 600;
+  color: #28a745;
+}
+
+/* Download Template Button */
+.download-template-btn {
+  --border-color: var(--ion-color-primary);
+  --color: var(--ion-color-primary);
+  font-family: 'Poppins', sans-serif;
+  font-size: 18px;
+  font-weight: 400;
+}
+
+.download-template-link {
+  --color: var(--ion-color-medium);
+  margin-top: 1rem;
+  font-family: 'Poppins', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+}
+
+/* Loading Spinner */
+ion-spinner {
+  width: 24px;
+  height: 24px;
+  --color: #e9fbfc;
+}
+
+/* Error Card */
+.error-card {
+  border-radius: 10px;
+  width: 373px;
+  height: 320px;
+  background: #ffffff;
+  margin: 0;
+  position: relative;
+  z-index: 1001;
+}
+
+.error-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 40px 20px;
+}
+
+.error-title {
+  font-family: 'Poppins', sans-serif;
+  font-size: 26px;
+  font-weight: 600;
+  color: #dc3545;
+  text-align: center;
+  margin: 0 0 20px 0;
+}
+
+.error-content p {
+  font-family: 'Poppins', sans-serif;
+  font-size: 18px;
+  font-weight: 400;
+  color: #000000;
+  text-align: center;
+  margin: 0 0 30px 0;
+  line-height: 1.4;
+}
+
+/* Template Info */
+.template-info {
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  color: #6c757d;
+  text-align: center;
+  margin-top: 20px;
+  line-height: 1.4;
+}
+
+/* Computation Note */
+.computation-note {
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  color: #6c757d;
+  text-align: center;
+  margin-top: 10px;
+  line-height: 1.4;
+}
+
+/* Upload modal subtitle */
+.upload-modal-subtitle {
+  font-family: 'Poppins', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  color: #6c757d;
+  text-align: center;
+  margin: 8px 0 20px 0;
+}
+
+/* Compute confirm subtitle */
+.compute-confirm-subtitle {
+  font-family: 'Poppins', sans-serif;
+  font-size: 18px;
+  font-weight: 400;
+  color: #6c757d;
+  text-align: center;
+  margin: 0 0 40px 0;
+  line-height: 1.4;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .modal-overlay {
+    padding: 10px;
+  }
+  
+  .upload-modal-card,
+  .compute-confirm-card,
+  .draft-submitted-card,
+  .draft-approved-card,
+  .error-card {
+    width: 90%;
+    max-width: 373px;
+  }
+  
+  .upload-box {
+    width: 90%;
+    max-width: 294px;
+    height: 200px;
+  }
+  
+  .upload-box-icon {
+    font-size: 48px;
+  }
+  
+  .main-add-csv-btn,
+  .upload-modal-btn,
+  .compute-confirm-btn,
+  .save-draft-final-btn,
+  .send-to-client-btn,
+  .close-modal-btn {
+    width: 90%;
+    max-width: 349px;
+    height: 60px;
+    font-size: 20px;
+  }
+  
+  .table-header-row th {
+    font-size: 18px;
+    padding: 12px 8px;
+  }
+  
+  .table-data-row td {
+    font-size: 16px;
+    padding: 10px 8px;
+  }
+  
+  .draft-approved-main-title {
+    font-size: 32px;
+  }
+  
+  .empty-state {
+    font-size: 16px;
+    padding: 2rem 1rem;
+  }
+  
+  .template-info,
+  .computation-note {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .ellipse-bg {
+    height: 150px;
+  }
+  
+  .computation-main-title {
+    font-size: 22px;
+  }
+  
+  .computation-main-subtitle {
+    font-size: 14px;
+  }
+  
+  .upload-modal-card {
+    height: 500px;
+  }
+  
+  .compute-confirm-card {
+    height: 280px;
+  }
+  
+  .draft-submitted-card {
+    height: 250px;
+  }
+  
+  .draft-approved-card {
+    height: 480px;
+  }
+  
+  .error-card {
+    height: 280px;
+  }
+  
+  .upload-box {
+    height: 180px;
+  }
+  
+  .upload-box-icon {
+    font-size: 40px;
+  }
+  
+  .table-header-row th {
+    font-size: 14px;
+    padding: 10px 6px;
+  }
+  
+  .table-data-row td {
+    font-size: 13px;
+    padding: 8px 6px;
+  }
+  
+  .draft-approved-main-title {
+    font-size: 28px;
+  }
+  
+  .send-to-client-text {
+    font-size: 22px;
+  }
+  
+  .empty-state {
+    font-size: 14px;
+    padding: 1.5rem 1rem;
+  }
+
+}

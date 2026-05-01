@@ -1,0 +1,17 @@
+
+/* Footer navigation bar */
+.footer-bar {
+  background-color: #0a3f59;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  padding: 0.5rem 0;
+}
+
+.footer-bar ion-button {
+  --color: #74c2d5;
+}
+
+.footer-bar ion-button.activated {
+  transform: scale(0.9);
+  transition: transform 0.1s ease;
+}

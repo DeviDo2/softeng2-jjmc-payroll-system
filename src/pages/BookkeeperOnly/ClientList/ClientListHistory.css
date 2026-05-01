@@ -1,0 +1,418 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+.client-list-content {
+  --background: transparent;
+  font-family: 'Poppins', sans-serif;
+  position: relative;
+  overflow-x: hidden;
+}
+
+.ellipse-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  z-index: 0;
+}
+
+.client-card-container {
+  background: linear-gradient(145deg, #ffffff 0%, #f4fbfc 100%);
+  border-radius: 28px;
+  box-shadow: 0 10px 30px rgba(10, 63, 89, 0.1);
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 20px 30px;
+  position: relative;
+  z-index: 2;
+}
+
+/* Client List - Semi Bold 26 Poppins 0A3F59 */
+.client-list-history-title {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #0A3F59 !important;
+  text-align: center;
+  margin: 20px 0 0 0;
+  padding: 0;
+}
+
+.client-list-subheader {
+  font-size: 1rem;
+  color: #000000;
+  margin-bottom: 20px;
+}
+
+.notification-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #0A3F59;
+  color: #B7E0EB;
+  border-radius: 40px;
+  padding: 8px 16px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-bottom: 20px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.notification-badge:hover {
+  transform: translateY(-2px);
+}
+
+/* Search bar: w 391 h 50, corner radius 20, padding 16 13, fill FFFFFF, stroke 0A3F59 */
+.client-searchbar {
+  --border-radius: 40px;
+  --background: white;
+  --box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  margin-bottom: 20px;
+}
+
+.client-counter {
+  display: inline-block;
+  background: #E9FBFC;
+  padding: 4px 12px;
+  border-radius: 30px;
+  font-size: 1rem;
+  font-weight: bold;
+  color: #0A3F59;
+  margin-bottom: 20px;
+}
+
+/* Sort by: Poppins Medium 16, Fill: 000000 */
+.sort-section {
+  margin: 16px 0;
+}
+
+.sort-by-text {
+  font-size: 16px;
+  font-weight: 500;
+  color: #000000;
+  font-family: 'Poppins', sans-serif;
+  white-space: nowrap;
+}
+
+.month-filter-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.month-filter-btn {
+  --border-radius: 40px;
+  font-weight: 600;
+  height: 44px;
+  --padding-start: 20px;
+  --padding-end: 20px;
+  margin: 0;
+}
+
+.month-filter-btn-active {
+  --background: #0A3F59;
+  --color: #B7E0EB;
+}
+
+.month-filter-btn-inactive {
+  --background: #E9FBFC;
+  --color: #0A3F59;
+  --border-color: #0A3F59;
+  --border-width: 1px;
+}
+
+/* Sort buttons: Poppins Medium 10, corner radius 5, padding 19 1 */
+.sort-button {
+  border-radius: 5px;
+  --padding-start: 19px;
+  --padding-end: 19px;
+  --padding-top: 1px;
+  --padding-bottom: 1px;
+  font-size: 10px;
+  font-weight: 500;
+  font-family: 'Poppins', sans-serif;
+  height: 32px;
+  margin: 0 5px;
+}
+
+.sort-button-active {
+  --background: #0A3F59;
+  --color: #B7E0EB;
+  --border-color: #0A3F59;
+}
+
+.sort-button-inactive {
+  --background: #B7E0EB;
+  --color: #0A3F59;
+  --border-color: #B7E0EB;
+}
+
+/* Client cards: W 368 H 73 Fill: E9FBFC, Padding: 21 24, Corner Radius: 10 */
+.client-card {
+  border-radius: 16px;
+  background: #E9FBFC;
+  margin: 12px 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  transition: transform 0.2s;
+}
+
+.client-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(10, 63, 89, 0.1);
+}
+
+.client-card-content {
+  padding: 21px 24px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+/* Company name: Poppins Medium 16, Color: 0A3F59 */
+.company-name {
+  font-size: 16px;
+  font-weight: 500;
+  color: #0A3F59;
+  font-family: 'Poppins', sans-serif;
+  display: block;
+}
+
+.computation-date {
+  font-family: 'Poppins', sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  color: #7F7F7F;
+  display: block;
+  margin-top: 4px;
+}
+
+.forward-icon {
+  color: #0A3F59;
+  font-size: 20px;
+}
+
+/* Custom Alert Styling */
+.custom-alert {
+  --width: 90%;
+  --max-width: 400px;
+}
+
+.custom-alert .alert-head {
+  text-align: center;
+}
+
+.custom-alert .alert-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #0A3F59;
+  margin-bottom: 8px;
+}
+
+.custom-alert .alert-sub-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 8px;
+}
+
+.custom-alert .alert-message {
+  font-size: 14px;
+  color: #7f8c8d;
+  line-height: 1.4;
+}
+
+/* Alert Button Styles */
+.alert-button-cancel {
+  color: #0A3F59;
+  background: #E9FBFC;
+  border-radius: 12px;
+  margin: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  height: 48px;
+  min-height: 48px;
+  border: 2px solid #0A3F59;
+}
+
+.alert-button-confirm {
+  color: #E9FBFC;
+  background: #0A3F59;
+  border-radius: 12px;
+  margin: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  height: 48px;
+  min-height: 48px;
+  border: 2px solid #0A3F59;
+}
+
+.alert-button-cancel:active,
+.alert-button-confirm:active {
+  transform: scale(0.98);
+  opacity: 0.9;
+}
+/* Error Message Styles */
+.error-message-card {
+  background: #ffe6e6;
+  border: 1px solid #ff4444;
+  border-radius: 8px;
+  margin: 10px 0;
+}
+
+.error-message-content {
+  padding: 12px 16px;
+}
+
+.error-message-text {
+  color: #d32f2f;
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.error-close-button {
+  --color: #d32f2f;
+  --padding-start: 8px;
+  --padding-end: 8px;
+}
+
+.loading-text {
+  font-family: 'Poppins', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  color: #7F7F7F;
+  text-align: center;
+  padding: 20px;
+}
+
+.empty-state-card {
+  background: #F8F9FA;
+  border: 2px dashed #DEE2E6;
+  border-radius: 10px;
+  margin: 20px 0;
+  padding: 40px 20px;
+}
+
+.empty-state-subtitle {
+  font-size: 12px;
+  margin-top: 8px;
+}
+
+/* Menu Styles */
+ion-menu {
+  --width: 300px;
+  --background: white;
+}
+
+ion-menu ion-content {
+  --background: white;
+}
+
+ion-menu ion-item {
+  --background: transparent;
+  --background-hover: rgba(10, 63, 89, 0.1);
+  --color: #0A3F59;
+  margin: 8px 0;
+  border-radius: 8px;
+}
+
+ion-menu ion-item:hover {
+  --background: rgba(10, 63, 89, 0.05);
+}
+
+ion-menu ion-icon {
+  color: #0A3F59;
+}
+
+ion-menu ion-label {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 500;
+  color: #0A3F59;
+}
+
+/* Menu Toggle Button */
+ion-menu-toggle ion-button {
+  --background: transparent;
+  --color: white;
+  --background-hover: rgba(255, 255, 255, 0.1);
+}
+
+/* Ensure page content doesn't get hidden */
+ion-page {
+  background: #e8f9fc;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .client-list-title {
+    font-size: 22px;
+  }
+  
+  .client-searchbar {
+    height: 45px;
+    margin: 12px 0;
+  }
+  
+  .client-card {
+    width: 90%;
+    max-width: 368px;
+    height: 68px;
+  }
+  
+  .client-card-content {
+    padding: 18px 20px;
+  }
+  
+  .sort-button {
+    --padding-start: 16px;
+    --padding-end: 16px;
+    font-size: 9px;
+    height: 30px;
+  }
+  
+  .sort-by-text {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .client-list-title {
+    font-size: 20px;
+  }
+  
+  .client-searchbar {
+    height: 42px;
+    margin: 10px 0;
+  }
+  
+  .sort-section {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+  }
+  
+  .sort-by-text {
+    font-size: 14px;
+    margin-right: 8px;
+  }
+  
+  .client-card {
+    width: 95%;
+    height: 65px;
+  }
+  
+  .client-card-content {
+    padding: 16px 18px;
+  }
+  
+  .company-name {
+    font-size: 14px;
+  }
+  
+  .forward-icon {
+    font-size: 18px;
+  }
+} 

@@ -1,0 +1,150 @@
+/* ---------------------- */
+/*     HEADER (kept)      */
+/* ---------------------- */
+
+ion-menu ion-header ion-toolbar {
+  --background: #B7E0EB;
+  --color: #0A3F59;
+}
+
+ion-menu ion-title {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  color: #0A3F59;
+}
+
+/* ---------------------- */
+/*   LOGO + TEXT CARD     */
+/* ---------------------- */
+
+.logo-card {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  padding: 28px 20px 24px;
+  margin: 16px 12px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* CHANGED: logo image – smaller, centered */
+.logo-placeholder {
+  width: 70px;
+  height: 70px;
+  margin: 0 auto;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.logo-placeholder ion-img {
+  width: 100%;
+  height: auto;
+}
+
+.company-subtitle {
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #0A3F59;        
+  margin: 8px 0 4px;
+}
+
+.role-title {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #0A3F59;
+  margin: 0;
+}
+
+/* ---------------------- */
+/*     MENU ITEMS         */
+/* ---------------------- */
+
+ion-menu ion-content {
+  --background: #E9FBFC;
+}
+
+ion-menu ion-item {
+  --background: #E9FBFC;  
+  --color: #0A3F59;
+  margin: 8px 12px;
+  border-radius: 12px;
+  --padding-start: 16px;
+  --min-height: 48px;
+  transition: all 0.2s ease;
+}
+
+ion-menu ion-item ion-icon {
+  color: #0A3F59 !important;
+  font-size: 1.4rem;
+  transition: color 0.2s ease;
+}
+
+ion-menu ion-item ion-label {
+  color: #0A3F59 !important;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+ion-menu ion-item:hover {
+  --background: #0A3F59;
+  --color: #B7E0EB;
+}
+
+ion-menu ion-item:hover ion-icon {
+  color: #B7E0EB !important;
+}
+
+ion-menu ion-item:hover ion-label {
+  color: #B7E0EB !important;
+}
+
+
+ion-menu ion-icon {
+  color: #0A3F59;
+  font-size: 1.4rem;
+  transition: color 0.2s ease;
+}
+
+ion-menu ion-label {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 500;
+  color: #0A3F59;
+  transition: color 0.2s ease;
+}
+
+/* ---------------------- */
+/*     LOGOUT BUTTON      */
+/* ---------------------- */
+
+/* CHANGED: button styling as requested */
+.logout-button {
+  --background: #0A3F59;
+  --color: white;
+  --border-radius: 12px;
+  margin: 16px 12px;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 500;
+  height: 48px;
+  width: 100%;
+}
+
+.logout-button ion-icon {
+  color: #B7E0EB;
+}
+
+.logout-button:hover {
+  --background: #74C2D5 !important;
+  --color: #0A3F59 !important;
+}
+
+
+.logout-button:hover ion-icon {
+  color: #0A3F59 !important;
+}
+

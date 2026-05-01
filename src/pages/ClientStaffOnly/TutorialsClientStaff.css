@@ -1,0 +1,137 @@
+/* AdminTutorials.css */
+
+/* Main content styles */
+.tutorial-content {
+  --background: #e8f9fc;
+  position: relative;
+}
+
+/* Title styles - Responsive font size */
+.tutorial-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #0b3954;
+}
+
+@media (max-width: 576px) {
+  .tutorial-title {
+    font-size: 1.5rem; /* Smaller on mobile */
+  }
+}
+
+.tutorial-subtitle {
+  font-size: 0.95rem;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+/* Searchbar styles */
+.tutorial-searchbar {
+  --background: white;
+  --border-radius: 20px;
+}
+
+/* Video count styles */
+.video-count {
+  font-weight: bold;
+  font-size: 2rem;
+  color: #0A3F59;
+  margin: 8px 0 20px;
+  display: inline-block;
+  background: #E9FBFC;
+  padding: 4px 12px;
+  border-radius: 20px;
+}
+
+/* Video card styles */
+.video-card {
+  border-radius: 15px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 15px; /* Add spacing */
+}
+
+/* Video thumbnail styles - Ensure responsive */
+.video-thumbnail {
+  border-radius: 10px;
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  min-height: 70px; /* Prevent squishing */
+}
+
+/* Video title styles */
+.video-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #0b3954;
+}
+
+@media (max-width: 576px) {
+  .video-title {
+    font-size: 0.9rem; /* Slightly smaller on mobile */
+  }
+}
+
+/* Video description styles */
+.video-description {
+  font-size: 0.85rem;
+  color: #555;
+}
+
+/* Footer bar styles */
+.footer-bar {
+  --background: #0b3954;
+}
+
+/* Footer buttons - Ensure touch-friendly */
+.footer-bar ion-button {
+  min-height: 50px; /* Better touch targets */
+  --padding: 10px;
+}
+
+/* Upload Modal Styles */
+.modal-input {
+  --background: white;
+  --border-radius: 10px;
+  --padding-start: 15px;
+  --padding-end: 15px;
+  --padding-top: 10px;
+  --padding-bottom: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ddd;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  font-family: poppins, sans-serif;
+  border-radius: 10px;
+}
+
+@media (max-width: 576px) {
+  .modal-input {
+    --padding-start: 10px;
+    --padding-end: 10px;
+  }
+}
+
+.modal-upload-btn {
+  --background: #0b3954;
+  --color: white;
+  --border-radius: 10px;
+  font-weight: 600;
+  margin-top: 20px;
+}
+
+/* Modal container styles */
+.ion-modal {
+  --border-radius: 15px;
+  --background: #f9f9f9;
+
+}
+
+.ion-modal .ion-content {
+  --padding: 20px;
+}
+
+@media (max-width: 576px) {
+  .ion-modal .ion-content {
+    --padding: 15px; /* Less padding on small screens */
+  }
+}

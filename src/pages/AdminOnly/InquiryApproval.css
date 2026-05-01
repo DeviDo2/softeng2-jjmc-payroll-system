@@ -1,0 +1,76 @@
+.computation-content {
+  --background: #e8f9fc;
+  position: relative;
+}
+
+.computation-main-title {
+  text-align: center;
+  font-family: 'Poppins', sans-serif;
+  font-size: 26px;
+  font-weight: 600;
+  color: #0A3F59;
+  margin-top: 20px;
+}
+
+/* Table container */
+.table-scroll-container {
+  overflow-x: auto;
+  border-radius: 10px;
+  margin-top: 20px;
+  background: white;
+}
+
+/* Use your earlier table styling */
+.results-data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'Poppins', sans-serif;
+  min-width: 1000px;
+  border: 1px solid #d0d0d0;
+}
+
+.table-header-row th {
+  background-color: #e9fbfc;
+  color: #0a3f59;
+  font-size: 20px;
+  font-weight: 600;
+  padding: 12px 10px;
+  border-bottom: 2px solid #0a3f59;
+  border-right: 1px solid #d0d0d0;
+  text-align: left;
+}
+
+.table-header-row th:last-child {
+  border-right: none;
+}
+
+.table-data-row td {
+  background-color: #ffffff;
+  color: #000000;
+  font-size: 18px;
+  padding: 12px 10px;
+  border-bottom: 1px solid #e0e0e0;
+  border-right: 1px solid #e0e0e0;
+  white-space: nowrap;
+}
+
+.table-data-row td:last-child {
+  border-right: none;
+}
+
+/* Action buttons */
+.action-buttons-cell {
+  display: flex;
+  gap: 8px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .table-header-row th {
+    font-size: 16px;
+  }
+
+  .table-data-row td {
+    font-size: 14px;
+  }
+}

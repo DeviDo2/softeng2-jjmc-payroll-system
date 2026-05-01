@@ -1,0 +1,81 @@
+.home-content {
+  --background: #ffffff;
+  position: relative;
+  overflow: hidden;
+}
+
+.ellipse-bg {
+  position: absolute;
+  width: 140vw; 
+  height: 140vw; 
+  top: -65vw;
+  left: -20vw;
+  z-index: 0;
+}
+
+.home-title {
+  color: #0a3f59;
+  font-weight: 700;
+  font-size: 2rem;
+  margin-top: 3.5rem;
+  font-family: poppins, sans-serif;
+  text-align: left;
+}
+
+.welcome-subtitle {
+  color: #0a3f59;
+  font-size: 1rem;
+  margin-bottom: 2rem;
+  font-family: poppins, sans-serif;
+    text-align: left;
+}
+
+
+
+/* Cards */
+.dashboard-card {
+  border-radius: 20px;
+  box-shadow: 0 4px 12px rgba(10, 63, 89, 0.12);
+  text-align: left;
+  margin-bottom: 1.5rem;
+  height: auto;               
+  min-height: 140px;         
+  max-width: 450px;          
+  width: 100%;
+  transition: transform 0.2s ease;
+}
+
+.dashboard-card:hover {
+  transform: translateY(-4px);
+}
+
+.dashboard-card ion-card-header {
+  padding-bottom: 8px;
+}
+
+.dashboard-card ion-card-title {
+  color: #0a3f59;
+  font-weight: 600;
+  text-align: left ;
+  font-size: 1.3rem;
+  font-family: poppins, sans-serif;
+}
+
+.dashboard-card p {
+  color: #0a3f59;
+  margin: 0;
+  text-align: left ;
+  font-family: poppins, sans-serif;
+}
+
+ion-col {
+  display: flex;
+  justify-content: center;
+}
+
+/* ADDED: responsive – on smaller screens cards stack and take full width */
+@media (max-width: 768px) {
+  .dashboard-card {
+    max-width: 100%;
+  }
+}

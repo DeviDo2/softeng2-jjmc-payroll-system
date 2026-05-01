@@ -1,0 +1,117 @@
+/* Background & layout wrapper */
+.view-content {
+  --background: #ffffff;
+  position: relative;
+}
+
+/* Decorative ellipse background (reused from SignUp) */
+.ellipse-bg {
+  position: absolute;
+  width: 140vw;
+  height: 140vw;
+  top: -50vw;
+  left: -20vw;
+  z-index: 0;
+}
+
+/* Main content grid */
+.view-grid {
+  position: relative;
+  z-index: 10;
+  padding-top: 6rem;
+  padding-bottom: 6rem;
+}
+
+/* Page title */
+.view-title {
+  color: #0A3F59;
+  font-weight: 700;
+  font-size: 1.6rem;
+  margin-bottom: 1rem;
+}
+
+/* Disable default Ion form styling */
+ion-item,
+ion-input {
+  --border-width: 0 !important;
+  --box-shadow: none !important;
+  border: none !important;
+  background: transparent !important;
+}
+
+/* Optional item styling if used elsewhere */
+.input-item {
+  --border-radius: 8px;
+  --border-color: #ccc;
+  --border-width: 1px;
+  --padding-start: 10px;
+  margin-bottom: 12px;
+}
+
+/* Primary button */
+.save-button {
+  --background: #0A3F59;
+  --color: #fff;
+  --border-radius: 12px;
+  height: 48px;
+  font-weight: 600;
+  font-family: poppins, sans-serif;
+}
+
+/* Secondary button */
+.cancel-button {
+  --background: #E9F8FC;
+  --color: #0A3F59;
+  --border-radius: 12px;
+  height: 48px;
+  border: 1px solid rgba(10, 63, 89, 0.12);
+}
+
+/* Responsive tweaks */
+@media (max-width: 480px) {
+  .view-title {
+    font-size: 1.4rem;
+  }
+
+  .ellipse-bg {
+    top: -140vw;
+  }
+}
+
+/* Footer styling */
+.footer-bar {
+  background-color: #0A3F59;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  padding: 0.5rem 0;
+}
+
+/* Accordion header styling */
+ion-accordion div[slot="header"] {
+  font-weight: 600;
+  color: #0A3F59;
+  padding: 12px 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Accordion content items */
+ion-accordion ion-item {
+  --background: #f9f9f9;
+  border-radius: 6px;
+  margin: 4px 0;
+}
+
+/* Optional: Card styling for accordion header */
+ion-card {
+  border-radius: 12px;
+  box-shadow: rgba(10, 63, 89, 0.15) 0px 4px 10px;
+}
+
+/* Icon styling */
+ion-icon {
+  font-size: 1.4rem;
+  color: #0A3F59;
+  margin-right: 6px;
+}

@@ -1,0 +1,136 @@
+/* reuse same ellipse classes as SignUp for consistency */
+.edit-content {
+  --background: #ffffff;
+  position: relative;
+  overflow-x: hidden;
+}
+
+.full-height-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100%;
+  width: 100%;
+  padding: 15px;
+}
+
+
+.ellipse-bg {
+  position: absolute;
+  width: 140vw; 
+  height: 140vw; 
+  top: -50vw;
+  left: -20vw;
+  z-index: 0;
+}
+
+/* center grid content above ellipses */
+.edit-card {
+  position: relative;
+  background: linear-gradient(145deg, #ffffff 0%, #f4fbfc 100%);
+  z-index: 10;
+  padding-bottom: 6rem; /* leave space for footer */
+  border-radius: 28px;
+
+
+}
+
+/* page title */
+.edit-title {
+  color: #0A3F59;
+  font-weight: 700;
+  font-size: 1.6rem;
+  margin-bottom: 1rem;
+}
+
+ion-item,
+ion-input {
+  --box-shadow: none !important;
+  border: none !important;
+  background: transparent !important;
+  
+}
+
+/* form item styling (kept minimal) */
+.input-item {
+  --border-radius: 14px;
+  --border-color: #e0e6ed;
+  --border-width: 1px;
+  --highlight-color-focused: #74C2D5;
+  --padding-start: 16px;
+  margin-bottom: 16px;
+  background: white;
+}
+
+ion-label[position="stacked"] {
+  font-weight: 500;
+  color: #2c5a74;
+  margin-bottom: 4px;
+}
+
+/* primary and secondary buttons using same variables as signup */
+.save-button {
+  --background: #0A3F59;
+  --color: #fff;
+  --border-radius: 14px;
+  font-weight: 600;
+  height: 52px;
+  width: 100%;
+}
+
+
+
+.cancel-button {
+  --background: transparent;
+  --color: #0A3F59;
+  --border-color: #0A3F59;
+  --border-width: 1.5px;
+  --border-radius: 14px;
+  font-weight: 600;
+  height: 52px;
+  width: 100%;
+}
+
+/* small responsive tweaks */
+@media (max-width: 480px) {
+  .edit-title {
+    font-size: 1.4rem;
+  }
+
+  .signup-ellipse-top {
+    top: -140vw;
+  }
+}
+
+/* footer styling */
+.footer-bar {
+  background-color: #0a3f59;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  padding: 0.5rem 0;
+}
+
+/* EDIT PROFILE PICTURE PAGE */
+/* ADDED: file input styling to match Ionic inputs */
+.file-input {
+  margin-top: 16px;
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid #e0e6ed;
+  border-radius: 14px;
+  background: white;
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+/* ADDED: profile image preview */
+.profile-preview {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin: 0 auto 16px;
+  display: block;
+  border: 3px solid #B7E0EB;
+}
