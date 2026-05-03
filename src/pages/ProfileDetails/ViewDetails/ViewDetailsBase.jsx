@@ -49,24 +49,27 @@ export default function ViewDetailsBase() {
     if (!loading && user?.uid) {
       const ref = doc(db, "users", user.uid);
 
-      const unsubscribe = onSnapshot(ref, (snap) => {
-        if (snap.exists()) {
-          setDetails({
-            email: snap.data().email || "",
-            firstName: snap.data().firstName || "",
-            lastName: snap.data().lastName || "",
-            birthdate: snap.data().birthdate || "",
-            gender: snap.data().gender || "",
-            address: snap.data().address || "",
-            phoneNumber: snap.data().phoneNumber || "",
-            company: snap.data().company || "",
-            position: snap.data().position || "",
-            department: snap.data().department || "",
-            salary: snap.data().salary || "",
-            taxId: snap.data().taxId || ""
-          });
+      const unsubscribe = onSnapshot(
+        ref, 
+        (snap) => {
+          if (snap.exists()) {
+            setDetails({
+              email: snap.data().email || "",
+              firstName: snap.data().firstName || "",
+              lastName: snap.data().lastName || "",
+              birthdate: snap.data().birthdate || "",
+              gender: snap.data().gender || "",
+              address: snap.data().address || "",
+              phoneNumber: snap.data().phoneNumber || "",
+              company: snap.data().company || "",
+              position: snap.data().position || "",
+              department: snap.data().department || "",
+              salary: snap.data().salary || "",
+              taxId: snap.data().taxId || ""
+            });
+          }
         }
-      });
+      );
 
       return () => unsubscribe();
     }
@@ -130,7 +133,7 @@ export default function ViewDetailsBase() {
                   </IonItem>
                 </IonCard>
                 <IonCardContent slot="content">
-                  <IonList>{renderFields(personalFields)}</IonList>
+                  <IonList style={{ position: 'static' }}>{renderFields(personalFields)}</IonList>
                 </IonCardContent>
               </IonAccordion>
 
@@ -143,10 +146,10 @@ export default function ViewDetailsBase() {
                   </IonItem>
                 </IonCard>
                 <IonCardContent slot="content">
-                  <IonList>{renderFields(workFields)}</IonList>
+                  <IonList style={{ position: 'static' }}>{renderFields(workFields)}</IonList>
                 </IonCardContent>
               </IonAccordion>
-
+              
             </IonAccordionGroup>
 
             {/* Back Button */}
