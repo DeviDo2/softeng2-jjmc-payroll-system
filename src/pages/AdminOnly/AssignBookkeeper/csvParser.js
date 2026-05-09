@@ -43,6 +43,9 @@ export const parseCSV = (file) => {
               `EMP${String(index + 1).padStart(3, "0")}`,
 
             name: row.name || "",
+            email: row.email || row.employeeemail || "",
+            taxId: row.taxid || row.taxidnumber || row.tin || "",
+            taxIdNumber: row.taxidnumber || row.taxid || row.tin || "",
             payrollPeriod: row.payrollperiod || "Monthly 2024",
             businessUnit: row.businessunit || "General",
             department: row.department || "",

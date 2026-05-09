@@ -35,9 +35,29 @@ import {
 
 import "./SignUpPage.css";
 
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, deleteUser, signOut } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import { auth, db } from "../../database-components/firebaseConfig";
+
+const signupErrorMessages = {
+  "auth/email-already-in-use":
+    "This email is already registered. Please log in instead, or use a different email.",
+  "auth/invalid-email": "Please enter a valid email address.",
+  "auth/weak-password": "Password should be at least 6 characters.",
+  "permission-denied":
+    "Signup could not be completed because the app does not have permission to save the user profile.",
+};
+
+const clearAuthState = () => {
+  localStorage.clear();
+  sessionStorage.clear();
+};
+
+const loginRouteByRole = {
+  "client-staff": "/client-staff-login",
+  bookkeeper: "/bookkeeper-login",
+  admin: "/admin-login",
+};
 
 function SignUpBase() {
   const history = useHistory();
@@ -118,11 +138,13 @@ function SignUpBase() {
     }
 
     setIsLoading(true);
+    let createdUser = null;
 
     try {
       /** 1️⃣ Create account */
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
+      createdUser = user;
 
       /** 2️⃣ Save profile information */
       await setDoc(
@@ -139,25 +161,50 @@ function SignUpBase() {
           company,
           position,
           department,
+          salary: salaryRate,
           salaryRate,
+          taxId: taxIdNumber,
           taxIdNumber,
           createdAt: new Date(),
         },
         { merge: true }
       );
 
-      /** 3️⃣ Save role for Cloud Function assignment */
-      await setDoc(doc(db, "pendingRoles", user.uid), { role });
+      /** 3️⃣ Save role for Cloud Function assignment, when rules allow it */
+      try {
+        await setDoc(doc(db, "pendingRoles", user.uid), { role });
+      } catch (pendingRoleError) {
+        console.warn("Pending role write skipped:", pendingRoleError);
+      }
 
-      setAlertMessage("Account created! Your role is being activated.");
+      await signOut(auth);
+      clearAuthState();
+
+      setAlertMessage("Account created! Please log in with your new account.");
       setShowAlert(true);
 
       setTimeout(() => {
-        history.push(`/login-${role}`);
+        history.push(loginRouteByRole[role] || "/login-base");
       }, 1200);
     } catch (err) {
       console.error("Signup error:", err);
-      setAlertMessage(err.message || "Something went wrong during signup.");
+
+      if (createdUser) {
+        try {
+          await deleteUser(createdUser);
+        } catch (deleteError) {
+          console.warn("Could not delete incomplete signup account:", deleteError);
+          await signOut(auth).catch(() => {});
+        }
+        clearAuthState();
+      }
+
+      const message =
+        signupErrorMessages[err.code] ||
+        err.message ||
+        "Something went wrong during signup.";
+
+      setAlertMessage(message);
       setShowAlert(true);
     } finally {
       setIsLoading(false);

@@ -21,10 +21,8 @@ import {
 
 import "./CurrentComputationBase.css";
 
-// Firebase imports
-import { collection, query, getDocs, orderBy, limit } from "firebase/firestore";
-import { db } from "../../database-components/firebaseConfig";
 import useAuthRole from "../../hooks/useAuthRole";
+import { getComputationResultsForUser } from "../../services/computationResultsService";
 
 import Sidebar from "../../components/Sidebar";
 import FooterNav from "../../components/FooterNav";
@@ -48,108 +46,20 @@ function CurrentComputation() {
   const loadComputation = async () => {
     try {
       setIsLoading(true);
-      
-      // First, let's see what's actually in the collection
-      console.log("=== DEBUG: Checking computationResults collection ===");
-      const testQuery = query(
-        collection(db, "computationResults"),
-        limit(5) // Get first 5 documents
-      );
-      
-      const testSnapshot = await getDocs(testQuery);
-      console.log("Total documents in computationResults:", testSnapshot.docs.length);
-      
-      if (testSnapshot.docs.length === 0) {
-        console.log("❌ computationResults collection is EMPTY!");
-        setEmployeeData(null);
-        setError("The database is empty. Ask bookkeeper to send data to 'computationResults' collection.");
-        return;
-      }
-      
-      testSnapshot.docs.forEach((doc, index) => {
-        console.log(`--- Document ${index + 1} ---`);
-        console.log("ID:", doc.id);
-        const data = doc.data();
-        console.log("Data:", data);
-        console.log("Fields:", Object.keys(data));
-        
-        // Check for payroll fields
-        const payrollFields = ['netPay', 'grossPay', 'ratePerHour', 'hoursWorked', 'sss', 'philHealth', 'phic', 'pagIbig', 'hdmf', 'tax', 'bir'];
-        const foundFields = payrollFields.filter(field => data[field] !== undefined);
-        console.log("Payroll fields found:", foundFields);
-      });
-      
-      // Try to get the most recent
-      console.log("\n=== Trying to get most recent document ===");
-      const q = query(
-        collection(db, "computationResults"),
-        orderBy("createdAt", "desc"),
-        limit(1)
-      );
-      
-      const snapshot = await getDocs(q);
-      console.log("Most recent query found:", snapshot.docs.length, "documents");
-      
-      if (snapshot.empty) {
-        console.log("No documents with createdAt field");
-        // Try without ordering
-        const simpleQuery = query(
-          collection(db, "computationResults"),
-          limit(1)
-        );
-        const simpleSnapshot = await getDocs(simpleQuery);
-        
-        if (!simpleSnapshot.empty) {
-          const doc = simpleSnapshot.docs[0];
-          const data = doc.data();
-          console.log("✅ Found document (no ordering):", data);
-          setEmployeeData(data);
-          setError("");
-          return;
-        }
-      } else {
-        const doc = snapshot.docs[0];
-        const data = doc.data();
-        console.log("✅ Most recent document:", data);
-        setEmployeeData(data);
+      const computations = await getComputationResultsForUser(user);
+
+      if (computations.length > 0) {
+        setEmployeeData(computations[0]);
         setError("");
         return;
       }
-      
-      // If we get here, no data found
+
       setEmployeeData(null);
-      setError("No computation data found. Ask bookkeeper to send payroll data.");
-      
+      setError("No computation data found for your account yet.");
     } catch (error) {
-      console.error("❌ Error:", error.code, error.message);
+      console.error("Error loading current computation:", error);
       setEmployeeData(null);
-      
-      if (error.code === 'failed-precondition') {
-        // Index error - try simple query
-        console.log("Index error, trying simple query...");
-        try {
-          const simpleQuery = query(
-            collection(db, "computationResults"),
-            limit(1)
-          );
-          const simpleSnapshot = await getDocs(simpleQuery);
-          
-          if (!simpleSnapshot.empty) {
-            const doc = simpleSnapshot.docs[0];
-            const data = doc.data();
-            console.log("✅ Found document (simple query):", data);
-            setEmployeeData(data);
-            setError("");
-          } else {
-            setError("No documents found. Ask bookkeeper to send data.");
-          }
-        } catch (simpleError) {
-          console.error("Simple query also failed:", simpleError);
-          setError(`Error: ${error.message}. Collection might not exist.`);
-        }
-      } else {
-        setError(`Error: ${error.message}`);
-      }
+      setError(`Error: ${error.message}`);
     } finally {
       setIsLoading(false);
     }
@@ -349,29 +259,6 @@ function CurrentComputation() {
                             </IonCol>
                           </IonRow>
                         </IonGrid>
-                      </IonCardContent>
-                    </IonCard>
-                  </IonCol>
-                </IonRow>
-                
-                {/* Debug Info Card */}
-                <IonRow>
-                  <IonCol size="12">
-                    <IonCard color="light">
-                      <IonCardHeader>
-                        <IonCardTitle>Debug Information</IonCardTitle>
-                      </IonCardHeader>
-                      <IonCardContent>
-                        <IonText>
-                          <p><strong>Found document with fields:</strong></p>
-                          <p>{Object.keys(employeeData).join(', ')}</p>
-                          <p><strong>Missing payroll fields:</strong></p>
-                          <p>
-                            {['ratePerHour', 'hoursWorked', 'grossPay', 'netPay', 'sss', 'philHealth', 'pagIbig', 'tax']
-                              .filter(field => employeeData[field] === undefined)
-                              .join(', ')}
-                          </p>
-                        </IonText>
                       </IonCardContent>
                     </IonCard>
                   </IonCol>

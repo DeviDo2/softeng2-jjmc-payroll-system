@@ -7,8 +7,14 @@ import {
 } from "@ionic/react";
 
 import { useEffect, useState } from "react";
-import { collection, getDocs, query, where } from "firebase/firestore";
+import { collection, getDocs } from "firebase/firestore";
 import { db } from "../../../database-components/firebaseConfig";
+
+const getDisplayName = (user) =>
+  [user.firstName, user.lastName].filter(Boolean).join(" ") ||
+  user.displayName ||
+  user.email ||
+  "Unnamed Bookkeeper";
 
 export default function BookkeeperSelectPopover({
   isOpen,
@@ -30,14 +36,18 @@ export default function BookkeeperSelectPopover({
 
       try {
         const usersRef = collection(db, "users");
-        const q = query(usersRef, where("role", "==", "bookkeeper"));
-        const snapshot = await getDocs(q);
+        const snapshot = await getDocs(usersRef);
 
-        const list = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-          fullName: `${doc.data().firstName} ${doc.data().lastName}`,
-        }));
+        const list = snapshot.docs
+          .map((doc) => {
+            const data = doc.data();
+            return {
+              id: doc.id,
+              ...data,
+              fullName: getDisplayName(data),
+            };
+          })
+          .filter((user) => user.role?.toLowerCase() === "bookkeeper");
 
         setBookkeepers(list);
       } catch (error) {

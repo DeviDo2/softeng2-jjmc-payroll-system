@@ -91,6 +91,18 @@ export default function useEditableUser() {
       // ------------------------------------------------------
       const { password, ...firestoreSafe } = newData;
 
+      if (firestoreSafe.taxId !== undefined) {
+        firestoreSafe.taxIdNumber = firestoreSafe.taxId;
+      } else if (firestoreSafe.taxIdNumber !== undefined) {
+        firestoreSafe.taxId = firestoreSafe.taxIdNumber;
+      }
+
+      if (firestoreSafe.salary !== undefined) {
+        firestoreSafe.salaryRate = firestoreSafe.salary;
+      } else if (firestoreSafe.salaryRate !== undefined) {
+        firestoreSafe.salary = firestoreSafe.salaryRate;
+      }
+
       const userRef = doc(db, "users", userId);
       await updateDoc(userRef, firestoreSafe);
 

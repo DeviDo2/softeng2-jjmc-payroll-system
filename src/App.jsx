@@ -92,7 +92,8 @@ import ManageTutorialsAdmin from "./pages/AdminOnly/ManageTutorialsAdmin";
 function App() {
   const handleLogout = () => {
     localStorage.clear();
-    window.location.href = "/welcome";
+    sessionStorage.clear();
+    window.location.replace("/welcome");
   };
 
   return (

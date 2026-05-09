@@ -16,7 +16,7 @@ import {
   IonIcon,
   IonBadge,
 } from "@ionic/react";
-import { calculatorOutline, saveOutline, documentOutline, downloadOutline, personOutline } from "ionicons/icons";
+import { personOutline } from "ionicons/icons";
 
 import "./ComputationPageBase.css";
 import useAuthRole from "../../../hooks/useAuthRole";
@@ -25,10 +25,30 @@ import { db } from "../../../database-components/firebaseConfig";
 import Sidebar from "../../../components/Sidebar";
 import FooterNav from "../../../components/FooterNav";
 import { formatCurrency } from "./formatters";
-import { calculateDeductions, calculateBIRTax } from "./payrollCalculations";
+import { calculateDeductions } from "./payrollCalculations";
 import { useLocation } from "react-router-dom";
 
-const PERIODS_PER_YEAR = 12;
+const toNumber = (value) => {
+  const number = Number(value);
+  return Number.isFinite(number) ? number : 0;
+};
+
+const roundMoney = (value) => Math.round(toNumber(value) * 100) / 100;
+
+const getMonthlyGrossPay = (row) => {
+  const providedGross = toNumber(row.grossPay);
+  if (providedGross > 0) return roundMoney(providedGross);
+
+  return roundMoney(toNumber(row.ratePerHour) * toNumber(row.hoursWorked));
+};
+
+const getPayrollPeriod = (rows) => {
+  const period = rows.find((row) => row.payrollPeriod)?.payrollPeriod;
+  return period || new Date().toLocaleDateString("en-US", {
+    month: "long",
+    year: "numeric",
+  });
+};
 
 // SIMPLE VALIDATION - NO EMAIL CHECKS
 export const validateCSVData = (parsedCSV) => {
@@ -117,18 +137,16 @@ function ComputationPage() {
 
     try {
       const preview = csvData.map(row => {
-        const gross = Number(row.grossPay) || 0;
+        const gross = getMonthlyGrossPay(row);
         const monthly = calculateDeductions(gross);
-        const annualGross = gross * PERIODS_PER_YEAR;
-        const annualTaxWithheld = (monthly.bir || 0) * PERIODS_PER_YEAR;
-        const annualTaxByBrackets = calculateBIRTax(annualGross);
-        const refundOrDue = Math.round((annualTaxWithheld - annualTaxByBrackets) * 100) / 100;
+        const totalDeductions = roundMoney(
+          monthly.sss + monthly.phic + monthly.hdmf + monthly.bir
+        );
 
         return {
           original: row,
           grossMonthly: gross,
-          monthlyDeductions: monthly,
-          annual: { annualGross, annualTaxWithheld, annualTaxByBrackets, refundOrDue },
+          monthlyDeductions: { ...monthly, totalDeductions },
           netPay: monthly.netPay
         };
       });
@@ -146,19 +164,47 @@ function ComputationPage() {
     if (!computedPreview || !user?.uid) return;
     setIsSaving(true);
     try {
+      const payrollPeriod = getPayrollPeriod(csvData);
+      const isDraft = collectionName === "clientPayrollDrafts";
+      const bookkeeperName =
+        [user.firstName, user.lastName].filter(Boolean).join(" ") ||
+        user.email ||
+        "Bookkeeper";
+
       const dataToSave = computedPreview.map(r => ({
         ...r.original,
-        ...r.monthlyDeductions,
-        ...r.annual,
+        grossPay: r.grossMonthly,
+        grossMonthly: r.grossMonthly,
+        sss: r.monthlyDeductions.sss,
+        phic: r.monthlyDeductions.phic,
+        philHealth: r.monthlyDeductions.phic,
+        hdmf: r.monthlyDeductions.hdmf,
+        pagIbig: r.monthlyDeductions.hdmf,
+        bir: r.monthlyDeductions.bir,
+        tax: r.monthlyDeductions.bir,
+        totalDeductions: r.monthlyDeductions.totalDeductions,
+        netPay: r.monthlyDeductions.netPay,
+        payrollPeriod: r.original.payrollPeriod || payrollPeriod,
       }));
 
       await addDoc(collection(db, collectionName), {
         clientId,
         clientName,
+        payrollPeriod,
         data: dataToSave,
         bookkeeperId: user.uid,
+        bookkeeperName,
+        bookkeeperEmail: user.email || "",
+        employeeCount: dataToSave.length,
         createdAt: serverTimestamp(),
-        status: "pending_approval",
+        updatedAt: serverTimestamp(),
+        status: isDraft ? "pending_approval" : "computed",
+        ...(isDraft
+          ? {
+              submittedToAdmin: true,
+              submittedAt: serverTimestamp(),
+            }
+          : {}),
       });
       return true;
     } catch (err) {
@@ -173,7 +219,7 @@ function ComputationPage() {
   const handleSaveDraft = async () => {
     const success = await saveToFirestore("clientPayrollDrafts");
     if (success) {
-      alert("Draft saved successfully!");
+      alert("Draft sent to admin for approval!");
     }
   };
 
@@ -187,12 +233,11 @@ function ComputationPage() {
   const exportCSV = () => {
     if (!computedPreview) return;
     const headers = [
-      "employeeCode","name","grossMonthly","sss","phic","hdmf","bir","netPay",
-      "annualGross","annualTaxWithheld","annualTaxByBrackets","refundOrDue"
+      "employeeCode","name","payrollPeriod","grossMonthly","sss","phic","hdmf","bir","totalDeductions","netPay"
     ];
 
     const rows = computedPreview.map(r =>
-      headers.map(h => r.monthlyDeductions[h] ?? r.annual[h] ?? r.original[h] ?? "").join(",")
+      headers.map(h => r.monthlyDeductions[h] ?? r[h] ?? r.original[h] ?? "").join(",")
     );
 
     const csv = [headers.join(","), ...rows].join("\n");
@@ -216,7 +261,7 @@ function ComputationPage() {
         <IonPage>
           <IonContent className="ion-padding ion-text-center">
             <h1>No client selected</h1>
-            <IonButton routerLink="/bookkeeper-client-list">Back to Clients</IonButton>
+            <IonButton routerLink="/bookkeeper-client-list-base">Back to Clients</IonButton>
           </IonContent>
         </IonPage>
       </IonApp>
@@ -237,20 +282,24 @@ function ComputationPage() {
                    <p className="computation-main-subtitle">
           Compute payroll and prepare for client delivery
         </p>
-                      <IonButton
-      className="client-selector-btn"
-      expand="block"
-      routerLink="/bookkeeper-client-list"
-    >
-      <IonIcon icon={personOutline} slot="start" />
-      {clientName || "Select Client"}
-    </IonButton>
-    {/* ADDED: Employee count badge – moved below button */}
-    <IonBadge color="primary" style={{ marginTop: '12px' }}>
-      <IonIcon icon={personOutline} /> {csvData.length} Employees
-    </IonBadge>
   </IonCol>
 </IonRow>
+
+            <IonRow className="client-selector-row">
+              <IonCol size="12" sizeMd="5" className="client-selector-col">
+                <IonButton
+                  className="client-selector-btn"
+                  expand="block"
+                  routerLink="/bookkeeper-client-list-base"
+                >
+                  <IonIcon icon={personOutline} slot="start" />
+                  {clientName || "Select Client"}
+                </IonButton>
+                <IonBadge color="primary" className="employee-count-badge">
+                  <IonIcon icon={personOutline} /> {csvData.length} Employees
+                </IonBadge>
+              </IonCol>
+            </IonRow>
          
 
             {/* CONTROLS */}
@@ -269,7 +318,7 @@ function ComputationPage() {
                   disabled={!computedPreview || isSaving}
                   style={{ marginLeft: 10, marginTop:8 }}
                 >
-                  {isSaving ? <IonSpinner name="crescent"/> : "Save as Draft"}
+                  {isSaving ? <IonSpinner name="crescent"/> : "Send Draft to Admin"}
                 </IonButton>
                 <IonButton
                   onClick={handleSaveResults}
@@ -304,7 +353,7 @@ function ComputationPage() {
                         <tr key={i}>
                           <td>{r.employeeCode}</td>
                           <td>{r.name}</td>
-                          <td>{formatCurrency(r.grossPay)}</td>
+                          <td>{formatCurrency(getMonthlyGrossPay(r))}</td>
                           <td>{formatCurrency(r.ratePerHour)}</td>
                           <td>{r.hoursWorked}</td>
                           <td>{r.department}</td>
@@ -327,9 +376,7 @@ function ComputationPage() {
                         <tr>
                           <th>Code</th><th>Name</th>
                           <th>Gross(M)</th><th>SSS</th><th>PHIC</th><th>HDMF</th>
-                          <th>BIR</th><th>Net(M)</th>
-                          <th>Annual Gross</th><th>Annual Tax Withheld</th>
-                          <th>Annual Tax Bracket</th><th>Refund/Due</th>
+                          <th>BIR</th><th>Total Deductions</th><th>Net(M)</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -342,13 +389,8 @@ function ComputationPage() {
                             <td>{formatCurrency(r.monthlyDeductions.phic)}</td>
                             <td>{formatCurrency(r.monthlyDeductions.hdmf)}</td>
                             <td>{formatCurrency(r.monthlyDeductions.bir)}</td>
+                            <td>{formatCurrency(r.monthlyDeductions.totalDeductions)}</td>
                             <td>{formatCurrency(r.monthlyDeductions.netPay)}</td>
-                            <td>{formatCurrency(r.annual.annualGross)}</td>
-                            <td>{formatCurrency(r.annual.annualTaxWithheld)}</td>
-                            <td>{formatCurrency(r.annual.annualTaxByBrackets)}</td>
-                            <td style={{color:r.annual.refundOrDue>0?"green":"red"}}>
-                              {r.annual.refundOrDue>0 ? `Refund ${formatCurrency(r.annual.refundOrDue)}` : `Due ${formatCurrency(Math.abs(r.annual.refundOrDue))}`}
-                            </td>
                           </tr>
                         ))}
                       </tbody>

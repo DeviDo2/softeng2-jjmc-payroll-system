@@ -17,6 +17,12 @@ import { db } from "../../../database-components/firebaseConfig";
 import { parseCSV } from "../../BookkeeperOnly/ComputationEngine/csvParser";
 import BookkeeperSelectPopover from "./BookkeeperSelectPopover";
 
+const getDisplayName = (user) =>
+  [user.firstName, user.lastName].filter(Boolean).join(" ") ||
+  user.displayName ||
+  user.email ||
+  "None";
+
 export default function AssignRow({ client, bookkeepers, onAssign }) {
   const [showModal, setShowModal] = useState(false);
   const [csvData, setCsvData] = useState(null);
@@ -35,10 +41,14 @@ export default function AssignRow({ client, bookkeepers, onAssign }) {
         return;
       }
 
+      if (client.bookkeeperName) {
+        setAssignedName(client.bookkeeperName);
+        return;
+      }
+
       const snap = await getDoc(doc(db, "users", client.bookkeeperId));
       if (snap.exists()) {
-        const u = snap.data();
-        setAssignedName(`${u.firstName} ${u.lastName}`);
+        setAssignedName(getDisplayName(snap.data()));
       } else {
         setAssignedName("None");
       }

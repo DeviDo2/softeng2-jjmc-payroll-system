@@ -72,6 +72,46 @@ const formatCurrency = (amount) => {
   }).format(numericAmount);
 };
 
+const normalize = (value) =>
+  String(value || "").trim().toLowerCase().replace(/\s+/g, " ");
+
+const getFullName = (person) =>
+  [person?.firstName, person?.lastName].filter(Boolean).join(" ").trim();
+
+const sameValue = (left, right) =>
+  normalize(left) && normalize(left) === normalize(right);
+
+const findMatchingStaff = (employeeData, clientStaffAccounts) => {
+  return clientStaffAccounts.find((staff) => (
+    sameValue(employeeData.clientStaffId, staff.id) ||
+    sameValue(employeeData.userId, staff.id) ||
+    sameValue(employeeData.employeeUserId, staff.id) ||
+    sameValue(employeeData.taxId || employeeData.taxIdNumber, staff.taxId || staff.taxIdNumber) ||
+    sameValue(employeeData.employeeCode, staff.employeeCode) ||
+    sameValue(employeeData.email || employeeData.employeeEmail, staff.email) ||
+    sameValue(employeeData.name, getFullName(staff))
+  ));
+};
+
+const loadClientStaffAccounts = async (companyName) => {
+  if (!companyName) return [];
+
+  try {
+    const staffQuery = query(
+      collection(db, "users"),
+      where("company", "==", companyName)
+    );
+    const snapshot = await getDocs(staffQuery);
+
+    return snapshot.docs
+      .map((staffDoc) => ({ id: staffDoc.id, ...staffDoc.data() }))
+      .filter((staff) => staff.role?.toLowerCase() === "client-staff");
+  } catch (error) {
+    console.warn("Could not load client staff accounts for payroll matching:", error);
+    return [];
+  }
+};
+
 // --- COMPONENT START ---
 
 function CompHistoryBookkeeper() {
@@ -220,6 +260,7 @@ function CompHistoryBookkeeper() {
       // for the client to view their own single pay slip (as implied by previous client-side components).
       
       const successfulComputations = [];
+      const clientStaffAccounts = await loadClientStaffAccounts(draftToSend.clientName);
       
       for (const employeeData of draftToSend.data) {
           // The structure of the client-side component (CurrentComputation) expects a single pay slip object.
@@ -231,19 +272,30 @@ function CompHistoryBookkeeper() {
           // For now, we assume this payroll draft is for the *client business* (client admin user), 
           // which is the user in your previous client-side components (useAuthRole). 
           
+          const matchedStaff = findMatchingStaff(employeeData, clientStaffAccounts);
+          const matchedStaffId =
+              matchedStaff?.id ||
+              employeeData.clientStaffId ||
+              employeeData.userId ||
+              employeeData.employeeUserId ||
+              null;
+
           const resultDoc = await addDoc(computationResultsRef, {
-              // Standard client ID
-              clientId: draftToSend.clientId, 
+              ...employeeData,
+              clientId: matchedStaffId || draftToSend.clientId,
+              clientCompanyId: draftToSend.clientId,
               clientName: draftToSend.clientName,
+              company: draftToSend.clientName,
               bookkeeperId: user.uid,
-              // All the payroll data for this employee
-              ...employeeData, 
-              // The time of creation will be used for sorting in client view
+              clientStaffId: matchedStaffId,
+              userId: matchedStaffId,
+              employeeUserId: matchedStaffId,
+              employeeEmail: matchedStaff?.email || employeeData.email || employeeData.employeeEmail || "",
+              taxId: employeeData.taxId || employeeData.taxIdNumber || matchedStaff?.taxId || matchedStaff?.taxIdNumber || "",
+              taxIdNumber: employeeData.taxIdNumber || employeeData.taxId || matchedStaff?.taxIdNumber || matchedStaff?.taxId || "",
               createdAt: serverTimestamp(),
-              // Link back to the draft for audit
-              sourceDraftId: draftToSend.id, 
-              // A specific ID to easily link this result to an employee user if needed later
-              employeeId: employeeData.employeeId || 'N/A', 
+              sourceDraftId: draftToSend.id,
+              employeeId: matchedStaffId || employeeData.employeeId || employeeData.employeeCode || "N/A",
           });
           successfulComputations.push(resultDoc.id);
       }
