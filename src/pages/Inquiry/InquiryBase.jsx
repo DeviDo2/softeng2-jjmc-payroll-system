@@ -70,7 +70,7 @@ function Inquiry() {
                   </IonLabel>
                   <IonIcon icon={chevronDownOutline} slot="end" />
                 </IonItem>
-                <IonList slot="content" className="accordion-content">
+                <IonList style={{ position: 'static' }} slot="content" className="accordion-content">
                   <IonItem>
                     <IonLabel>
                       We provide the following services:
@@ -91,7 +91,7 @@ function Inquiry() {
                   </IonLabel>
                   <IonIcon icon={chevronDownOutline} slot="end" />
                 </IonItem>
-                <IonList slot="content" className="accordion-content">
+                <IonList style={{ position: 'static' }} slot="content" className="accordion-content">
                   <IonItem>
                     <IonLabel>
                       Choosing JJMC allows you to benefit from our
