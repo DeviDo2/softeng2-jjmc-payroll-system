@@ -297,7 +297,10 @@ function CompHistoryBookkeeper() {
               sourceDraftId: draftToSend.id,
               employeeId: matchedStaffId || employeeData.employeeId || employeeData.employeeCode || "N/A",
           });
-          successfulComputations.push(resultDoc.id);
+          successfulComputations.push({
+              id: resultDoc.id,
+              staffId: matchedStaffId,
+          });
       }
 
 
@@ -307,19 +310,30 @@ function CompHistoryBookkeeper() {
                      'this period';
 
       const notificationsRef = collection(db, "notifications");
-      await addDoc(notificationsRef, {
-        userId: draftToSend.clientId, // Must match client's ID (required by notification create rule)
-        type: "computation_ready",
-        message: `Your payroll computation for ${period} is ready for review`,
-        computationId: draftToSend.id,
-        computationResultIds: successfulComputations, // Store the IDs of the new client pay slips
-        clientName: draftToSend.clientName,
-        bookkeeperName: user.firstName || user.email,
-        read: false,
-        createdAt: serverTimestamp()
-      });
+      const computationIdsByStaff = successfulComputations.reduce((targets, computation) => {
+        if (!computation.staffId) return targets;
+        const existingIds = targets.get(computation.staffId) || [];
+        targets.set(computation.staffId, [...existingIds, computation.id]);
+        return targets;
+      }, new Map());
 
-      setAlertMessage(`Computation for ${draftToSend.clientName} sent to client successfully! (${successfulComputations.length} employee records created)`);
+      await Promise.all(
+        [...computationIdsByStaff.entries()].map(([staffId, computationResultIds]) =>
+          addDoc(notificationsRef, {
+            userId: staffId,
+            type: "computation_ready",
+            message: `Your payroll computation for ${period} is ready for review`,
+            computationId: draftToSend.id,
+            computationResultIds,
+            clientName: draftToSend.clientName,
+            bookkeeperName: user.firstName || user.email,
+            read: false,
+            createdAt: serverTimestamp()
+          })
+        )
+      );
+
+      setAlertMessage(`Computation for ${draftToSend.clientName} sent to client successfully! (${successfulComputations.length} employee records created, ${computationIdsByStaff.size} staff notified)`);
       setShowAlert(true);
       
       // Update local state to reflect 'sent_to_client' status

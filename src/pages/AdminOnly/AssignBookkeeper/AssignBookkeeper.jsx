@@ -21,8 +21,9 @@ import {
   getDoc,
   serverTimestamp,
 } from "firebase/firestore";
+import { httpsCallable } from "firebase/functions";
 
-import { db, auth } from "../../../database-components/firebaseConfig";
+import { db, auth, functions } from "../../../database-components/firebaseConfig";
 
 import Sidebar from "../../../components/Sidebar";
 import FooterNav from "../../../components/FooterNav";
@@ -38,6 +39,25 @@ const getDisplayName = (user) =>
   user.displayName ||
   user.email ||
   "Unnamed Bookkeeper";
+
+const getFunctionErrorMessage = (error) => {
+  const code = error.code ? `${error.code}: ` : "";
+  const details =
+    typeof error.details === "string"
+      ? error.details
+      : error.details?.message;
+  return `${code}${details || error.message || "Please check permissions."}`;
+};
+
+const shouldFallbackToFirestore = (error) =>
+  [
+    "functions/not-found",
+    "functions/internal",
+    "functions/unavailable",
+    "not-found",
+    "internal",
+    "unavailable",
+  ].includes(error.code);
 
 export default function AssignBookkeeper() {
   const [role, setRole] = useState(null);
@@ -145,28 +165,54 @@ export default function AssignBookkeeper() {
 
   // Assign Bookkeeper
   const assignBookkeeper = async (client, bk) => {
+    const isUnassigning = bk.id === "NONE";
+
     try {
-      await updateDoc(doc(db, "clientCompanies", client.id), {
-        bookkeeperId: bk.id !== "NONE" ? bk.id : null,
-        bookkeeperName: bk.id !== "NONE" ? bk.fullName : null,
-        status: bk.id === "NONE" ? "Awaiting Assignment" : "Assigned",
-        updatedAt: serverTimestamp(),
-        assignedAt: bk.id !== "NONE" ? serverTimestamp() : null,
+      const assignBookkeeperFn = httpsCallable(functions, "assignBookkeeperToClient");
+      const result = await assignBookkeeperFn({
+        clientId: client.id,
+        bookkeeperId: isUnassigning ? null : bk.id,
+        bookkeeperName: isUnassigning ? null : bk.fullName,
       });
 
-      if (bk.id !== "NONE") {
-        await addDoc(collection(db, "notifications"), {
-          userId: bk.id,
-          message: `You have been assigned: ${client.name}`,
-          createdAt: serverTimestamp(),
-          read: false,
-        });
+      setToastMessage(result.data?.message || "Bookkeeper updated.");
+    } catch (err) {
+      console.warn("Callable assignment failed, trying Firestore fallback:", err);
+
+      if (!shouldFallbackToFirestore(err)) {
+        setToastMessage(`Assignment failed: ${getFunctionErrorMessage(err)}`);
+        return;
       }
 
-      setToastMessage("Bookkeeper updated.");
-    } catch (err) {
-      console.error(err);
-      setToastMessage("Assignment failed.");
+      try {
+        await updateDoc(doc(db, "clientCompanies", client.id), {
+          bookkeeperId: isUnassigning ? null : bk.id,
+          bookkeeperName: isUnassigning ? null : bk.fullName,
+          status: isUnassigning ? "Awaiting Assignment" : "Assigned",
+          updatedAt: serverTimestamp(),
+          assignedAt: isUnassigning ? null : serverTimestamp(),
+        });
+
+        if (!isUnassigning) {
+          addDoc(collection(db, "notifications"), {
+            userId: bk.id,
+            message: `You have been assigned: ${client.name}`,
+            createdAt: serverTimestamp(),
+            read: false,
+          }).catch((notificationError) => {
+            console.warn("Bookkeeper assigned, but notification was not created:", notificationError);
+          });
+        }
+
+        setToastMessage(
+          isUnassigning
+            ? "Bookkeeper removed from client."
+            : `${bk.fullName || "Bookkeeper"} assigned to ${client.name}.`
+        );
+      } catch (fallbackError) {
+        console.error(fallbackError);
+        setToastMessage(`Assignment failed: ${fallbackError.message || getFunctionErrorMessage(err)}`);
+      }
     }
   };
 

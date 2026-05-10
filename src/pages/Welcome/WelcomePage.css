@@ -41,7 +41,6 @@ ion-button {
 /* Centering dropdown list */
 ion-list {
   position: absolute;
-  top: 100%;
   left: 0;
   right: 0;
   background-color: #74C2D5;

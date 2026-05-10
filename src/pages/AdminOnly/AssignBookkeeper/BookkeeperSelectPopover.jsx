@@ -1,9 +1,14 @@
 import {
-  IonPopover,
+  IonModal,
+  IonContent,
+  IonHeader,
   IonList,
   IonItem,
   IonLabel,
-  IonSpinner
+  IonTitle,
+  IonToolbar,
+  IonButton,
+  IonSpinner,
 } from "@ionic/react";
 
 import { useEffect, useState } from "react";
@@ -18,18 +23,20 @@ const getDisplayName = (user) =>
 
 export default function BookkeeperSelectPopover({
   isOpen,
-  event,
   onDismiss,
   onSelect,
+  bookkeepers: providedBookkeepers = [],
 }) {
   const [bookkeepers, setBookkeepers] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  // sanitize Ionic event
-  const safeEvent = event ? { ...event } : undefined;
-
   useEffect(() => {
     if (!isOpen) return;
+    if (providedBookkeepers.length > 0) {
+      setBookkeepers(providedBookkeepers);
+      setLoading(false);
+      return;
+    }
 
     const fetchBookkeepers = async () => {
       setLoading(true);
@@ -59,40 +66,55 @@ export default function BookkeeperSelectPopover({
     };
 
     fetchBookkeepers();
-  }, [isOpen]);
+  }, [isOpen, providedBookkeepers]);
 
   return (
-    <IonPopover isOpen={isOpen} event={safeEvent} onDidDismiss={onDismiss}>
-      <IonList>
+    <IonModal
+      isOpen={isOpen}
+      onDidDismiss={onDismiss}
+      className="bookkeeper-select-modal"
+    >
+      <IonHeader>
+        <IonToolbar>
+          <IonTitle>Select Bookkeeper</IonTitle>
+          <IonButton slot="end" fill="clear" onClick={onDismiss}>
+            Close
+          </IonButton>
+        </IonToolbar>
+      </IonHeader>
 
-        {/* UNASSIGN OPTION */}
-        <IonItem button onClick={() => onSelect({ id: "NONE" })}>
-          <IonLabel>None / Unassigned</IonLabel>
-        </IonItem>
+      <IonContent>
+        <IonList>
 
-        {/* LOADING STATE */}
-        {loading && (
-          <IonItem>
-            <IonLabel>Loading bookkeepers...</IonLabel>
-            <IonSpinner name="crescent" slot="end" />
+          {/* UNASSIGN OPTION */}
+          <IonItem button onClick={() => onSelect({ id: "NONE" })}>
+            <IonLabel>None / Unassigned</IonLabel>
           </IonItem>
-        )}
 
-        {/* DATA */}
-        {!loading && bookkeepers.length > 0 &&
-          bookkeepers.map((bk) => (
-            <IonItem key={bk.id} button onClick={() => onSelect(bk)}>
-              <IonLabel>{bk.fullName}</IonLabel>
+          {/* LOADING STATE */}
+          {loading && (
+            <IonItem>
+              <IonLabel>Loading bookkeepers...</IonLabel>
+              <IonSpinner name="crescent" slot="end" />
             </IonItem>
-          ))}
+          )}
 
-        {/* EMPTY STATE */}
-        {!loading && bookkeepers.length === 0 && (
-          <IonItem>
-            <IonLabel>No bookkeepers found</IonLabel>
-          </IonItem>
-        )}
-      </IonList>
-    </IonPopover>
+          {/* DATA */}
+          {!loading && bookkeepers.length > 0 &&
+            bookkeepers.map((bk) => (
+              <IonItem key={bk.id} button onClick={() => onSelect(bk)}>
+                <IonLabel>{bk.fullName}</IonLabel>
+              </IonItem>
+            ))}
+
+          {/* EMPTY STATE */}
+          {!loading && bookkeepers.length === 0 && (
+            <IonItem>
+              <IonLabel>No bookkeepers found</IonLabel>
+            </IonItem>
+          )}
+        </IonList>
+      </IonContent>
+    </IonModal>
   );
 }

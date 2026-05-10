@@ -4,9 +4,6 @@ import {
   IonIcon,
   IonModal,
   IonContent,
-  IonGrid,
-  IonRow,
-  IonCol,
   IonSpinner,
 } from "@ionic/react";
 
@@ -31,7 +28,6 @@ export default function AssignRow({ client, bookkeepers, onAssign }) {
   const [assignedName, setAssignedName] = useState("None");
 
   const [showPopover, setShowPopover] = useState(false);
-  const [popoverEvent, setPopoverEvent] = useState(null);
 
   // Load assigned bookkeeper name
   useEffect(() => {
@@ -86,7 +82,6 @@ export default function AssignRow({ client, bookkeepers, onAssign }) {
 
   const openBkPopover = (e) => {
     e.preventDefault();
-    setPopoverEvent({ clientX: e.clientX, clientY: e.clientY });
     setShowPopover(true);
   };
 
@@ -95,43 +90,9 @@ export default function AssignRow({ client, bookkeepers, onAssign }) {
     setShowPopover(false);
   };
 
-  const rowHeight = 45; // px
-const buffer = 5;
-
-const virtualRef = React.useRef(null);
-const [visibleRows, setVisibleRows] = useState([]);
-
-useEffect(() => {
-  if (!csvData?.length) return;
-  updateVisibleRows(); // initial render
-}, [csvData]);
-
-const handleVirtualScroll = () => updateVisibleRows();
-
-const updateVisibleRows = () => {
-  const container = virtualRef.current;
-  if (!container) return;
-
-  const scrollTop = container.scrollTop;
-  const viewportHeight = container.clientHeight;
-
-  const startIndex = Math.max(0, Math.floor(scrollTop / rowHeight) - buffer);
-  const endIndex = Math.min(
-    csvData.length,
-    Math.ceil((scrollTop + viewportHeight) / rowHeight) + buffer
-  );
-
-  const rows = [];
-  for (let i = startIndex; i < endIndex; i++) {
-    rows.push({
-      index: i,
-      row: csvData[i],
-    });
-  }
-
-  setVisibleRows(rows);
-};
-
+  const csvHeaders = csvData?.length
+    ? Array.from(new Set(csvData.flatMap((row) => Object.keys(row))))
+    : [];
 
   return (
     <>
@@ -156,9 +117,16 @@ const updateVisibleRows = () => {
       </tr>
 
       {/* CSV Modal */}
-      <IonModal isOpen={showModal} onDidDismiss={() => setShowModal(false)}>
-        <IonContent>
-          <h2>{client.name} — Staff CSV</h2>
+      <IonModal
+        isOpen={showModal}
+        onDidDismiss={() => setShowModal(false)}
+        className="csv-viewer-modal"
+      >
+        <IonContent className="csv-modal-content">
+          <div className="csv-modal-header">
+            <h2>{client.name} — Staff CSV</h2>
+            <IonButton onClick={() => setShowModal(false)}>Close</IonButton>
+          </div>
 
           {loading ? (
             <div className="csv-loading">
@@ -168,62 +136,36 @@ const updateVisibleRows = () => {
           ) : !csvData?.length ? (
             <p>No CSV found.</p>
           ) : (
-            <div className="csv-virtual-wrapper">
-              {/* Horizontal scroll area */}
-              <div className="csv-horizontal-scroll">
-
-                {/* Sticky Header */}
-                <div className="csv-header-row">
-                  {Object.keys(csvData[0]).map((h) => (
-                    <div className="csv-header-cell" key={h}>{h}</div>
-                  ))}
-                </div>
-
-                {/* Virtualized Body */}
-                <div
-                  className="csv-virtual-body"
-                  ref={virtualRef}
-                  onScroll={handleVirtualScroll}
-                >
-                  <div
-                    style={{ height: csvData.length * rowHeight, position: "relative" }}
-                  >
-                    {visibleRows.map(({ index, row }) => (
-                      <div
-                        key={index}
-                        className={`csv-row ${index % 2 === 0 ? "even" : "odd"}`}
-                        style={{
-                          position: "absolute",
-                          top: index * rowHeight,
-                          height: rowHeight,
-                        }}
-                      >
-                        {Object.values(row).map((v, i) => (
-                          <div className="csv-cell" key={i}>
-                            {v}
-                          </div>
-                        ))}
-                      </div>
+            <div className="csv-table-wrapper">
+              <table className="csv-full-table">
+                <thead>
+                  <tr>
+                    {csvHeaders.map((header) => (
+                      <th key={header}>{header}</th>
                     ))}
-                  </div>
-                </div>
-
-              </div>
+                  </tr>
+                </thead>
+                <tbody>
+                  {csvData.map((row, rowIndex) => (
+                    <tr key={rowIndex}>
+                      {csvHeaders.map((header) => (
+                        <td key={header}>{row[header] ?? ""}</td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           )}
-
-          <div style={{ marginTop: 20 }}>
-            <IonButton onClick={() => setShowModal(false)}>Close</IonButton>
-          </div>
         </IonContent>
       </IonModal>
 
 
       <BookkeeperSelectPopover
         isOpen={showPopover}
-        event={popoverEvent}
         onDismiss={() => setShowPopover(false)}
         onSelect={handleSelectBk}
+        bookkeepers={bookkeepers}
       />
     </>
   );
