@@ -191,8 +191,8 @@ ion-button {
 /* Edit Profile Picture Button */
 .edit-profile-pic-btn {
   border-radius: 12px;
-  background: #fff !important;
-  color: #0A3F59;
+  --background: #fff !important;
+  --color: #0A3F59;
   box-shadow: 0 2px 5px rgb(0 0 0 / 0.1);
   margin-bottom: 1rem;
   font-weight: 500;

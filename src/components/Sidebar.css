@@ -71,10 +71,12 @@ ion-menu ion-content {
 ion-menu ion-item {
   --background: #E9FBFC;  
   --color: #0A3F59;
-  margin: 8px 12px;
+  margin: 8px 0;
   border-radius: 12px;
-  --padding-start: 16px;
+  --padding-start: 14px;
+  --inner-padding-end: 14px;
   --min-height: 48px;
+  width: 100%;
   transition: all 0.2s ease;
 }
 
@@ -112,6 +114,7 @@ ion-menu ion-icon {
 }
 
 ion-menu ion-label {
+  width: 100%;
   font-family: 'Poppins', sans-serif;
   font-weight: 500;
   color: #0A3F59;
@@ -127,11 +130,10 @@ ion-menu ion-label {
   --background: #0A3F59;
   --color: white;
   --border-radius: 12px;
-  margin: 16px 12px;
+  margin: 10px;
   font-family: 'Poppins', sans-serif;
   font-weight: 500;
   height: 48px;
-  width: 100%;
 }
 
 .logout-button ion-icon {

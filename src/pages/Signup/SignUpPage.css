@@ -76,7 +76,7 @@ ion-input {
   box-shadow: none;
 }
 
-ion-button {
+.sign-up-btn {
   height: 0px;
   margin-top: 30px;
 }

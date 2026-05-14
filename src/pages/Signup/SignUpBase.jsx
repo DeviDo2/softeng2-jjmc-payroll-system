@@ -253,7 +253,7 @@ function SignUpBase({ role: propRole }) {
                         value={password}
                         onIonChange={(e) => setPassword(e.detail.value)}
                       />
-                      <IonButton fill="clear" slot="end" onClick={togglePasswordVisibility}>
+                      <IonButton className="sign-up-btn" fill="clear" slot="end" onClick={togglePasswordVisibility}>
                         <IonIcon 
                         icon={showPassword ? eyeOffOutline : eyeOutline} 
                           onClick={togglePasswordVisibility}
@@ -282,7 +282,7 @@ function SignUpBase({ role: propRole }) {
                         <IonItem className="input-item">
                           <IonLabel position="stacked">Birthdate</IonLabel>
                           <IonInput value={birthdate} readonly placeholder="Select Birthdate" />
-                          <IonButton fill="clear" slot="end" onClick={() => setShowCalendar(true)}>
+                          <IonButton className="sign-up-btn" fill="clear" slot="end" onClick={() => setShowCalendar(true)}>
                             <IonIcon icon={calendarOutline} />
                           </IonButton>
                         </IonItem>
