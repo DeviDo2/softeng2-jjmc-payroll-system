@@ -256,7 +256,6 @@ function SignUpBase({ role: propRole }) {
                       <IonButton fill="clear" slot="end" onClick={togglePasswordVisibility}>
                         <IonIcon 
                         icon={showPassword ? eyeOffOutline : eyeOutline} 
-                          slot="end" 
                           onClick={togglePasswordVisibility}
                           className="password-icon"/>
                       </IonButton>
@@ -292,7 +291,7 @@ function SignUpBase({ role: propRole }) {
                           <IonHeader>
                             <IonToolbar color="primary">
                               <IonTitle>Select Date</IonTitle>
-                              <IonButtons slot="end">
+                              <IonButtons>
                                 <IonButton onClick={() => setShowCalendar(false)}>
                                   <IonIcon icon={closeOutline} />
                                 </IonButton>

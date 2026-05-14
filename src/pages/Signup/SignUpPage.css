@@ -140,6 +140,8 @@ form {
 /* ADDED: fix modal datetime styling */
 ion-modal ion-datetime {
   --background: white;
-  padding: 16px;
+    width: 100% !important;
+    max-width: fit-content;
+    max-height: fit-content;
 }
 
