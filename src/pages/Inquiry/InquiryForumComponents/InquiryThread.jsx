@@ -16,6 +16,7 @@ export default function InquiryThread({
   onSendReply,
   triggerNotification,
   userId,
+  currentUserId,
 }) {
   const canReply = role === "bookkeeper" || role === "admin";
 
@@ -54,87 +55,111 @@ export default function InquiryThread({
             </IonBadge>
           </p>
 
-          <IonText>
-            <h3 className="ion-margin-top">Message</h3>
-          </IonText>
-          <p className="inquiry-body">{inquiry.body}</p>
-
           <hr className="ion-margin-vertical" />
         </div>
 
         {/* ======================= THREAD MESSAGES ======================= */}
         <div className="thread-messages">
-          {messages.map((msg) => {
-            const isAnswer = msg.messageType === "answer";
-            const isPending = isAnswer && !msg.approved;
+          {!messages || messages.length === 0 ? (
+            <p style={{ textAlign: "center", color: "#999", padding: "1rem" }}>
+              No messages yet.
+            </p>
+          ) : (
+            messages.map((msg) => {
+              const isAnswer = msg.messageType === "answer";
+              const isRejected = msg.rejected === true;
+              const isPending = isAnswer && !msg.approved && !isRejected;
 
-            /**
-             * MESSAGE VISIBILITY RULES
-             * -------------------------
-             * ADMIN → sees everything
-             * BOOKKEEPER → sees everything
-             * CLIENT-STAFF → sees:
-             *     - their own messages
-             *     - approved answers
-             *     - NEVER sees pending answers
-             */
-            let isVisible = false;
+              /**
+               * MESSAGE VISIBILITY RULES
+               * -------------------------
+               * ADMIN → sees everything
+               * BOOKKEEPER → sees everything
+               * CLIENT-STAFF → sees:
+               *     - their own messages
+               *     - approved answers
+               *     - NEVER sees pending answers
+               */
+              let isVisible = false;
 
-            if (role === "admin" || role === "bookkeeper") {
-              isVisible = true;
-            } else if (role === "client-staff") {
-              isVisible =
-                msg.createdBy === userId || // their own message
-                msg.approved === true;
-                // admin-approved messages
-            }
+              if (role === "admin" || role === "bookkeeper") {
+                isVisible = true;
+              } else if (role === "client-staff") {
+                isVisible =
+                  msg.createdBy === userId || // their own message
+                  msg.approved === true;
+                  // admin-approved messages
+              }
 
-            if (!isVisible) return null;
+              if (!isVisible) return null;
 
-            return (
-              <div
-                key={msg.id}
-                className={`message-bubble ${
-                  isAnswer ? "answer-bubble" : "question-bubble"
-                }`}
-              >
-                <strong>{msg.authorSnapshot?.displayName}</strong>
-                <p>{msg.body}</p>
-                <small>{formatTS(msg.createdAt)}</small>
+              return (
+                <div
+                  key={msg.id}
+                  className={`message-bubble ${
+                    isAnswer ? "answer-bubble" : "question-bubble"
+                  } ${
+                    role === "bookkeeper" &&
+                    msg.createdBy === currentUserId &&
+                    isPending
+                      ? "own-pending-reply"
+                      : ""
+                  }`}
+                >
+                  <strong>{msg.authorSnapshot?.displayName}</strong>
+                  <p>{msg.body}</p>
+                  <small>{formatTS(msg.createdAt)}</small>
 
-                {/* Pending badge (admin/bookkeeper only) */}
-                {isPending && (role === "admin" || role === "bookkeeper") && (
-                  <IonBadge color="warning" className="pending-label">
-                    Pending Approval
-                  </IonBadge>
-                )}
+                  {/* Rejected badge (shows to bookkeeper/admin and marks resolved) */}
+                  {isRejected && (role === "admin" || role === "bookkeeper") && (
+                    <IonBadge color="danger" className="rejected-label">
+                      Rejected
+                    </IonBadge>
+                  )}
 
-                {/* ADMIN APPROVE / REJECT */}
-                {role === "admin" && isAnswer && isPending && (
-                  <div className="action-buttons">
-                    <IonButton
-                      size="small"
-                      onClick={() => triggerNotification("approve", msg.id)}
-                    >
-                      Approve
-                    </IonButton>
+                  {/* Pending badge (admin/bookkeeper only) */}
+                  {isPending && (role === "admin" || role === "bookkeeper") && (
+                    <IonBadge color="warning" className="pending-label">
+                      {role === "bookkeeper" && msg.createdBy === currentUserId
+                        ? "Your reply - Pending Approval"
+                        : "Pending Approval"}
+                    </IonBadge>
+                  )}
 
-                    <IonButton
-                      size="small"
-                      color="danger"
-                      onClick={() => triggerNotification("reject", msg.id)}
-                    >
-                      Reject
-                    </IonButton>
-                  </div>
-                )}
-              </div>
-            );
-          })}
+                  {/* Show rejection reason if present (bookkeeper/client admin can see) */}
+                  {isRejected && msg.rejectionReason && (
+                    <p style={{ color: "#a00", marginTop: 8, fontSize: 13 }}>
+                      <strong>Reason:</strong> {msg.rejectionReason}
+                    </p>
+                  )}
+
+                  {/* ADMIN APPROVE / REJECT: only available for pending answers */}
+                  {role === "admin" && isAnswer && isPending && (
+                    <div className="action-buttons">
+                      <IonButton
+                        size="small"
+                        onClick={() => triggerNotification("approve", msg.id)}
+                      >
+                        Approve
+                      </IonButton>
+
+                      <IonButton
+                        size="small"
+                        color="danger"
+                        onClick={() => triggerNotification("reject", msg.id)}
+                      >
+                        Reject
+                      </IonButton>
+                    </div>
+                  )}
+                </div>
+              );
+            })
+          )}
         </div>
 
         {/* ======================= FOOTER ======================= */}
-        {canReply && (
+        {canReply && typeof onSendReply === "function" && (
           <IonButton expand="block" onClick={onSendReply}>
             Reply
           </IonButton>
