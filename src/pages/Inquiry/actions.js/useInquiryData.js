@@ -90,7 +90,10 @@ export function useInquiryData(role, activeInquiry) {
   // FETCH MESSAGES FOR ACTIVE INQUIRY
   // ======================================================
   useEffect(() => {
+    console.log("📋 useInquiryData messages effect:", { activeInquiry: activeInquiry?.id, role, userId: user?.uid });
+    
     if (!activeInquiry || !user || !role) {
+      console.log("❌ Missing data for messages fetch");
       setMessages([]);
       return;
     }
@@ -100,41 +103,30 @@ export function useInquiryData(role, activeInquiry) {
       `inquiries/${activeInquiry.id}/messages`
     );
 
-    let q;
-
-    // 🌟 CLIENT-STAFF SAFE QUERY 🌟
-    // Only fetch:
-    //   - their own messages
-    //   - approved answers
+    // 🌟 CLIENT-STAFF: Use two listeners with proper merging
     if (role === "client-staff") {
-      q = query(
-        messagesRef,
-        where("visibleToClient", "==", user.uid) // (not used)
-      );
-    }
+      let ownMsgs = [];
+      let approvedMsgs = [];
 
-    // ❗ CORRECT SOLUTION:
-    // Firestore does NOT allow OR queries, so we must use two listeners
-    // and merge the results client-side.
-
-    if (role === "client-staff") {
+      // Listener 1: Client's own messages
       const unsubUserMsgs = onSnapshot(
         query(messagesRef, where("createdBy", "==", user.uid), orderBy("createdAt", "asc")),
         (snap) => {
-          const ownMsgs = snap.docs.map((d) => ({
+          ownMsgs = snap.docs.map((d) => ({
             id: d.id,
             ...d.data(),
           }));
-
-          setMessages((prev) => {
-            const approvedMsgs = prev.filter((m) => m.approved === true);
-            return [...approvedMsgs, ...ownMsgs].sort(
-              (a, b) => a.createdAt.toMillis() - b.createdAt.toMillis()
-            );
-          });
+          console.log("👤 Own messages updated:", ownMsgs.length, ownMsgs);
+          // Merge both sets
+          const merged = [...approvedMsgs, ...ownMsgs]
+            .filter((msg, idx, arr) => arr.findIndex(m => m.id === msg.id) === idx) // dedupe by id
+            .sort((a, b) => a.createdAt.toMillis() - b.createdAt.toMillis());
+          console.log("✅ Merged after own msgs:", merged.length, merged);
+          setMessages(merged);
         }
       );
 
+      // Listener 2: Approved answers (all approved answers from bookkeeper/admin)
       const unsubApproved = onSnapshot(
         query(
           messagesRef,
@@ -143,17 +135,17 @@ export function useInquiryData(role, activeInquiry) {
           orderBy("createdAt", "asc")
         ),
         (snap) => {
-          const approved = snap.docs.map((d) => ({
+          approvedMsgs = snap.docs.map((d) => ({
             id: d.id,
             ...d.data(),
           }));
-
-          setMessages((prev) => {
-            const ownMsgs = prev.filter((m) => m.createdBy === user.uid);
-            return [...ownMsgs, ...approved].sort(
-              (a, b) => a.createdAt.toMillis() - b.createdAt.toMillis()
-            );
-          });
+          console.log("🟢 Approved messages updated:", approvedMsgs.length, approvedMsgs);
+          // Merge both sets
+          const merged = [...approvedMsgs, ...ownMsgs]
+            .filter((msg, idx, arr) => arr.findIndex(m => m.id === msg.id) === idx) // dedupe by id
+            .sort((a, b) => a.createdAt.toMillis() - b.createdAt.toMillis());
+          console.log("✅ Merged after approved msgs:", merged.length, merged);
+          setMessages(merged);
         }
       );
 

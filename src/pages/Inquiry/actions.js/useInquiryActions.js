@@ -1,6 +1,6 @@
 // useInquiryActions.js
 import { useState } from "react";
-import { addDoc, collection, doc, serverTimestamp, updateDoc } from "firebase/firestore";
+import { addDoc, collection, doc, serverTimestamp, updateDoc, getDoc, getDocs, query, where, limit } from "firebase/firestore";
 import { db, auth } from "../../../database-components/firebaseConfig"; // adapt path as needed
 
 export function useInquiryActions() {
@@ -63,22 +63,39 @@ export function useInquiryActions() {
       if (!user || !reply?.trim() || !activeInquiry) throw new Error("Missing reply data");
 
       const isBookkeeper = role === "bookkeeper";
-      const authorName = user.displayName || (isBookkeeper ? "Bookkeeper" : "Admin");
+      const isClient = role === "client-staff";
+      const authorName = user.displayName || (isBookkeeper ? "Bookkeeper" : isClient ? "Client" : "Admin");
 
-      const replyData = {
-        body: reply.trim(),
-        createdBy: user.uid,
-        authorSnapshot: {
-          displayName: authorName,
-          photoURL: user.photoURL || "",
-          role,
-        },
-        messageType: "answer",
-        isAnswer: true,
-        needsAdminApproval: isBookkeeper,
-        approved: !isBookkeeper,
-        createdAt: serverTimestamp(),
-      };
+      // client-staff follow-up should be a question message approved immediately
+      const replyData = isClient
+        ? {
+            body: reply.trim(),
+            createdBy: user.uid,
+            authorSnapshot: {
+              displayName: authorName,
+              photoURL: user.photoURL || "",
+              role,
+            },
+            messageType: "question",
+            isAnswer: false,
+            needsAdminApproval: false,
+            approved: true,
+            createdAt: serverTimestamp(),
+          }
+        : {
+            body: reply.trim(),
+            createdBy: user.uid,
+            authorSnapshot: {
+              displayName: authorName,
+              photoURL: user.photoURL || "",
+              role,
+            },
+            messageType: "answer",
+            isAnswer: true,
+            needsAdminApproval: isBookkeeper,
+            approved: !isBookkeeper,
+            createdAt: serverTimestamp(),
+          };
 
       await addDoc(collection(db, `inquiries/${activeInquiry.id}/messages`), replyData);
       await updateDoc(doc(db, "inquiries", activeInquiry.id), {
@@ -112,7 +129,21 @@ export function useInquiryActions() {
       if (!activeInquiry || !msgId) throw new Error("Missing identifiers");
 
       const msgRef = doc(db, `inquiries/${activeInquiry.id}/messages/${msgId}`);
-      await updateDoc(msgRef, { needsAdminApproval: false, needsAdminApproval: true });
+      // guard: ensure message isn't already resolved
+      const snap = await getDoc(msgRef);
+      if (!snap.exists()) throw new Error("Message not found");
+      const data = snap.data();
+      if (data.approved) return true; // already approved
+      if (data.rejected) {
+        console.warn("Cannot approve a rejected message");
+        return false; // do not approve rejected messages
+      }
+
+      await updateDoc(msgRef, {
+        approved: true,
+        needsAdminApproval: false,
+        rejected: false,
+      });
 
       // set inquiry status to answered
       await updateDoc(doc(db, "inquiries", activeInquiry.id), {
@@ -145,6 +176,16 @@ export function useInquiryActions() {
       if (!activeInquiry || !msgId) throw new Error("Missing identifiers");
 
       const msgRef = doc(db, `inquiries/${activeInquiry.id}/messages/${msgId}`);
+      // guard: ensure message isn't already approved/rejected
+      const snap = await getDoc(msgRef);
+      if (!snap.exists()) throw new Error("Message not found");
+      const data = snap.data();
+      if (data.rejected) return true; // already rejected
+      if (data.approved) {
+        console.warn("Cannot reject an already approved message");
+        return false;
+      }
+
       await updateDoc(msgRef, {
         approved: false,
         rejected: true,
@@ -152,8 +193,15 @@ export function useInquiryActions() {
         rejectionReason: reason || "Rejected by admin",
       });
 
+      // Decide inquiry status: do NOT mark the whole inquiry 'rejected'.
+      // If there exists any approved answer, keep status 'answered', else keep it 'open'.
+      const messagesRef = collection(db, `inquiries/${activeInquiry.id}/messages`);
+      const approvedQuery = query(messagesRef, where("messageType", "==", "answer"), where("approved", "==", true), limit(1));
+      const approvedDocs = await getDocs(approvedQuery);
+      const newStatus = approvedDocs.size > 0 ? "answered" : "open";
+
       await updateDoc(doc(db, "inquiries", activeInquiry.id), {
-        status: "rejected",
+        status: newStatus,
         lastUpdated: serverTimestamp(),
       });
 
