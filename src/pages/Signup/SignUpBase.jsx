@@ -53,28 +53,20 @@ const clearAuthState = () => {
   sessionStorage.clear();
 };
 
-const loginRouteByRole = {
-  "client-staff": "/client-staff-login",
-  bookkeeper: "/bookkeeper-login",
-  admin: "/admin-login",
-};
+const normalizeRole = (value) => value?.toLowerCase().replace(/\s+/g, "-");
+const signupRoles = new Set(["client-staff", "bookkeeper"]);
 
-function SignUpBase() {
+function SignUpBase({ role: propRole }) {
   const history = useHistory();
   const location = useLocation();
 
   /**
    * ROLE HANDLING
-   * We get the role from router or localStorage
-   * Convert it to the required format: "client-staff" or "bookkeeper"
+   * Public signup defaults to client-staff. Role-specific signup routes can
+   * still pass bookkeeper without requiring a role-specific login page.
    */
-  const passedRole = location.state?.role;
-  const storedRole = localStorage.getItem("selectedRole");
-
-  const role =
-    passedRole?.toLowerCase().replace(/\s+/g, "-") ||
-    storedRole?.toLowerCase().replace(/\s+/g, "-") ||
-    "client-staff";
+  const requestedRole = normalizeRole(location.state?.role || propRole);
+  const role = signupRoles.has(requestedRole) ? requestedRole : "client-staff";
 
   console.log("Signup Role:", role);
 
@@ -184,7 +176,7 @@ function SignUpBase() {
       setShowAlert(true);
 
       setTimeout(() => {
-        history.push(loginRouteByRole[role] || "/login-base");
+        history.push("/login");
       }, 1200);
     } catch (err) {
       console.error("Signup error:", err);
@@ -218,7 +210,7 @@ function SignUpBase() {
     <IonPage>
       <IonHeader className="ion-no-border">
         <IonToolbar style={{ '--background': 'transparent' }}>
-          <IonButton slot="start" fill="clear" routerLink="/Welcome">
+          <IonButton slot="start" fill="clear" routerLink="/welcome">
             <IonIcon icon={arrowBackOutline} />
           </IonButton>
         </IonToolbar>

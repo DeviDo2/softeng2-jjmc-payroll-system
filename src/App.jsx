@@ -54,7 +54,6 @@ import EditWorkDetails from "./pages/ProfileDetails/EditDetails/EditWorkDetails"
 
 // Client Staff
 import SignUpClientStaff from "./pages/ClientStaffOnly/SignUpClientStaff";
-import LoginClientStaff from "./pages/ClientStaffOnly/LoginClientStaff";
 import HomeClientStaff from "./pages/ClientStaffOnly/HomeClientStaff";
 import ProfileClientStaff from "./pages/ClientStaffOnly/ProfileClientStaff";
 
@@ -65,7 +64,6 @@ import TutorialsClientStaff from "./pages/ClientStaffOnly/TutorialsClientStaff";
 
 // Bookkeeper
 import SignUpBookkeeper from "./pages/BookkeeperOnly/SignUpBookkeeper";
-import LoginBookkeeper from "./pages/BookkeeperOnly/LoginBookkeeper";
 import HomeBookkeeper from "./pages/BookkeeperOnly/HomeBookkeeper";
 import ProfileBookkeeper from "./pages/BookkeeperOnly/ProfileBookkeeper";
 
@@ -81,7 +79,6 @@ import ClientEmployeeList from "./pages/BookkeeperOnly/ClientList/ClientEmployee
 import InquiryBookkeeper from "./pages/BookkeeperOnly/InquiryForumBookkeeper";
 
 // Admin
-import LoginAdmin from "./pages/AdminOnly/LoginAdmin";
 import HomeAdmin from "./pages/AdminOnly/HomeAdmin";
 import InquiryForumAdmin from "./pages/AdminOnly/InquiryForumAdmin";
 
@@ -106,7 +103,8 @@ function App() {
             {/* Public */}
             <Route exact path="/" render={() => <Redirect to="/welcome" />} />
             <Route exact path="/welcome" component={WelcomePage} />
-            <Route exact path="/login-base" component={LoginBase} />
+            <Route exact path="/login" component={LoginBase} />
+            <Route exact path="/login-base" render={() => <Redirect to="/login" />} />
             <Route exact path="/signup-base" component={SignUpBase} />
             <Route exact path="/forgot-password" component={ForgotPassword} />
             
@@ -125,7 +123,7 @@ function App() {
             <Route exact path="/edit-work-details" component={EditWorkDetails} />
 
             {/* Client-Staff */}
-            <Route exact path="/client-staff-login" component={LoginClientStaff} />
+            <Route exact path="/client-staff-login" render={() => <Redirect to="/login" />} />
             <Route exact path="/client-staff-signup" component={SignUpClientStaff} />
             <Route exact path="/client-staff-profile" component={ProfileClientStaff} />
             <Route exact path="/client-staff-current-computation" component={CurrentComputation} />
@@ -145,7 +143,7 @@ function App() {
 
             {/* Bookkeeper */}
             <Route exact path="/bookkeeper-signup" component={SignUpBookkeeper} />
-            <Route exact path="/bookkeeper-login" component={LoginBookkeeper} />
+            <Route exact path="/bookkeeper-login" render={() => <Redirect to="/login" />} />
             <Route exact path="/bookkeeper-profile" component={ProfileBookkeeper} />
             
             <Route exact path="/bookkeeper-inquiry-forum" component={InquiryBookkeeper} />
@@ -168,7 +166,7 @@ function App() {
             />
 
             {/* Admin */}
-            <Route exact path="/admin-login" component={LoginAdmin} />
+            <Route exact path="/admin-login" render={() => <Redirect to="/login" />} />
             <Route
               exact
               path="/admin-home"

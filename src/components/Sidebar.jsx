@@ -28,6 +28,7 @@ import "./Sidebar.css";
 const PUBLIC_PATHS = [
   "/",
   "/welcome",
+  "/login",
   "/login-base",
   "/signup-base",
   "/forgot-password",
