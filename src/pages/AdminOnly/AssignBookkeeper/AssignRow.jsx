@@ -90,8 +90,25 @@ export default function AssignRow({ client, bookkeepers, onAssign }) {
     setShowPopover(false);
   };
 
+  // Force a consistent column order + labels for the CSV viewer
+  const desiredOrder = [
+    "employeeCode",
+    "name",
+    "ratePerHour",
+    "hoursWorked",
+    "payrollPeriod",
+  ];
+
+  const headerLabels = {
+    employeeCode: "Employee code",
+    name: "Name",
+    ratePerHour: "Rate/hour",
+    hoursWorked: "Hours worked",
+    payrollPeriod: "Payroll period",
+  };
+
   const csvHeaders = csvData?.length
-    ? Array.from(new Set(csvData.flatMap((row) => Object.keys(row))))
+    ? desiredOrder.filter((key) => csvData.some((r) => r[key] !== undefined))
     : [];
 
   return (
@@ -141,16 +158,28 @@ export default function AssignRow({ client, bookkeepers, onAssign }) {
                 <thead>
                   <tr>
                     {csvHeaders.map((header) => (
-                      <th key={header}>{header}</th>
+                      <th key={header}>{headerLabels[header] || header}</th>
                     ))}
                   </tr>
                 </thead>
                 <tbody>
                   {csvData.map((row, rowIndex) => (
                     <tr key={rowIndex}>
-                      {csvHeaders.map((header) => (
-                        <td key={header}>{row[header] ?? ""}</td>
-                      ))}
+                      {csvHeaders.map((header) => {
+                        let value = row[header];
+                        if (value === undefined || value === null) value = "";
+
+                        if (header === "ratePerHour" && value !== "") {
+                          const n = Number(value) || 0;
+                          value = n.toFixed(2);
+                        }
+
+                        if (header === "hoursWorked" && value !== "") {
+                          value = String(value);
+                        }
+
+                        return <td key={header}>{value}</td>;
+                      })}
                     </tr>
                   ))}
                 </tbody>

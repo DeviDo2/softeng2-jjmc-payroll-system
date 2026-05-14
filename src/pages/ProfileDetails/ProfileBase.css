@@ -9,6 +9,10 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
+ion-button {
+  margin-top: 0;
+  height: 0;
+}
 
 .logo-card {
   background: #fff;
@@ -187,7 +191,7 @@
 /* Edit Profile Picture Button */
 .edit-profile-pic-btn {
   border-radius: 12px;
-  background: #fff;
+  background: #fff !important;
   color: #0A3F59;
   box-shadow: 0 2px 5px rgb(0 0 0 / 0.1);
   margin-bottom: 1rem;
@@ -252,6 +256,7 @@
 }
 
 /* Save changes button */
+
 .save-changes-btn {
   --background: #104763;
   --color: #fff;
@@ -295,6 +300,7 @@
       .edit-profile-pic-btn {
         height: 44px; /* Smaller on mobile */
         font-size: 1rem;
+        
       }
       .edit-detail-btn {
         height: 50px;
