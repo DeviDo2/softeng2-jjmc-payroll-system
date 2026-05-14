@@ -120,6 +120,7 @@ export function useInquiryData(role, activeInquiry) {
           // Merge both sets
           const merged = [...approvedMsgs, ...ownMsgs]
             .filter((msg, idx, arr) => arr.findIndex(m => m.id === msg.id) === idx) // dedupe by id
+            .filter((m) => m.rejected !== true) // exclude rejected messages for client
             .sort((a, b) => a.createdAt.toMillis() - b.createdAt.toMillis());
           console.log("✅ Merged after own msgs:", merged.length, merged);
           setMessages(merged);
@@ -143,6 +144,7 @@ export function useInquiryData(role, activeInquiry) {
           // Merge both sets
           const merged = [...approvedMsgs, ...ownMsgs]
             .filter((msg, idx, arr) => arr.findIndex(m => m.id === msg.id) === idx) // dedupe by id
+            .filter((m) => m.rejected !== true) // exclude rejected messages for client
             .sort((a, b) => a.createdAt.toMillis() - b.createdAt.toMillis());
           console.log("✅ Merged after approved msgs:", merged.length, merged);
           setMessages(merged);

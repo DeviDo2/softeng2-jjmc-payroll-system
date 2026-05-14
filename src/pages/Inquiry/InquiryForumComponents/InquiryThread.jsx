@@ -86,9 +86,9 @@ export default function InquiryThread({
                 isVisible = true;
               } else if (role === "client-staff") {
                 isVisible =
-                  msg.createdBy === userId || // their own message
-                  msg.approved === true;
-                  // admin-approved messages
+                  (msg.createdBy === userId || // their own message
+                  msg.approved === true) && // admin-approved messages
+                  msg.rejected !== true; // never show rejected messages to client
               }
 
               if (!isVisible) return null;
