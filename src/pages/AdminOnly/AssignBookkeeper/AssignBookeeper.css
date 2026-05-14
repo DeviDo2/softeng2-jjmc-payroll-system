@@ -108,7 +108,6 @@
 }
 
 .csv-table-wrapper {
-  height: calc(92vh - 88px);
   margin: 16px;
   overflow: auto;
   border: 1px solid #d0d0d0;

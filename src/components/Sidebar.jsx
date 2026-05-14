@@ -94,7 +94,7 @@ export default function Sidebar({ onLogout }) {
         </IonToolbar>
       </IonHeader>
 
-      <IonContent className="ion-padding">
+      <IonContent>
         <IonGrid>
           {/* Logo & Header */}
           

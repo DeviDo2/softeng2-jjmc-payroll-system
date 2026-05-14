@@ -111,20 +111,6 @@ function CurrentComputation() {
               </IonCol>
             </IonRow>
 
-            {error && (
-              <IonRow>
-                <IonCol size="12">
-                  <IonCard color="warning">
-                    <IonCardContent>
-                      <IonText>
-                        <p>{error}</p>
-                        <p><small>Collection: computationResults</small></p>
-                      </IonText>
-                    </IonCardContent>
-                  </IonCard>
-                </IonCol>
-              </IonRow>
-            )}
 
             {!employeeData ? (
               <IonRow className="ion-justify-content-center">
