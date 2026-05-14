@@ -285,7 +285,7 @@ export default function InquiryForumBase({ role: propRole }) {
             
           </IonGrid>
         </IonContent>
-        <FooterNav />
+        <FooterNav/>
       </IonPage>
     </IonApp>
   );

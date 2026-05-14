@@ -140,7 +140,7 @@ export default function InquiryThread({
           </IonButton>
         )}
 
-        <IonButton fill="clear" onClick={onBack}>
+        <IonButton style={{ height:"0px"}} fill="clear" onClick={onBack}>
           Back
         </IonButton>
       </IonCardContent>

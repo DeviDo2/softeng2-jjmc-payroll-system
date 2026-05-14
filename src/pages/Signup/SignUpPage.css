@@ -76,6 +76,11 @@ ion-input {
   box-shadow: none;
 }
 
+ion-button {
+  height: 0px;
+  margin-top: 30px;
+}
+
 ion-label[position="stacked"] {
   white-space: nowrap;
   overflow: visible;

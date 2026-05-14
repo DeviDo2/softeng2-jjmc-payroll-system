@@ -120,6 +120,22 @@
   padding-bottom: 100px;
 }
 
+/* Footer - Dark teal/blue rounded top navigation bar */
+.footer-bar {
+  background-color: #0a3f59;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  padding: 0.5rem 0;
+  font-family: 'Poppins', sans-serif !important;
+}
+
+
+/* Bottom navigation icons - ensure good contrast */
+.footer-bar ion-button {
+  --color: white;
+  font-family: 'Poppins', sans-serif !important;
+}
+
 /* Table fixes (if used in list view) */
 .results-data-table td:last-child,
 .results-data-table th:last-child {
