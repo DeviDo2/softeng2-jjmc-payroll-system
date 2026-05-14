@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
   IonPage,
   IonContent,
@@ -8,44 +7,12 @@ import {
   IonText,
   IonButton,
   IonIcon,
-  IonList,
-  IonItem,
-  IonLabel,
   IonImg,
-  useIonRouter
 } from "@ionic/react";
-import { chevronDownOutline, chevronUpOutline, personCircleOutline } from "ionicons/icons";
-import { getFirestore, doc, setDoc } from "firebase/firestore";
-import { getAuth } from "firebase/auth";
+import { logInOutline } from "ionicons/icons";
 import "./WelcomePage.css";
 
 function WelcomePage() {
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const userRoles = ["Admin", "Bookkeeper", "Client-Staff"];
-  const router = useIonRouter();
-  const db = getFirestore();
-  const auth = getAuth();
-
-  const handleButtonClick = () => {
-    setIsDropdownOpen(prev => !prev);
-  };
-  
-  const handleRoleSelect = (role) => {
-    setIsDropdownOpen(false);
-
-    const normalizedRole = role.toLowerCase().replace(/\s+/g, "-");
-
-    // Save selected role to localStorage (used later after login/signup)
-    localStorage.setItem("selectedRole", role);
-
-    // Route based on role
-    if (role === "Admin") {
-      router.push("/admin-login", "forward");
-    } else {
-      router.push(`/${normalizedRole}-login`, "forward");
-    }
-  };
-
   return (
     <IonPage>
       <IonContent fullscreen className="welcome-content">
@@ -73,28 +40,16 @@ function WelcomePage() {
 
           <IonRow className="ion-justify-content-center">
             <IonCol size="12" sizeSm="8" sizeMd="5" sizeLg="4">
-              <IonButton expand="block" shape="round" fill="solid" onClick={handleButtonClick}>
-                <IonIcon icon={personCircleOutline} slot="start" />
-                Login As
-                <IonIcon icon={isDropdownOpen ? chevronUpOutline : chevronDownOutline} slot="end" />
+              <IonButton
+                expand="block"
+                shape="round"
+                fill="solid"
+                routerLink="/login"
+                className="welcome-login-button"
+              >
+                <IonIcon icon={logInOutline} slot="start" />
+                Login
               </IonButton>
-
-              {isDropdownOpen && (
-                <IonList inset>
-                  {userRoles.map((role, index) => (
-                    <IonItem
-                    className="ion-list"
-                      key={index}
-                      button
-                      detail={false}
-                      onClick={() => handleRoleSelect(role)}
-                      lines="none"
-                    >
-                      <IonLabel className="ion-text-center">{role}</IonLabel>
-                    </IonItem>
-                  ))}
-                </IonList>
-              )}
             </IonCol>
           </IonRow>
         </IonGrid>
