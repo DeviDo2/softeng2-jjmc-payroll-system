@@ -72,14 +72,3 @@ export const uploadToCloudinary = async (file, options = null) => {
     throw err;
   }
 };
-
-/* -------------------------------------------------------
-   PUBLIC ID NORMALIZER (Fixes camelCase vs snakeCase)
-------------------------------------------------------- */
-const normalizePublicId = (input) => {
-  if (!input) return null;
-  if (typeof input === "string") return input;
-  if (input.public_id) return input.public_id;
-  if (input.publicId) return input.publicId;
-  return null;
-};
