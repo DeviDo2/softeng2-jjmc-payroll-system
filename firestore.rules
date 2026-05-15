@@ -1,0 +1,206 @@
+rules_version = "2";
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function loggedIn() {
+      return request.auth != null;
+    }
+
+    function userExists(uid) {
+      return exists(/databases/$(database)/documents/users/$(uid));
+    }
+
+    function userRole(uid) {
+      return userExists(uid)
+        ? get(/databases/$(database)/documents/users/$(uid)).data.role
+        : "unknown";
+    }
+
+    function myRole() {
+      return loggedIn() ? userRole(request.auth.uid) : "unknown";
+    }
+
+    function isAdmin() {
+      return loggedIn() && myRole() == "admin";
+    }
+
+    function isBookkeeper() {
+      return loggedIn() && myRole() == "bookkeeper";
+    }
+
+    function isClientStaff() {
+      return loggedIn() && myRole() == "client-staff";
+    }
+
+    match /users/{uid} {
+      allow read: if loggedIn();
+
+      allow create: if isAdmin()
+        || (
+          loggedIn()
+          && request.auth.uid == uid
+          && (
+            request.resource.data.role == "bookkeeper"
+            || request.resource.data.role == "client-staff"
+          )
+        );
+
+      allow update: if isAdmin()
+        || (
+          loggedIn()
+          && request.auth.uid == uid
+          && request.resource.data.role == resource.data.role
+        );
+
+      allow delete: if isAdmin();
+    }
+
+    match /inquiries/{inquiryId} {
+      allow read: if isAdmin()
+        || isBookkeeper()
+        || (isClientStaff() && resource.data.createdBy == request.auth.uid);
+
+      allow create: if isClientStaff()
+        && request.resource.data.createdBy == request.auth.uid;
+
+      allow update, delete: if isAdmin();
+
+      match /messages/{messageId} {
+        allow read: if isAdmin()
+          || isBookkeeper()
+          || (
+            isClientStaff()
+            && (
+              resource.data.createdBy == request.auth.uid
+              || (
+                resource.data.messageType == "answer"
+                && resource.data.approved == true
+              )
+            )
+          );
+
+        allow create: if (
+            isClientStaff()
+            && request.resource.data.messageType == "question"
+            && request.resource.data.createdBy == request.auth.uid
+          )
+          || (
+            isBookkeeper()
+            && request.resource.data.messageType == "answer"
+            && request.resource.data.createdBy == request.auth.uid
+          );
+
+        allow update: if (
+            isAdmin()
+            && resource.data.messageType == "answer"
+          )
+          || (
+            isBookkeeper()
+            && resource.data.messageType == "answer"
+            && resource.data.createdBy == request.auth.uid
+            && resource.data.approved == false
+          );
+      }
+    }
+
+    match /notifications/{noteId} {
+      allow create: if isAdmin()
+        || (
+          isBookkeeper()
+          && request.resource.data.userId is string
+          && request.resource.data.read == false
+          && request.resource.data.keys().hasOnly([
+            "userId",
+            "type",
+            "message",
+            "computationId",
+            "computationResultIds",
+            "clientName",
+            "bookkeeperName",
+            "read",
+            "createdAt"
+          ])
+        );
+
+      allow read: if isAdmin()
+        || (loggedIn() && request.auth.uid == resource.data.userId);
+
+      allow update: if isAdmin()
+        || (
+          loggedIn()
+          && request.auth.uid == resource.data.userId
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(["read"])
+        );
+
+      allow delete: if isAdmin();
+    }
+
+    match /clientCompanies/{clientId} {
+      allow read: if loggedIn();
+      allow create, delete: if isAdmin();
+
+      allow update: if isAdmin()
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+          "bookkeeperId",
+          "bookkeeperName",
+          "status",
+          "name",
+          "csv",
+          "parsedCSV",
+          "tag",
+          "businessType",
+          "updatedAt",
+          "assignedAt"
+        ]);
+
+      match /computationResults/{resultId} {
+        allow read, write: if isAdmin();
+
+        allow create: if isBookkeeper()
+          && get(/databases/$(database)/documents/clientCompanies/$(clientId)).data.bookkeeperId == request.auth.uid;
+
+        allow update: if isBookkeeper()
+          && resource.data.status == "pending"
+          && resource.data.bookkeeperId == request.auth.uid;
+      }
+    }
+
+    match /tutorialVideos/{videoId} {
+      allow read: if loggedIn();
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /clientPayrollDrafts/{draftId} {
+      allow read: if isAdmin()
+        || (isBookkeeper() && resource.data.bookkeeperId == request.auth.uid)
+        || isClientStaff();
+
+      allow create: if isAdmin() || isBookkeeper();
+
+      allow update: if isAdmin()
+        || (
+          isBookkeeper()
+          && resource.data.bookkeeperId == request.auth.uid
+          && resource.data.status == "approved"
+          && request.resource.data.status == "sent_to_client"
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+            "sentToClient",
+            "sentAt",
+            "sendCount",
+            "lastSentBy",
+            "lastSentAt",
+            "clientVisible",
+            "status"
+          ])
+        );
+
+      allow delete: if isAdmin();
+    }
+
+    match /computationResults/{compId} {
+      allow read: if isAdmin() || isBookkeeper() || isClientStaff();
+      allow create: if isAdmin() || isBookkeeper();
+      allow update, delete: if isAdmin();
+    }
+  }
+}

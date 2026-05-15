@@ -56,9 +56,6 @@ function ProfilePageBase() {
   }, []);
 
   return (
-    <IonApp>
-      <Sidebar />
-
       <IonPage id="main-content">
         <IonContent fullscreen className="home-content">
           <IonImg
@@ -185,7 +182,6 @@ function ProfilePageBase() {
         <FooterNav />
 
       </IonPage>
-    </IonApp>
   );
 }
 

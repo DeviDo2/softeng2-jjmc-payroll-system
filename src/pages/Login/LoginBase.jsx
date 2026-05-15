@@ -119,7 +119,7 @@ function LoginBase() {
     <IonPage>
       <IonHeader className="ion-no-border">
         <IonToolbar style={{ '--background': 'transparent' }}>
-          <IonButton slot="start" fill="clear" routerLink="/Welcome">
+          <IonButton slot="start" fill="clear" routerLink="/welcome">
             <IonIcon icon={arrowBackOutline} />
           </IonButton>
         </IonToolbar>

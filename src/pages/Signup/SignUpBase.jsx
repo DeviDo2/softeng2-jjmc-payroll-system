@@ -35,26 +35,38 @@ import {
 
 import "./SignUpPage.css";
 
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, deleteUser, signOut } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import { auth, db } from "../../database-components/firebaseConfig";
 
-function SignUpBase() {
+const signupErrorMessages = {
+  "auth/email-already-in-use":
+    "This email is already registered. Please log in instead, or use a different email.",
+  "auth/invalid-email": "Please enter a valid email address.",
+  "auth/weak-password": "Password should be at least 6 characters.",
+  "permission-denied":
+    "Signup could not be completed because the app does not have permission to save the user profile.",
+};
+
+const clearAuthState = () => {
+  localStorage.clear();
+  sessionStorage.clear();
+};
+
+const normalizeRole = (value) => value?.toLowerCase().replace(/\s+/g, "-");
+const signupRoles = new Set(["client-staff", "bookkeeper"]);
+
+function SignUpBase({ role: propRole }) {
   const history = useHistory();
   const location = useLocation();
 
   /**
    * ROLE HANDLING
-   * We get the role from router or localStorage
-   * Convert it to the required format: "client-staff" or "bookkeeper"
+   * Public signup defaults to client-staff. Role-specific signup routes can
+   * still pass bookkeeper without requiring a role-specific login page.
    */
-  const passedRole = location.state?.role;
-  const storedRole = localStorage.getItem("selectedRole");
-
-  const role =
-    passedRole?.toLowerCase().replace(/\s+/g, "-") ||
-    storedRole?.toLowerCase().replace(/\s+/g, "-") ||
-    "client-staff";
+  const requestedRole = normalizeRole(location.state?.role || propRole);
+  const role = signupRoles.has(requestedRole) ? requestedRole : "client-staff";
 
   console.log("Signup Role:", role);
 
@@ -118,11 +130,13 @@ function SignUpBase() {
     }
 
     setIsLoading(true);
+    let createdUser = null;
 
     try {
       /** 1️⃣ Create account */
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
+      createdUser = user;
 
       /** 2️⃣ Save profile information */
       await setDoc(
@@ -139,25 +153,50 @@ function SignUpBase() {
           company,
           position,
           department,
+          salary: salaryRate,
           salaryRate,
+          taxId: taxIdNumber,
           taxIdNumber,
           createdAt: new Date(),
         },
         { merge: true }
       );
 
-      /** 3️⃣ Save role for Cloud Function assignment */
-      await setDoc(doc(db, "pendingRoles", user.uid), { role });
+      /** 3️⃣ Save role for Cloud Function assignment, when rules allow it */
+      try {
+        await setDoc(doc(db, "pendingRoles", user.uid), { role });
+      } catch (pendingRoleError) {
+        console.warn("Pending role write skipped:", pendingRoleError);
+      }
 
-      setAlertMessage("Account created! Your role is being activated.");
+      await signOut(auth);
+      clearAuthState();
+
+      setAlertMessage("Account created! Please log in with your new account.");
       setShowAlert(true);
 
       setTimeout(() => {
-        history.push(`/login-${role}`);
+        history.push("/login");
       }, 1200);
     } catch (err) {
       console.error("Signup error:", err);
-      setAlertMessage(err.message || "Something went wrong during signup.");
+
+      if (createdUser) {
+        try {
+          await deleteUser(createdUser);
+        } catch (deleteError) {
+          console.warn("Could not delete incomplete signup account:", deleteError);
+          await signOut(auth).catch(() => {});
+        }
+        clearAuthState();
+      }
+
+      const message =
+        signupErrorMessages[err.code] ||
+        err.message ||
+        "Something went wrong during signup.";
+
+      setAlertMessage(message);
       setShowAlert(true);
     } finally {
       setIsLoading(false);
@@ -171,7 +210,7 @@ function SignUpBase() {
     <IonPage>
       <IonHeader className="ion-no-border">
         <IonToolbar style={{ '--background': 'transparent' }}>
-          <IonButton slot="start" fill="clear" routerLink="/Welcome">
+          <IonButton slot="start" fill="clear" routerLink="/welcome">
             <IonIcon icon={arrowBackOutline} />
           </IonButton>
         </IonToolbar>
@@ -214,10 +253,9 @@ function SignUpBase() {
                         value={password}
                         onIonChange={(e) => setPassword(e.detail.value)}
                       />
-                      <IonButton fill="clear" slot="end" onClick={togglePasswordVisibility}>
+                      <IonButton className="sign-up-btn" fill="clear" slot="end" onClick={togglePasswordVisibility}>
                         <IonIcon 
                         icon={showPassword ? eyeOffOutline : eyeOutline} 
-                          slot="end" 
                           onClick={togglePasswordVisibility}
                           className="password-icon"/>
                       </IonButton>
@@ -244,7 +282,7 @@ function SignUpBase() {
                         <IonItem className="input-item">
                           <IonLabel position="stacked">Birthdate</IonLabel>
                           <IonInput value={birthdate} readonly placeholder="Select Birthdate" />
-                          <IonButton fill="clear" slot="end" onClick={() => setShowCalendar(true)}>
+                          <IonButton className="sign-up-btn" fill="clear" slot="end" onClick={() => setShowCalendar(true)}>
                             <IonIcon icon={calendarOutline} />
                           </IonButton>
                         </IonItem>
@@ -253,7 +291,7 @@ function SignUpBase() {
                           <IonHeader>
                             <IonToolbar color="primary">
                               <IonTitle>Select Date</IonTitle>
-                              <IonButtons slot="end">
+                              <IonButtons>
                                 <IonButton onClick={() => setShowCalendar(false)}>
                                   <IonIcon icon={closeOutline} />
                                 </IonButton>

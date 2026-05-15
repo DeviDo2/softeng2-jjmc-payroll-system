@@ -133,15 +133,23 @@ export default function InquiryForumBase({ role: propRole }) {
     if (!reply || !reply.trim()) return;
 
     try {
-      // sendReplyToFirebase signature assumed: (inquiry, messageText) => Promise
-      await sendReplyToFirebase(activeInquiry, reply.trim());
+      // sendReplyToFirebase expects: { reply, activeInquiry, role }
+      await sendReplyToFirebase({
+        reply: reply.trim(),
+        activeInquiry,
+        role: effectiveRole,
+      });
       setReply("");
-      // optionally refresh data or show success
+      // Show notification modal for bookkeeper/admin about reply status
+      if (effectiveRole === "bookkeeper" || effectiveRole === "admin") {
+        setActionType("reply-sent");
+        setNotificationOpen(true);
+      }
     } catch (err) {
       console.error("Failed to send reply:", err);
       // optionally show toast
     }
-  }, [activeInquiry, reply, sendReplyToFirebase]);
+  }, [activeInquiry, reply, sendReplyToFirebase, effectiveRole]);
 
   // ask form submit
   const handleAskSubmit = useCallback(
@@ -162,8 +170,6 @@ export default function InquiryForumBase({ role: propRole }) {
   );
 
   return (
-    <IonApp>
-      <Sidebar />
       <IonPage id="main-content">
         <IonContent fullscreen className="inquiry-forum-content">
           <IonImg
@@ -211,6 +217,7 @@ export default function InquiryForumBase({ role: propRole }) {
                     inquiries={inquiries}
                     formatTS={formatTS}
                     onSelectInquiry={handleSelectInquiry}
+                    role={effectiveRole}
                   />
                 </IonCardContent>
               </IonCard>
@@ -244,10 +251,16 @@ export default function InquiryForumBase({ role: propRole }) {
                   // triggerNotification is used by thread (e.g. when clicking approve/reject on a message)
                   triggerNotification={triggerNotification}
                   onBack={() => setView("list")}
+                  currentUserId={user?.uid}
                 />
 
-                {/* Reply box for admins/bookkeepers */}
-                {(effectiveRole === "bookkeeper" || effectiveRole === "admin") && (
+                {/* Reply box for admins/bookkeepers and client follow-ups */}
+                {(effectiveRole === "bookkeeper" || effectiveRole === "admin" ||
+                  (effectiveRole === "client-staff" &&
+                    activeInquiry?.createdBy === user?.uid &&
+                    (activeInquiry?.status === "open" || activeInquiry?.status === "answered")
+                  )
+                ) && (
                   <InquiryReplyBox
                     reply={reply}
                     setReply={setReply}
@@ -285,8 +298,7 @@ export default function InquiryForumBase({ role: propRole }) {
             
           </IonGrid>
         </IonContent>
-        <FooterNav />
+        <FooterNav/>
       </IonPage>
-    </IonApp>
   );
 }

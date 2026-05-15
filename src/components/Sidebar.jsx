@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   IonMenu,
   IonContent,
@@ -17,12 +18,58 @@ import {
   IonText,
 } from "@ionic/react";
 import { logOutOutline } from "ionicons/icons";
+import { useHistory, useLocation } from "react-router-dom";
+import { signOut } from "firebase/auth";
 
 import useAuthRole from "../hooks/useAuthRole";
+import { auth } from "../database-components/firebaseConfig";
 import "./Sidebar.css";
 
-export default function Sidebar() {
+const PUBLIC_PATHS = [
+  "/",
+  "/welcome",
+  "/login",
+  "/login-base",
+  "/signup-base",
+  "/forgot-password",
+  "/client-staff-login",
+  "/client-staff-signup",
+  "/bookkeeper-login",
+  "/bookkeeper-signup",
+  "/admin-login",
+];
+
+export default function Sidebar({ onLogout }) {
   const { loading, role, roleConfig } = useAuthRole();
+  const history = useHistory();
+  const location = useLocation();
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const path = location.pathname.toLowerCase();
+  const isPublicPage = PUBLIC_PATHS.some((publicPath) => path === publicPath);
+
+  const handleLogout = async () => {
+    if (isLoggingOut) return;
+
+    setIsLoggingOut(true);
+    try {
+      await signOut(auth);
+    } catch (error) {
+      console.error("Logout failed:", error);
+    } finally {
+      localStorage.clear();
+      sessionStorage.clear();
+
+      if (typeof onLogout === "function") {
+        onLogout();
+      } else {
+        history.replace("/welcome");
+      }
+
+      setIsLoggingOut(false);
+    }
+  };
+
+  if (isPublicPage) return null;
 
   if (loading) return <IonSpinner />;
 
@@ -47,7 +94,7 @@ export default function Sidebar() {
         </IonToolbar>
       </IonHeader>
 
-      <IonContent className="ion-padding">
+      <IonContent>
         <IonGrid>
           {/* Logo & Header */}
           
@@ -82,10 +129,17 @@ export default function Sidebar() {
           {/* Logout */}
           <IonRow>
             <IonCol>
-              <IonButton expand="block" routerLink="/welcome" className="logout-button">
-                <IonIcon icon={logOutOutline} slot="start" />
-                Log out
-              </IonButton>
+              <IonMenuToggle autoHide={false}>
+                <IonButton
+                  expand="block"
+                  className="logout-button"
+                  onClick={handleLogout}
+                  disabled={isLoggingOut}
+                >
+                  <IonIcon icon={logOutOutline} slot="start" />
+                  {isLoggingOut ? "Logging out..." : "Log out"}
+                </IonButton>
+              </IonMenuToggle>
             </IonCol>
           </IonRow>
         </IonGrid>

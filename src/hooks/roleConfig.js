@@ -56,7 +56,7 @@ export const roleConfig = {
          path: "/bookkeeper-client-list-base"},
       { label: "Inquiry",
          icon: chatbubbleOutline,
-          path: "/inquiry" },
+        path: "/bookkeeper-inquiry-forum" },
     ],
     homePath: "/bookkeeper-home",
     profilePath: "/bookkeeper-profile",

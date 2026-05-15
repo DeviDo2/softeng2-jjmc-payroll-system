@@ -7,7 +7,7 @@ function ProfileBookkeeper() {
       menuItems={[
         { label: "Client List History", link: "/current-computation", icon: documentTextOutline },
         { label: "Compute Client Staff Data", link: "/computation-history", icon: barChartOutline },
-        { label: "Inquiry", link: "/inquiry", icon: chatbubbleOutline },
+        { label: "Inquiry", link: "/bookkeeper-inquiry-forum", icon: chatbubbleOutline },
         { logoutIcon: logOutOutline }
       ]}
       editButtons={{

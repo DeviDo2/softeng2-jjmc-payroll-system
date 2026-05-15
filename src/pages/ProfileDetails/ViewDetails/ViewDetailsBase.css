@@ -39,6 +39,9 @@ ion-input {
   background: transparent !important;
 }
 
+ion-button {
+  margin-top: 0;
+}
 /* Optional item styling if used elsewhere */
 .input-item {
   --border-radius: 8px;

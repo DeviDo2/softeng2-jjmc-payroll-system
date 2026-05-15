@@ -1,35 +1,24 @@
-// InquiryReplyBox.jsx
 import React from "react";
 import { IonTextarea, IonButton } from "@ionic/react";
-import { useInquiryActions } from "../actions.js/useInquiryActions";
-import { auth } from "../../../database-components/firebaseConfig";
 
 export default function InquiryReplyBox({
   reply,
   setReply,
   activeInquiry,
   role,
-  onSuccess, // optional callback after send
+  onSend,
 }) {
-  const { sendReplyToFirebase, loading } = useInquiryActions();
-
   const handleSend = async () => {
-  await sendReplyToFirebase(
-    { reply, activeInquiry, role },
-    {
-      setShowSuccess: onSuccess, // <–– this triggers modal
-    },
-    () => {
-      setReply("");
-    }
-  );
-};
+    if (typeof onSend !== "function") return;
 
-  console.log("Sending reply:", { 
-    reply, 
-    inquiryID: activeInquiry?.id, 
-    role 
-  });
+    await onSend({
+      reply,
+      activeInquiry,
+      role,
+    });
+
+    setReply("");
+  };
 
   return (
     <>
@@ -37,15 +26,15 @@ export default function InquiryReplyBox({
         placeholder="Write a reply..."
         value={reply}
         autoGrow
-        onIonChange={(e) => setReply(e.detail.value)}
+        onIonChange={(e) => setReply(e.detail.value || "")}
       />
 
       <IonButton
         className="ion-margin-top"
         onClick={handleSend}
-        disabled={loading || !reply?.trim()}
+        disabled={!reply?.trim() || !activeInquiry || typeof onSend !== "function"}
       >
-        {loading ? "Sending..." : "Send Reply"}
+        Send Reply
       </IonButton>
     </>
   );
