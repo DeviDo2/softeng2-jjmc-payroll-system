@@ -136,8 +136,6 @@ export default function ComputationApproval() {
   }
 
   return (
-    <IonApp>
-      <Sidebar />
       <IonPage id="main-content">
         <IonContent className="computation-content">
           <IonImg
@@ -219,6 +217,5 @@ export default function ComputationApproval() {
         </IonContent>
         <FooterNav />
       </IonPage>
-    </IonApp>
   );
 }

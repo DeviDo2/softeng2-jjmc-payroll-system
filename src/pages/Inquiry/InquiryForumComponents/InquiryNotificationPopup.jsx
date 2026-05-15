@@ -43,13 +43,18 @@ export default function InquiryNotificationModal({
         cfg.subtitle = "It will appear after admin approval (if required).";
         break;
       case "admin": {
-        const isApprove = actionType === "approve";
-        cfg.showConfirm = true;
-        cfg.header = isApprove ? "Approve this response?" : "Reject this response?";
-        cfg.subtitle = isApprove
-          ? "Approving will make this reply visible to the client."
-          : "Rejecting will hide this reply from the client (a reason is optional).";
-        cfg.confirmLabel = isApprove ? "Approve" : "Reject";
+        if (actionType === "reply-sent") {
+          cfg.header = "Reply submitted!";
+          cfg.subtitle = "Awaiting your review.";
+        } else {
+          const isApprove = actionType === "approve";
+          cfg.showConfirm = true;
+          cfg.header = isApprove ? "Approve this response?" : "Reject this response?";
+          cfg.subtitle = isApprove
+            ? "Approving will make this reply visible to the client."
+            : "Rejecting will hide this reply from the client (a reason is optional).";
+          cfg.confirmLabel = isApprove ? "Approve" : "Reject";
+        }
         break;
       }
       default:
@@ -82,40 +87,40 @@ export default function InquiryNotificationModal({
 
   return (
     <IonModal isOpen={!!isOpen} onDidDismiss={onDidDismiss} cssClass="notification-modal">
-      <div style={{ padding: 24, textAlign: "center" }}>
-        <div style={{ display: "flex", justifyContent: "center", marginBottom: 12 }}>
-          <IonIcon icon={mailOutline} style={{ fontSize: 44 }} />
+      <div style={{ padding: "12px 16px", textAlign: "center" }}>
+        <div style={{ display: "flex", justifyContent: "center", marginBottom: 8 }}>
+          <IonIcon icon={mailOutline} style={{ fontSize: 32 }} />
         </div>
 
         <IonText>
-          <h2 style={{ margin: "6px 0 8px" }}>{header}</h2>
+          <h2 style={{ margin: "4px 0 6px", fontSize: "1.1rem" }}>{header}</h2>
         </IonText>
 
-        {subtitle ? <p style={{ marginTop: 0 }}>{subtitle}</p> : null}
+        {subtitle ? <p style={{ marginTop: 4, fontSize: "0.9rem" }}>{subtitle}</p> : null}
 
         {messageId ? (
-          <p style={{ color: "#666", fontSize: 13, marginTop: 8 }}>Message ID: {messageId}</p>
+          <p style={{ color: "#666", fontSize: 12, marginTop: 4 }}>Message ID: {messageId}</p>
         ) : null}
 
         {isAdminConfirm && actionType === "reject" && (
-          <div style={{ marginTop: 14 }}>
+          <div style={{ marginTop: 10 }}>
             <IonTextarea
-              placeholder="Optional rejection reason (client won't see internal notes if you leave blank depending on config)"
+              placeholder="Optional rejection reason (client won't see internal notes if left blank)"
               value={rejectReason}
               onIonChange={(e) => setRejectReason(e.detail.value)}
-              rows={4}
+              rows={3}
             />
           </div>
         )}
 
-        <div style={{ marginTop: 18 }}>
+        <div style={{ marginTop: 12 }}>
           {isAdminConfirm ? (
             <>
               <IonButton
                 expand="block"
                 onClick={handleConfirm}
                 disabled={submitting}
-                style={{ marginBottom: 8 }}
+                style={{ marginBottom: 6 }}
               >
                 {confirmLabel}
               </IonButton>

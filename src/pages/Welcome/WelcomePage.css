@@ -29,35 +29,12 @@
   margin: 1.5rem auto 2.5rem;
 }
 
-ion-button {
+.welcome-login-button {
   font-weight: 600;
   --background: #74C2D5;
   --color: #0A3F59;
   --border-radius: 12px;
   --box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-  
-}
-
-/* Centering dropdown list */
-ion-list {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  right: 0;
-  background-color: #74C2D5;
-  border: 0.5vh solid #74C2D5;
-  border-radius: 2vh;
-  z-index: 1000;
-  margin-top: 1.5vh;
-}
-.dropdown-item {
-  padding: 4vh 4vw;
-  color: #0A3F59;
-  cursor: pointer;
-  font-weight: bold;
-  background-color: #74C2D5;
-  text-align: left;
-  font-size: 4vh;
 }
 
 

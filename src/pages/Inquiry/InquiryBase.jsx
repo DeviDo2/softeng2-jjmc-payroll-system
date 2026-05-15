@@ -1,24 +1,13 @@
 import React from "react";
 
 import {
-  IonApp,
   IonPage,
   IonContent,
-  IonText,
   IonImg,
-  IonGrid,
-  IonRow,
-  IonCol,
   IonCard,
   IonCardContent,
-  IonFooter,
   IonButton,
   IonIcon,
-  IonMenu,
-  IonMenuToggle,
-  IonHeader,
-  IonToolbar,
-  IonTitle,
   IonList,
   IonItem,
   IonLabel,
@@ -33,7 +22,6 @@ import {
 import "./InquiryBase.css";
 import useAuthRole from "../../hooks/useAuthRole";
 
-import Sidebar from "../../components/Sidebar";
 import FooterNav from "../../components/FooterNav";
 
 function Inquiry() {
@@ -41,12 +29,9 @@ function Inquiry() {
   const { role } = useAuthRole() || { role: "Client-Staff" };
 
  return (
-  <IonApp>
-    <Sidebar />
-
     <IonPage id="main-content">
       <IonContent fullscreen className="inquiry-content">
-         <IonImg
+          <IonImg
             src="/assets/Gradient-Ellipses.png"
             alt="Background Ellipse"
             className="ellipse-bg"
@@ -70,7 +55,7 @@ function Inquiry() {
                   </IonLabel>
                   <IonIcon icon={chevronDownOutline} slot="end" />
                 </IonItem>
-                <IonList slot="content" className="accordion-content">
+                <IonList style={{ position: 'static' }} slot="content" className="accordion-content">
                   <IonItem>
                     <IonLabel>
                       We provide the following services:
@@ -91,7 +76,7 @@ function Inquiry() {
                   </IonLabel>
                   <IonIcon icon={chevronDownOutline} slot="end" />
                 </IonItem>
-                <IonList slot="content" className="accordion-content">
+                <IonList style={{ position: 'static' }} slot="content" className="accordion-content">
                   <IonItem>
                     <IonLabel>
                       Choosing JJMC allows you to benefit from our
@@ -119,10 +104,10 @@ function Inquiry() {
           </div>
         </div>
 
-        <FooterNav />
+        
       </IonContent>
+      <FooterNav/>
     </IonPage>
-  </IonApp>
 );
 }
 

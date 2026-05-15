@@ -1,8 +1,11 @@
 import { IonButton, IonIcon, IonGrid, IonRow, IonCol } from "@ionic/react";
 import { checkmarkOutline, closeOutline } from "ionicons/icons";
 
+const money = (value) => `₱${(Number(value) || 0).toFixed(2)}`;
+
 export default function DraftModal({ draft, onClose, onApprove, onRevise }) {
   if (!draft) return null;
+  const rows = Array.isArray(draft.data) ? draft.data : [];
 
   return (
     <div className="modal-overlay">
@@ -36,18 +39,22 @@ export default function DraftModal({ draft, onClose, onApprove, onRevise }) {
                 </thead>
 
                 <tbody>
-                  {draft.data.map((row, i) => (
+                  {rows.length === 0 ? (
+                    <tr>
+                      <td colSpan="10">No payroll rows found for this draft.</td>
+                    </tr>
+                  ) : rows.map((row, i) => (
                     <tr key={i}>
                       <td>{row.employeeCode}</td>
                       <td>{row.name}</td>
-                      <td>₱{row.ratePerHour.toFixed(2)}</td>
+                      <td>{money(row.ratePerHour)}</td>
                       <td>{row.hoursWorked}</td>
-                      <td>₱{row.grossPay.toFixed(2)}</td>
-                      <td>₱{row.sss.toFixed(2)}</td>
-                      <td>₱{row.phic.toFixed(2)}</td>
-                      <td>₱{row.hdmf.toFixed(2)}</td>
-                      <td>₱{row.bir.toFixed(2)}</td>
-                      <td style={{ fontWeight: "bold" }}>₱{row.netPay.toFixed(2)}</td>
+                      <td>{money(row.grossPay || row.grossMonthly)}</td>
+                      <td>{money(row.sss)}</td>
+                      <td>{money(row.phic || row.philHealth)}</td>
+                      <td>{money(row.hdmf || row.pagIbig)}</td>
+                      <td>{money(row.bir || row.tax)}</td>
+                      <td style={{ fontWeight: "bold" }}>{money(row.netPay)}</td>
                     </tr>
                   ))}
                 </tbody>

@@ -40,7 +40,7 @@ export default function AddClientModal({ isOpen, onDismiss, onSubmit }) {
       setAssignedName("UNASSIGNED");
     } else {
       setAssignedTo(bk.id);
-      setAssignedName(bk.fullName);
+      setAssignedName(bk.fullName || bk.email || "Unnamed Bookkeeper");
     }
     setShowBkPopover(false);
   };
@@ -58,6 +58,9 @@ export default function AddClientModal({ isOpen, onDismiss, onSubmit }) {
       const normalizedData = data.map((row) => ({
         employeeCode: row.employeeCode || "",
         name: row.name || "",
+        email: row.email || "",
+        taxId: row.taxId || row.taxIdNumber || "",
+        taxIdNumber: row.taxIdNumber || row.taxId || "",
         payrollPeriod: row.payrollPeriod || "Monthly 2024",
         businessUnit: row.businessUnit || "General",
         department: row.department || "",

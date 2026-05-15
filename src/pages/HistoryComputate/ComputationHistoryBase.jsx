@@ -23,9 +23,8 @@ import {
 import "./ComputationHistoryBase.css";
 import Sidebar from "../../components/Sidebar";
 import FooterNav from "../../components/FooterNav";
-import { collection, query, where, onSnapshot, orderBy } from "firebase/firestore";
-import { db } from "../../database-components/firebaseConfig";
 import useAuthRole from "../../hooks/useAuthRole";
+import { getComputationResultsForUser } from "../../services/computationResultsService";
 
 function ComputationHistory() {
   const [computations, setComputations] = useState([]);
@@ -33,32 +32,33 @@ function ComputationHistory() {
   const [isLoading, setIsLoading] = useState(true);
   const { user } = useAuthRole();
 
-  // GET ALL COMPUTATIONS FOR THIS CLIENT FROM DATABASE
   useEffect(() => {
-    if (!user?.uid) return;
-
-    const computationsRef = collection(db, "computationResults");
-    const q = query(
-      computationsRef, 
-      where("clientId", "==", user.uid),
-      orderBy("createdAt", "desc")
-    );
-    
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const comps = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
-      console.log("📊 All computations for this client:", comps);
-      setComputations(comps);
+    if (!user?.uid) {
       setIsLoading(false);
-    }, (error) => {
-      console.error("🔥 Error loading computations:", error);
-      setIsLoading(false);
-    });
+      return;
+    }
 
-    return () => unsubscribe();
-  }, [user?.uid]);
+    let cancelled = false;
+
+    const loadComputations = async () => {
+      setIsLoading(true);
+      try {
+        const comps = await getComputationResultsForUser(user);
+        if (!cancelled) setComputations(comps);
+      } catch (error) {
+        console.error("Error loading computations:", error);
+        if (!cancelled) setComputations([]);
+      } finally {
+        if (!cancelled) setIsLoading(false);
+      }
+    };
+
+    loadComputations();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [user]);
 
   // Get the computation to display
   const getDisplayComputation = () => {

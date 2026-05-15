@@ -64,8 +64,8 @@ export default function ViewDetailsBase() {
               company: snap.data().company || "",
               position: snap.data().position || "",
               department: snap.data().department || "",
-              salary: snap.data().salary || "",
-              taxId: snap.data().taxId || ""
+              salary: snap.data().salary || snap.data().salaryRate || "",
+              taxId: snap.data().taxId || snap.data().taxIdNumber || ""
             });
           }
         }
