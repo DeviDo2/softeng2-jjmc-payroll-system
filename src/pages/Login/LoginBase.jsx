@@ -53,6 +53,7 @@ function LoginBase() {
     "role-missing": "Account has no assigned role.",
     "role-unknown": "Your account role is not recognized.",
     "no-user-doc": "Account not found.",
+    "account-disabled": "This account is disabled. Please contact an administrator.",
   };
 
   const handleLogin = async (e) => {
@@ -84,12 +85,22 @@ function LoginBase() {
       if (!userSnap.exists()) throw { code: "no-user-doc" };
 
       const userData = userSnap.data();
-      const role = userData.role?.toLowerCase();
+      if (userData.disabled === true) throw { code: "account-disabled" };
+
+      const role = userData.role?.trim().toLowerCase().replace(/\s+/g, "-");
 
       if (!role) throw { code: "role-missing" };
 
       // Save session info
-      sessionStorage.setItem("jjmcUser", JSON.stringify(userData));
+      sessionStorage.setItem(
+        "jjmcUser",
+        JSON.stringify({
+          uid: user.uid,
+          email: user.email,
+          ...userData,
+          role,
+        })
+      );
       localStorage.setItem("role", role);
 
       // Redirect based on role
@@ -126,9 +137,9 @@ function LoginBase() {
       </IonHeader>
 
       <IonContent className="login-screen" fullscreen>
-        <IonImg src="/Ellipse 1 (1).png" className="login-ellipse-top" />
+        <IonImg src="/assets/Ellipse 1 (1).png" className="login-ellipse-top" />
         <IonImg
-          src="/Ellipse 2 (1).png"
+          src="/assets/Ellipse 2 (1).png"
           className="login-ellipse-bottom"
         />
 
@@ -137,7 +148,7 @@ function LoginBase() {
           {/* Logo Row */}
           <IonRow>
                 <IonCol size="12">
-                  <IonImg src="/JJMCLogo.png" className="JJMClogo" />
+                  <IonImg src="/assets/JJMCLogo.png" className="JJMClogo" />
                 </IonCol>
               </IonRow>
               
