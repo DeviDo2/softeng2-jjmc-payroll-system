@@ -10,11 +10,26 @@ import {
   IonCard,
   IonCardContent,
   IonButton,
+  IonButtons,
+  IonHeader,
+  IonInput,
+  IonItem,
+  IonLabel,
+  IonModal,
   IonSearchbar,
+  IonSelect,
+  IonSelectOption,
   IonSpinner,
+  IonTitle,
+  IonToast,
+  IonToolbar,
 } from "@ionic/react";
 
-import { fetchUsers } from "../../services/adminBackendService";
+import {
+  fetchUsers,
+  removeUserAccount,
+  updateUserAccount,
+} from "../../services/adminBackendService";
 import FooterNav from "../../components/FooterNav";
 import "./AdminPages.css";
 
@@ -51,6 +66,17 @@ const getRoleDetails = (role) =>
 
 const getUserId = (user) => user.id || user.uid || "No ID";
 
+const isAdminAccount = (user) => user?.role === "admin";
+
+const getCompanyName = (user) =>
+  user.company ||
+  user.companyName ||
+  user.assignedCompany ||
+  user.clientCompany ||
+  "JJMC";
+
+const getStatusValue = (user) => (user.disabled ? "disabled" : "active");
+
 const sortAccounts = (accounts) =>
   [...accounts].sort((a, b) => {
     const aName = getName(a).toLowerCase();
@@ -60,8 +86,9 @@ const sortAccounts = (accounts) =>
     return String(a.email || "").localeCompare(String(b.email || ""));
   });
 
-const AccountTable = ({ role, users, showCount = true }) => {
+const AccountTable = ({ role, users, showCount = true, onEdit, onRemove }) => {
   const roleDetails = getRoleDetails(role);
+  const companyColumn = role === "bookkeeper" ? "Assigned Company" : "Company";
 
   return (
     <div className="admin-account-section">
@@ -79,9 +106,8 @@ const AccountTable = ({ role, users, showCount = true }) => {
             <tr>
               <th>Name</th>
               <th>Email</th>
-              <th>Role</th>
               <th>User ID</th>
-              <th>Company</th>
+              <th>{companyColumn}</th>
               <th>Status</th>
             </tr>
           </thead>
@@ -90,10 +116,29 @@ const AccountTable = ({ role, users, showCount = true }) => {
               <tr key={getUserId(user)}>
                 <td>{getName(user)}</td>
                 <td>{user.email || "No email"}</td>
-                <td><span className="admin-role-badge">{roleDetails.label}</span></td>
                 <td className="admin-id-cell">{getUserId(user)}</td>
-                <td>{user.company || user.companyName || "JJMC"}</td>
-                <td><span className="admin-status">{user.disabled ? "Disabled" : "Active"}</span></td>
+                <td>{getCompanyName(user)}</td>
+                <td>
+                  <div className="admin-status-actions">
+                    <span className="admin-status">{user.disabled ? "Disabled" : "Active"}</span>
+                    {!isAdminAccount(user) && (
+                      <>
+                        <IonButton size="small" fill="outline" className="admin-table-action" onClick={() => onEdit(user)}>
+                          Edit
+                        </IonButton>
+                        <IonButton
+                          size="small"
+                          color="danger"
+                          fill="outline"
+                          className="admin-table-action"
+                          onClick={() => onRemove(user)}
+                        >
+                          Remove
+                        </IonButton>
+                      </>
+                    )}
+                  </div>
+                </td>
               </tr>
             ))}
           </tbody>
@@ -108,12 +153,39 @@ export default function ManageAccountsAdmin() {
   const [users, setUsers] = useState([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
+  const [savingAccount, setSavingAccount] = useState(false);
   const [backendError, setBackendError] = useState("");
+  const [editingUser, setEditingUser] = useState(null);
+  const [editForm, setEditForm] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    phoneNumber: "",
+    company: "",
+    department: "",
+    position: "",
+    status: "active",
+    password: "",
+  });
+  const [toast, setToast] = useState({ open: false, message: "" });
+
+  const loadUsers = async () => {
+    setLoading(true);
+    try {
+      const backendUsers = await fetchUsers();
+      setUsers(backendUsers);
+      setBackendError("");
+    } catch (error) {
+      setBackendError(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     let active = true;
 
-    const loadUsers = async () => {
+    const loadActiveUsers = async () => {
       setLoading(true);
       try {
         const backendUsers = await fetchUsers();
@@ -127,7 +199,7 @@ export default function ManageAccountsAdmin() {
       }
     };
 
-    loadUsers();
+    loadActiveUsers();
 
     return () => {
       active = false;
@@ -143,14 +215,82 @@ export default function ManageAccountsAdmin() {
     );
   }, [search, users]);
 
+  const admins = filtered.filter((user) => user.role === "admin");
   const bookkeepers = filtered.filter((user) => user.role === "bookkeeper");
   const clientStaff = filtered.filter((user) => user.role === "client-staff");
-  const admins = filtered.filter((user) => user.role === "admin");
+  const openEditModal = (user) => {
+    setEditingUser(user);
+    setEditForm({
+      firstName: user.firstName || "",
+      lastName: user.lastName || "",
+      email: user.email || "",
+      phoneNumber: user.phoneNumber || "",
+      company: getCompanyName(user),
+      department: user.department || "",
+      position: user.position || "",
+      status: getStatusValue(user),
+      password: "",
+    });
+  };
+
+  const updateEditField = (field, value) => {
+    setEditForm((current) => ({ ...current, [field]: value }));
+  };
+
+  const handleSaveAccount = async () => {
+    if (!editingUser) return;
+
+    setSavingAccount(true);
+    try {
+      const editingAdmin = isAdminAccount(editingUser);
+      const updates = {
+        ...editForm,
+        disabled: editingAdmin ? editingUser.disabled === true : editForm.status === "disabled",
+      };
+
+      delete updates.status;
+
+      if (editingAdmin) {
+        delete updates.email;
+        delete updates.password;
+        delete updates.disabled;
+      } else if (!updates.password) {
+        delete updates.password;
+      }
+
+      await updateUserAccount(getUserId(editingUser), updates);
+      setToast({ open: true, message: "Account updated." });
+      setEditingUser(null);
+      loadUsers();
+    } catch (error) {
+      setToast({ open: true, message: error.message || "Unable to update account." });
+    } finally {
+      setSavingAccount(false);
+    }
+  };
+
+  const handleRemoveAccount = async (user) => {
+    if (isAdminAccount(user)) {
+      setToast({ open: true, message: "Admin accounts cannot be removed here." });
+      return;
+    }
+
+    const name = getName(user);
+    if (!window.confirm(`Remove ${name}? This will permanently delete the account.`)) return;
+
+    try {
+      await removeUserAccount(getUserId(user));
+      setToast({ open: true, message: "Account removed." });
+      loadUsers();
+    } catch (error) {
+      setToast({ open: true, message: error.message || "Unable to remove account." });
+    }
+  };
 
   return (
     <IonPage id="main-content">
       <IonContent fullscreen className="admin-content">
-        <IonImg src="/Gradient-Ellipses.png" className="admin-bg" />
+        <IonImg src="/assets/Gradient-Ellipses.png" className="admin-bg" />
 
         <IonGrid className="admin-shell">
           <IonRow>
@@ -166,7 +306,7 @@ export default function ManageAccountsAdmin() {
           </IonRow>
 
           <IonRow>
-            <IonCol size="12" sizeMd="6">
+            <IonCol size="12" sizeMd="4">
               <IonCard className="admin-card">
                 <IonCardContent>
                   <p className="admin-stat">{clientStaff.length}</p>
@@ -174,11 +314,19 @@ export default function ManageAccountsAdmin() {
                 </IonCardContent>
               </IonCard>
             </IonCol>
-            <IonCol size="12" sizeMd="6">
+            <IonCol size="12" sizeMd="4">
               <IonCard className="admin-card">
                 <IonCardContent>
                   <p className="admin-stat">{bookkeepers.length}</p>
                   <p className="admin-card-text">Bookkeeper accounts</p>
+                </IonCardContent>
+              </IonCard>
+            </IonCol>
+            <IonCol size="12" sizeMd="4">
+              <IonCard className="admin-card">
+                <IonCardContent>
+                  <p className="admin-stat">{admins.length}</p>
+                  <p className="admin-card-text">Admin accounts</p>
                 </IonCardContent>
               </IonCard>
             </IonCol>
@@ -218,22 +366,123 @@ export default function ManageAccountsAdmin() {
             <>
               <IonRow>
                 <IonCol>
-                  <AccountTable role="client-staff" users={clientStaff} />
+                  <AccountTable
+                    role="client-staff"
+                    users={clientStaff}
+                    onEdit={openEditModal}
+                    onRemove={handleRemoveAccount}
+                  />
                 </IonCol>
               </IonRow>
               <IonRow>
                 <IonCol>
-                  <AccountTable role="bookkeeper" users={bookkeepers} />
+                  <AccountTable
+                    role="bookkeeper"
+                    users={bookkeepers}
+                    onEdit={openEditModal}
+                    onRemove={handleRemoveAccount}
+                  />
                 </IonCol>
               </IonRow>
               <IonRow>
                 <IonCol>
-                  <AccountTable role="admin" users={admins} showCount={false} />
+                  <AccountTable
+                    role="admin"
+                    users={admins}
+                    onEdit={openEditModal}
+                    onRemove={handleRemoveAccount}
+                  />
                 </IonCol>
               </IonRow>
             </>
           )}
         </IonGrid>
+
+        <IonModal isOpen={Boolean(editingUser)} onDidDismiss={() => setEditingUser(null)}>
+          <IonHeader>
+            <IonToolbar>
+              <IonTitle>Edit Account</IonTitle>
+              <IonButtons slot="end">
+                <IonButton onClick={() => setEditingUser(null)}>Close</IonButton>
+              </IonButtons>
+            </IonToolbar>
+          </IonHeader>
+          <IonContent className="admin-modal-content">
+            <div className="admin-modal-form">
+              {isAdminAccount(editingUser) && (
+                <p className="admin-warning">
+                  Admin credentials, status, and deletion are protected from this page.
+                </p>
+              )}
+              <IonItem>
+                <IonLabel position="stacked">First Name</IonLabel>
+                <IonInput value={editForm.firstName} onIonInput={(event) => updateEditField("firstName", event.detail.value || "")} />
+              </IonItem>
+              <IonItem>
+                <IonLabel position="stacked">Last Name</IonLabel>
+                <IonInput value={editForm.lastName} onIonInput={(event) => updateEditField("lastName", event.detail.value || "")} />
+              </IonItem>
+              <IonItem>
+                <IonLabel position="stacked">Email</IonLabel>
+                <IonInput
+                  type="email"
+                  value={editForm.email}
+                  disabled={isAdminAccount(editingUser)}
+                  onIonInput={(event) => updateEditField("email", event.detail.value || "")}
+                />
+              </IonItem>
+              <IonItem>
+                <IonLabel position="stacked">Phone Number</IonLabel>
+                <IonInput value={editForm.phoneNumber} onIonInput={(event) => updateEditField("phoneNumber", event.detail.value || "")} />
+              </IonItem>
+              <IonItem>
+                <IonLabel position="stacked">Company</IonLabel>
+                <IonInput value={editForm.company} onIonInput={(event) => updateEditField("company", event.detail.value || "")} />
+              </IonItem>
+              <IonItem>
+                <IonLabel position="stacked">Department</IonLabel>
+                <IonInput value={editForm.department} onIonInput={(event) => updateEditField("department", event.detail.value || "")} />
+              </IonItem>
+              <IonItem>
+                <IonLabel position="stacked">Position</IonLabel>
+                <IonInput value={editForm.position} onIonInput={(event) => updateEditField("position", event.detail.value || "")} />
+              </IonItem>
+              <IonItem>
+                <IonLabel position="stacked">Status</IonLabel>
+                <IonSelect
+                  value={editForm.status}
+                  disabled={isAdminAccount(editingUser)}
+                  onIonChange={(event) => updateEditField("status", event.detail.value)}
+                >
+                  <IonSelectOption value="active">Active</IonSelectOption>
+                  <IonSelectOption value="disabled">Disabled</IonSelectOption>
+                </IonSelect>
+              </IonItem>
+              <IonItem>
+                <IonLabel position="stacked">New Password</IonLabel>
+                <IonInput
+                  type="password"
+                  value={editForm.password}
+                  placeholder="Leave blank to keep current password"
+                  disabled={isAdminAccount(editingUser)}
+                  onIonInput={(event) => updateEditField("password", event.detail.value || "")}
+                />
+              </IonItem>
+              <div className="admin-actions">
+                <IonButton className="admin-primary-btn" onClick={handleSaveAccount} disabled={savingAccount}>
+                  {savingAccount ? <IonSpinner name="crescent" /> : "Save Changes"}
+                </IonButton>
+              </div>
+            </div>
+          </IonContent>
+        </IonModal>
+
+        <IonToast
+          isOpen={toast.open}
+          message={toast.message}
+          duration={2500}
+          onDidDismiss={() => setToast({ open: false, message: "" })}
+        />
       </IonContent>
 
       <FooterNav />
