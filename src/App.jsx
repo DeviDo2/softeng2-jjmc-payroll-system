@@ -82,6 +82,10 @@ import InquiryBookkeeper from "./pages/BookkeeperOnly/InquiryForumBookkeeper";
 import HomeAdmin from "./pages/AdminOnly/HomeAdmin";
 import InquiryForumAdmin from "./pages/AdminOnly/InquiryForumAdmin";
 
+import SystemMonitorAdmin from "./pages/AdminOnly/SystemMonitorAdmin";
+import ManageAccountsAdmin from "./pages/AdminOnly/ManageAccountsAdmin";
+import BookkeeperAccountsAdmin from "./pages/AdminOnly/BookkeeperAccountsAdmin";
+
 import ComputationApproval from "./pages/AdminOnly/ComputationApproval/ComputationApproval";
 import AssignBookkeeper from "./pages/AdminOnly/AssignBookkeeper/AssignBookkeeper";
 import ManageTutorialsAdmin from "./pages/AdminOnly/ManageTutorialsAdmin";
@@ -176,6 +180,9 @@ function App() {
                 </RoleGuard>
               )}
             />
+            <Route exact path="/admin-system-monitor" component={SystemMonitorAdmin} />
+            <Route exact path="/admin-manage-accounts" component={ManageAccountsAdmin} />
+            <Route exact path="/admin-bookkeeper-accounts" component={BookkeeperAccountsAdmin} />
             <Route exact path="/admin-inquiry-forum" component={InquiryForumAdmin} />
             <Route exact path="/admin-computation-approval" component={ComputationApproval} />
             <Route exact path="/admin-assign-bookkeeper" component={AssignBookkeeper} />

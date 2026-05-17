@@ -67,10 +67,10 @@ export const roleConfig = {
     dashboardCards: [
       { title: "System Monitor",
          subtitle: "Admin overview",
-          path: "/admin-dashboard" },
+          path: "/admin-system-monitor" },
       { title: "User Management", 
         subtitle: "Manage accounts",
-         path: "/user-management" },
+         path: "/admin-manage-accounts" },
     ],
     menuItems: [
       { label: "Computation Approval",
