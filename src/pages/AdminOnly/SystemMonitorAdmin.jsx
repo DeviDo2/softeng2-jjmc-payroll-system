@@ -22,7 +22,7 @@ const monitors = [
   { key: "bookkeepers", label: "Bookkeepers" },
   { key: "clients", label: "Client Companies" },
   { key: "inquiries", label: "Inquiries" },
-  { key: "drafts", label: "Payroll Computation" },
+  { key: "drafts", label: "Payroll Drafts" },
   { key: "pendingDrafts", label: "Pending Approvals" },
   { key: "tutorials", label: "Tutorials" },
 ];
@@ -130,6 +130,17 @@ const getDraftDisplayName = (draft) =>
   draft.clientName ||
   draft.company ||
   "Unnamed draft";
+
+const getDraftFileType = (draft) => {
+  const explicitType = draft.fileType || draft.type || draft.mimeType;
+  const fileName = draft.fileName || draft.filename || "";
+  const extension = fileName.includes(".") ? fileName.split(".").pop() : "";
+
+  if (explicitType) return String(explicitType).replace("text/", "").toUpperCase();
+  if (extension) return extension.toUpperCase();
+  if (draft.csv || draft.parsedCSV || draft.csvData) return "CSV";
+  return "DRAFT";
+};
 
 export default function SystemMonitorAdmin() {
   const [data, setData] = useState(initialData);
@@ -258,6 +269,7 @@ export default function SystemMonitorAdmin() {
           .map((draft) => ({
             id: draft.id || `${getDraftDisplayName(draft)}-${getDraftStatus(draft)}`,
             name: getDraftDisplayName(draft),
+            fileType: getDraftFileType(draft),
           })),
       })),
     [data.drafts, payrollActivity.items]
@@ -266,7 +278,7 @@ export default function SystemMonitorAdmin() {
   return (
     <IonPage id="main-content">
       <IonContent fullscreen className="admin-content">
-        <IonImg src="/assets/Gradient-Ellipses.png" className="admin-bg" />
+        <IonImg src="/Gradient-Ellipses.png" className="admin-bg" />
 
         <IonGrid className="admin-shell">
           <IonRow>
@@ -331,10 +343,10 @@ export default function SystemMonitorAdmin() {
                     <div>
                       <h2 className="admin-card-title">Payroll Activity</h2>
                       <p className="admin-section-description">
-                        Computation counts by current payroll workflow status.
+                        Draft counts by current payroll workflow status.
                       </p>
                     </div>
-                    <span className="admin-count-badge">{stats.drafts} computations</span>
+                    <span className="admin-count-badge">{stats.drafts} drafts</span>
                   </div>
 
                   <div className="admin-payroll-donut-chart">
@@ -357,7 +369,7 @@ export default function SystemMonitorAdmin() {
                       </svg>
                       <div className="admin-donut-center">
                         <strong>{payrollActivity.total}</strong>
-                        <span>computations</span>
+                        <span>drafts</span>
                       </div>
                     </div>
 
@@ -375,7 +387,7 @@ export default function SystemMonitorAdmin() {
                       </div>
 
                       <div className="admin-draft-checker">
-                        <h3>Computation Checker</h3>
+                        <h3>Draft Checker</h3>
                         {draftCheckerGroups.map((group) => (
                           <div className="admin-draft-checker-group" key={group.key}>
                             <div className="admin-draft-checker-heading">
@@ -387,6 +399,7 @@ export default function SystemMonitorAdmin() {
                                 {group.drafts.map((draft) => (
                                   <div className="admin-draft-checker-item" key={draft.id}>
                                     <span>{draft.name}</span>
+                                    <strong>{draft.fileType}</strong>
                                   </div>
                                 ))}
                               </div>

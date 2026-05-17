@@ -17,8 +17,6 @@ import {
   IonSpinner,
   IonToast,
 } from "@ionic/react";
-import { eyeOffOutline, eyeOutline } from "ionicons/icons";
-import { IonIcon } from "@ionic/react";
 
 import {
   createBookkeeperViaBackend,
@@ -33,6 +31,8 @@ const initialForm = {
   email: "",
   password: "",
   phoneNumber: "",
+  department: "",
+  position: "",
 };
 
 const getName = (user) =>
@@ -50,39 +50,12 @@ const sortBookkeepers = (users) =>
     return String(a.email || "").localeCompare(String(b.email || ""));
   });
 
-const generateTemporaryPassword = () => {
-  const groups = [
-    "ABCDEFGHJKLMNPQRSTUVWXYZ",
-    "abcdefghijkmnopqrstuvwxyz",
-    "23456789",
-    "!@#$%&*?",
-  ];
-  const alphabet = groups.join("");
-  const values = new Uint32Array(18);
-  window.crypto.getRandomValues(values);
-
-  const required = groups.map((group, index) => group[values[index] % group.length]);
-  const rest = Array.from(
-    values.slice(required.length),
-    (value) => alphabet[value % alphabet.length]
-  );
-  const password = [...required, ...rest];
-
-  for (let index = password.length - 1; index > 0; index -= 1) {
-    const swapIndex = values[index] % (index + 1);
-    [password[index], password[swapIndex]] = [password[swapIndex], password[index]];
-  }
-
-  return password.join("");
-};
-
 export default function BookkeeperAccountsAdmin() {
   const [bookkeepers, setBookkeepers] = useState([]);
   const [form, setForm] = useState(initialForm);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
   const [toast, setToast] = useState({ open: false, message: "" });
   const [backendError, setBackendError] = useState("");
 
@@ -116,10 +89,6 @@ export default function BookkeeperAccountsAdmin() {
     setForm((current) => ({ ...current, [field]: value }));
   };
 
-  const handleGeneratePassword = () => {
-    updateField("password", generateTemporaryPassword());
-  };
-
   const handleCreate = async (event) => {
     event.preventDefault();
 
@@ -151,7 +120,7 @@ export default function BookkeeperAccountsAdmin() {
   return (
     <IonPage id="main-content">
       <IonContent fullscreen className="admin-content">
-        <IonImg src="/assets/Gradient-Ellipses.png" className="admin-bg" />
+        <IonImg src="/Gradient-Ellipses.png" className="admin-bg" />
 
         <IonGrid className="admin-shell">
           <IonRow>
@@ -186,31 +155,19 @@ export default function BookkeeperAccountsAdmin() {
                     </IonItem>
                     <IonItem>
                       <IonLabel position="stacked">Temporary Password</IonLabel>
-                      <IonInput
-                        readonly
-                        type={showPassword ? "text" : "password"}
-                        value={form.password}
-                        placeholder="Generate a secure password"
-                      />
-                      <IonButton
-                        className="admin-password-toggle"
-                        fill="clear"
-                        slot="end"
-                        type="button"
-                        onClick={() => setShowPassword((current) => !current)}
-                        aria-label={showPassword ? "Hide generated password" : "Show generated password"}
-                      >
-                        <IonIcon icon={showPassword ? eyeOffOutline : eyeOutline} />
-                      </IonButton>
+                      <IonInput type="password" value={form.password} onIonInput={(event) => updateField("password", event.detail.value || "")} />
                     </IonItem>
-                    <div className="admin-inline-action">
-                      <IonButton className="admin-secondary-btn" fill="outline" type="button" onClick={handleGeneratePassword}>
-                        Generate Password
-                      </IonButton>
-                    </div>
                     <IonItem>
                       <IonLabel position="stacked">Phone Number</IonLabel>
                       <IonInput value={form.phoneNumber} onIonInput={(event) => updateField("phoneNumber", event.detail.value || "")} />
+                    </IonItem>
+                    <IonItem>
+                      <IonLabel position="stacked">Department</IonLabel>
+                      <IonInput value={form.department} onIonInput={(event) => updateField("department", event.detail.value || "")} />
+                    </IonItem>
+                    <IonItem>
+                      <IonLabel position="stacked">Position</IonLabel>
+                      <IonInput value={form.position} onIonInput={(event) => updateField("position", event.detail.value || "")} />
                     </IonItem>
                     <div className="admin-actions">
                       <IonButton className="admin-primary-btn" type="submit" disabled={saving}>
@@ -255,6 +212,8 @@ export default function BookkeeperAccountsAdmin() {
                         <th>Name</th>
                         <th>Email</th>
                         <th>Phone</th>
+                        <th>Department</th>
+                        <th>Position</th>
                         <th>Status</th>
                       </tr>
                     </thead>
@@ -264,6 +223,8 @@ export default function BookkeeperAccountsAdmin() {
                           <td>{getName(user)}</td>
                           <td>{user.email || "No email"}</td>
                           <td>{user.phoneNumber || "Not set"}</td>
+                          <td>{user.department || "Accounting"}</td>
+                          <td>{user.position || "Bookkeeper"}</td>
                           <td><span className="admin-status">{user.disabled ? "Disabled" : "Active"}</span></td>
                         </tr>
                       ))}
