@@ -116,6 +116,18 @@
   margin-top: 14px;
 }
 
+.admin-inline-action {
+  align-items: end;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.admin-password-toggle {
+  --color: #0a3f59;
+  margin-top: 14px;
+}
+
 .admin-primary-btn {
   --background: #0a3f59;
   --color: #ffffff;
@@ -194,6 +206,36 @@
   font-size: 0.8rem;
   font-weight: 700;
   padding: 4px 10px;
+}
+
+.admin-status-actions {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.admin-table-action {
+  --border-radius: 6px;
+  font-family: Poppins, sans-serif;
+  font-size: 0.75rem;
+  min-height: 28px;
+}
+
+.admin-modal-content {
+  --background: #ffffff;
+}
+
+.admin-modal-form {
+  display: grid;
+  gap: 12px;
+  padding: 18px;
+}
+
+.admin-modal-form ion-item {
+  --background: #ffffff;
+  border: 1px solid #d8edf2;
+  border-radius: 8px;
 }
 
 .admin-account-section {
@@ -398,15 +440,22 @@
 
 .admin-draft-checker-heading {
   align-items: center;
-  display: grid;
+  display: flex;
   gap: 8px;
-  grid-template-columns: 12px minmax(0, 1fr);
+  justify-content: center;
+  position: relative;
 }
 
 .admin-draft-checker-heading strong {
   color: #0a3f59;
   font-family: Poppins, sans-serif;
   font-size: 0.88rem;
+  text-align: center;
+}
+
+.admin-draft-checker-heading .admin-donut-dot {
+  left: 0;
+  position: absolute;
 }
 
 .admin-draft-checker-list {
@@ -419,14 +468,10 @@
   background: #f8fdfe;
   border: 1px solid #e9fbfc;
   border-radius: 6px;
-  display: grid;
-  gap: 10px;
-  grid-template-columns: minmax(0, 1fr) auto;
   padding: 8px 10px;
 }
 
 .admin-draft-checker-item span,
-.admin-draft-checker-item strong,
 .admin-draft-checker-empty {
   font-family: Poppins, sans-serif;
   font-size: 0.82rem;
@@ -437,13 +482,6 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-
-.admin-draft-checker-item strong {
-  background: #e9fbfc;
-  border-radius: 999px;
-  color: #0a3f59;
-  padding: 3px 8px;
 }
 
 .admin-draft-checker-empty {
