@@ -16,8 +16,8 @@ function WelcomePage() {
   return (
     <IonPage>
       <IonContent fullscreen className="welcome-content">
-        <IonImg src="/assets/Ellipse 1 (1).png" className="ellipse-top" alt="Background Ellipse Top" />
-        <IonImg src="/assets/Ellipse 2 (1).png" className="ellipse-bottom" alt="Background Ellipse Bottom" />
+        <IonImg src="/Ellipse 1 (1).png" className="ellipse-top" alt="Background Ellipse Top" />
+        <IonImg src="/Ellipse 2 (1).png" className="ellipse-bottom" alt="Background Ellipse Bottom" />
 
         <IonGrid className="ion-text-center ion-justify-content-center ion-align-items-center full-height">
           <IonRow>
