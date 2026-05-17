@@ -272,7 +272,7 @@ function ComputationPage() {
       <Sidebar />
       <IonPage id="main-content">
         <IonContent fullscreen className="computation-content">
-          <IonImg src="/assets/Gradient-Ellipses.png" className="ellipse-bg" />
+          <IonImg src="/Gradient-Ellipses.png" className="ellipse-bg" />
           <IonGrid className="ion-padding">
            
             <IonRow>

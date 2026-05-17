@@ -59,7 +59,7 @@ function ProfilePageBase() {
       <IonPage id="main-content">
         <IonContent fullscreen className="home-content">
           <IonImg
-            src="/assets/Gradient-Ellipses.png"
+            src="/Gradient-Ellipses.png"
             alt="Background"
             className="ellipse-bg"
           />
@@ -82,7 +82,7 @@ function ProfilePageBase() {
                       src={
                         profilePic
                           ? profilePic
-                          : "/assets/myprofilesample.png"
+                          : "/myprofilesample.png"
                       }
                       alt="User"
                       className="profile-photo"

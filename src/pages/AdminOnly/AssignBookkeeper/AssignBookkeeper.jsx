@@ -223,7 +223,7 @@ export default function AssignBookkeeper() {
       <IonPage id="assign-content">
         <IonContent>
           <IonImg
-            src="../assets/Gradient-Ellipses.png"
+            src="../Gradient-Ellipses.png"
             alt="Background Ellipse"
             className="ellipse-bg"
           />

@@ -108,7 +108,7 @@ function ComputationHistory() {
         <IonContent fullscreen className="computation-history-content">
           {/* BACKGROUND ELLIPSES */}
          <IonImg
-            src="/assets/Gradient-Ellipses.png"
+            src="/Gradient-Ellipses.png"
             alt="Background Ellipse"
             className="ellipse-bg"
           />

@@ -47,7 +47,7 @@ function HomePageBase() {
 
       <IonPage id="main-content">
         <IonContent fullscreen className="home-content">
-          <IonImg src="/assets/Gradient-Ellipses.png" className="ellipse-bg" />
+          <IonImg src="/Gradient-Ellipses.png" className="ellipse-bg" />
 
           <IonGrid>
             <IonRow>

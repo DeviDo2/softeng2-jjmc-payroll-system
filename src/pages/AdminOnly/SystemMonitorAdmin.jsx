@@ -278,7 +278,7 @@ export default function SystemMonitorAdmin() {
   return (
     <IonPage id="main-content">
       <IonContent fullscreen className="admin-content">
-        <IonImg src="/assets/Gradient-Ellipses.png" className="admin-bg" />
+        <IonImg src="/Gradient-Ellipses.png" className="admin-bg" />
 
         <IonGrid className="admin-shell">
           <IonRow>

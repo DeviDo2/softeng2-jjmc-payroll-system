@@ -95,7 +95,7 @@ export default function EditDetailsBase({
 
       <IonPage id="main-page">
         <IonContent fullscreen className="edit-content">
-          <IonImg src="/assets/Gradient-Ellipses.png" className="ellipse-bg" />
+          <IonImg src="/Gradient-Ellipses.png" className="ellipse-bg" />
 
           <div className="full-height-wrapper">
             <div className="edit-card">

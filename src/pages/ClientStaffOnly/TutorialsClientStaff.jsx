@@ -55,7 +55,7 @@ const TutorialsClientStaff = () => {
       <IonPage id="main-content">
         <IonContent className="tutorial-content">
           {/* Background Ellipse */}
-          <IonImg src="/assets/Gradient-Ellipses.png" className="ellipse-bg" />
+          <IonImg src="/Gradient-Ellipses.png" className="ellipse-bg" />
 
           {/* HEADER */}
           <IonGrid>

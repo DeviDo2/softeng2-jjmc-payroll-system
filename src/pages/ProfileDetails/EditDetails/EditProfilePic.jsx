@@ -178,7 +178,7 @@ function EditProfilePic() {
                 src={
                   preview ||
                   currentImage ||
-                  "/assets/myprofilesample.png"
+                  "/myprofilesample.png"
                 }
                 className="profile-preview"
                

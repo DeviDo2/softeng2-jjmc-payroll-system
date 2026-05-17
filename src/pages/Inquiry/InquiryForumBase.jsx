@@ -173,7 +173,7 @@ export default function InquiryForumBase({ role: propRole }) {
       <IonPage id="main-content">
         <IonContent fullscreen className="inquiry-forum-content">
           <IonImg
-            src="/assets/Gradient-Ellipses.png"
+            src="/Gradient-Ellipses.png"
             alt="Ellipses"
             className="ellipse-bg"
           />

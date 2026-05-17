@@ -32,7 +32,7 @@ function Inquiry() {
     <IonPage id="main-content">
       <IonContent fullscreen className="inquiry-content">
           <IonImg
-            src="/assets/Gradient-Ellipses.png"
+            src="/Gradient-Ellipses.png"
             alt="Background Ellipse"
             className="ellipse-bg"
           />
