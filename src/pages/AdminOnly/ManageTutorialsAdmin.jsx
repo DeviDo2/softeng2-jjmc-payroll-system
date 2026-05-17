@@ -217,7 +217,7 @@ const ManageTutorialsAdmin = () => {
 
         <IonContent className="tutorial-content" fullscreen>
           <IonImg
-                      src="../assets/Gradient-Ellipses.png"
+                      src="../Gradient-Ellipses.png"
                       alt="Background Ellipse"
                       className="ellipse-bg"
                     />
@@ -251,7 +251,7 @@ const ManageTutorialsAdmin = () => {
                       <IonRow>
                         <IonCol size="12" size-md="4">
                           <img
-                            src={item.thumbnailUrl || "/assets/video-placeholder.png"}
+                            src={item.thumbnailUrl || "/video-placeholder.png"}
                             alt="thumbnail"
                             className="video-thumb"
                           />

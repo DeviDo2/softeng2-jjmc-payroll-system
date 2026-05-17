@@ -139,7 +139,7 @@ export default function ComputationApproval() {
       <IonPage id="main-content">
         <IonContent className="computation-content">
           <IonImg
-            src="../../assets/Gradient-Ellipses.png"
+            src="../../Gradient-Ellipses.png"
             alt="Background"
             className="ellipse-bg"
           />

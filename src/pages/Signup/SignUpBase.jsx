@@ -217,8 +217,8 @@ function SignUpBase({ role: propRole }) {
       </IonHeader>
 
       <IonContent className="signup-screen" fullscreen scrollY={true}>
-        <IonImg src="/assets/Ellipse 1 (1).png" className="signup-ellipse-top" />
-        <IonImg src="/assets/Ellipse 2 (1).png" className="signup-ellipse-bottom" />
+        <IonImg src="/Ellipse 1 (1).png" className="signup-ellipse-top" />
+        <IonImg src="/Ellipse 2 (1).png" className="signup-ellipse-bottom" />
 
         <div className="full-height-wrapper">
         <IonGrid className="signup-container-grid">

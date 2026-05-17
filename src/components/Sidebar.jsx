@@ -102,7 +102,7 @@ export default function Sidebar({ onLogout }) {
             <IonCol size="12" className="ion-text-center">
           <div className="logo-card">
             <div className="logo-placeholder">
-              <IonImg src="/assets/JJMCLogo.png" />   {/* your logo image */}
+              <IonImg src="/JJMCLogo.png" />   {/* your logo image */}
             </div>
             <IonText className="company-subtitle">
               Tax and Accounting services

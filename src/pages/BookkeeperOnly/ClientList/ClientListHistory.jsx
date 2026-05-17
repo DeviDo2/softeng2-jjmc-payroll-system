@@ -507,7 +507,7 @@ function ClientListHistory() {
 
       <IonPage id="main-content">
         <IonContent fullscreen className="client-list-content">
-          <IonImg src="/assets/Gradient-Ellipses.png" alt="BG" className="ellipse-bg" />
+          <IonImg src="/Gradient-Ellipses.png" alt="BG" className="ellipse-bg" />
 
           <div className="client-card-container">
           <IonGrid>

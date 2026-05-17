@@ -154,7 +154,7 @@ const ClientEmployeeList = () => {
 
         <IonContent fullscreen className="employee-list-content">
           <IonImg
-            src="/assets/Gradient-Ellipses.png"
+            src="/Gradient-Ellipses.png"
             className="ellipse-bg"
             onError={(e) => (e.target.style.display = "none")}
           />

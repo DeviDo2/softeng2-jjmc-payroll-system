@@ -97,7 +97,7 @@ function CurrentComputation() {
       <IonPage id="main-content">
         <IonContent fullscreen className="computation-content">
           <IonImg
-            src="/assets/Gradient-Ellipses.png"
+            src="/Gradient-Ellipses.png"
             alt="Background Ellipse"
             className="ellipse-bg"
           />
