@@ -137,9 +137,9 @@ function LoginBase() {
       </IonHeader>
 
       <IonContent className="login-screen" fullscreen>
-        <IonImg src="/assets/Ellipse 1 (1).png" className="login-ellipse-top" />
+        <IonImg src="/Ellipse 1 (1).png" className="login-ellipse-top" />
         <IonImg
-          src="/assets/Ellipse 2 (1).png"
+          src="/Ellipse 2 (1).png"
           className="login-ellipse-bottom"
         />
 
