@@ -31,7 +31,7 @@ function WelcomePage() {
           <IonRow>
             <IonCol size="12" sizeMd="8" offsetMd="2">
               <IonImg
-                src="/assets/welcome-illustration.png"
+                src="/welcome-illustration.png"
                 alt="Welcome Illustration"
                 className="welcome-img"
               />

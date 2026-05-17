@@ -97,3 +97,6 @@ src/admin-tools/*.json
 # Optional: OS junk
 .DS_Store
 Thumbs.db
+
+.vercel
+.env*.local
