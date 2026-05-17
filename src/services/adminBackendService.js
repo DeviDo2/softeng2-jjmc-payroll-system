@@ -15,6 +15,7 @@ import {
   getDocs,
   serverTimestamp,
   setDoc,
+  updateDoc,
 } from "firebase/firestore";
 import {
   auth,
@@ -228,6 +229,37 @@ export const fetchUsers = () =>
 
 export const fetchBookkeepers = () =>
   requestArray("/users/bookkeepers", ["bookkeepers", "users"], fetchBookkeepersFromFirestore);
+
+export const updateUserAccount = async (uid, updates) => {
+  await getCurrentAdminUser();
+  const authBackedFields = ["email", "password", "disabled", "role"];
+  const requiresBackend = authBackedFields.some((field) =>
+    Object.prototype.hasOwnProperty.call(updates, field)
+  );
+
+  try {
+    return await adminBackendRequest(`/users/${uid}`, {
+      method: "PUT",
+      body: JSON.stringify(updates),
+    });
+  } catch (backendError) {
+    if (requiresBackend) throw backendError;
+
+    await updateDoc(doc(db, "users", uid), {
+      ...updates,
+      updatedAt: serverTimestamp(),
+    });
+    return { message: "User updated." };
+  }
+};
+
+export const removeUserAccount = async (uid) => {
+  await getCurrentAdminUser();
+
+  return adminBackendRequest(`/users/${uid}`, {
+    method: "DELETE",
+  });
+};
 
 const createBookkeeperWithSecondaryAuth = async (bookkeeper) => {
   await getCurrentAdminUser();
