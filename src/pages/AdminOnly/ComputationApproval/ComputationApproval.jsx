@@ -222,7 +222,7 @@ export default function ComputationApproval() {
             <IonRow>
               <IonCol>
                 <IonText>
-                  <h1 className="computation-main-title">Admin: Draft Approvals</h1>
+                  <h1 className="computation-main-title">Computation Draft Approvals</h1>
                   <p className="computation-subheader">Review payroll computations from bookkeepers</p>
                 </IonText>
                  </IonCol>
@@ -270,7 +270,7 @@ export default function ComputationApproval() {
             <IonRow className="ion-margin-top">
               <IonCol>
                 <IonText>
-                  <h2 className="computation-main-title">Recent Disputed / Resolved Computations</h2>
+                  <h2 className="computation-main-title">Disputed Computations</h2>
                   <p className="computation-subheader">
                     Review client-staff disputes (including recently resolved items) and decide whether the bookkeeper should recompute them.
                   </p>
