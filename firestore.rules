@@ -197,6 +197,22 @@ service cloud.firestore {
       allow delete: if isAdmin();
     }
 
+    match /computationDisputes/{disputeId} {
+      allow read: if isAdmin()
+        || (isClientStaff() && resource.data.clientStaffId == request.auth.uid)
+        || (isBookkeeper() && resource.data.bookkeeperId == request.auth.uid);
+
+      allow create: if isClientStaff()
+        && request.resource.data.clientStaffId == request.auth.uid
+        && request.resource.data.status == "submitted";
+
+      allow update: if isAdmin()
+        || (isBookkeeper() && resource.data.bookkeeperId == request.auth.uid)
+        || (isClientStaff() && resource.data.clientStaffId == request.auth.uid && resource.data.status == "submitted");
+
+      allow delete: if isAdmin();
+    }
+
     match /computationResults/{compId} {
       allow read: if isAdmin() || isBookkeeper() || isClientStaff();
       allow create: if isAdmin() || isBookkeeper();
