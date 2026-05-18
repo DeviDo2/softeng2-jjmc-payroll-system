@@ -41,6 +41,8 @@ import {
 import { db } from "../../../database-components/firebaseConfig";
 import useAuthRole from "../../../hooks/useAuthRole";
 import { useHistory } from "react-router-dom";
+import Sidebar from "../../../components/Sidebar";
+import FooterNav from "../../../components/FooterNav";
 
 // --- HELPER FUNCTIONS ---
 
@@ -413,7 +415,7 @@ Please confirm you want to send it again.`;
   // Handle not logged in state
   if (!user) {
     return (
-      <IonPage>
+      <IonPage id="main-content">
         <IonContent className="ion-padding">
           <div className="ion-text-center">
             <IonText color="danger">
@@ -431,7 +433,9 @@ Please confirm you want to send it again.`;
   const getRevisedCount = getCount('revised') + getCount('needs_revision');
 
   return (
-    <IonPage>
+    <>
+      <Sidebar />
+    <IonPage id="main-content">
       <IonHeader>
         <IonToolbar color="primary">
           <IonButton slot="start" fill="clear" onClick={() => history.goBack()}>
@@ -784,7 +788,9 @@ Please confirm you want to send it again.`;
         message={alertMessage}
         buttons={["OK"]}
       />
+        <FooterNav />
     </IonPage>
+    </>
   );
 }
 

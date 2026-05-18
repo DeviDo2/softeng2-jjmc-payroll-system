@@ -16,9 +16,6 @@ import {
   IonApp,
   IonBadge,
   IonAlert,
-  IonList,
-  IonItem,
-  IonLabel,
   IonModal,
 } from "@ionic/react";
 import { documentTextOutline, notificationsOutline, closeOutline, timeOutline, checkmarkDoneOutline } from "ionicons/icons";
@@ -638,32 +635,32 @@ function ClientListHistory() {
 
             {/* Time Filter Buttons */}
             <IonRow className="month-filter-row">
-              <IonCol size="12" sizeMd="4">
+              <IonCol size="4" sizeMd="4">
                 <IonButton
                   className="month-filter-btn"
                   fill={selectedSort === "all" ? "solid" : "outline"}
                   onClick={() => setSelectedSort("all")}
                 >
-                  All Clients ({getMonthFilterCounts.all})
+                  All ({getMonthFilterCounts.all})
                 </IonButton>
               </IonCol>
-              <IonCol size="6">
+              <IonCol size="4">
                 <IonButton
                   className="month-filter-btn"
                   fill={selectedSort === "current" ? "solid" : "outline"}
                   onClick={() => setSelectedSort("current")}
                 >
-                  Current Month ({getMonthFilterCounts.current})
+                  Current ({getMonthFilterCounts.current})
                 </IonButton>
               </IonCol>
 
-              <IonCol size="6" sizeMd="4">
+              <IonCol size="4" sizeMd="4">
                 <IonButton
                   className="month-filter-btn"
                   fill={selectedSort === "previous" ? "solid" : "outline"}
                   onClick={() => setSelectedSort("previous")}
                 >
-                  Previous Months ({getMonthFilterCounts.previous})
+                  Previous ({getMonthFilterCounts.previous})
                 </IonButton>
               </IonCol>
             </IonRow>
@@ -724,143 +721,168 @@ function ClientListHistory() {
             )}
 
             {/* Clients List */}
-            {!isLoading && !error && filteredClients.map((client) => (
-              <IonCard key={client.id} className="client-card">
-                <IonCardContent>
-                  <IonRow className="ion-align-items-center client-card-row">
-                    <IonCol
-                      size="12"
-                      sizeMd="8"
-                      className="client-info-column"
-                      onClick={() => handleClientSelect(client)}
-                    >
-                      <IonText>
-                        <h3 className="client-card-title">{client.name}</h3>
-                      </IonText>
-                      <div className="client-meta-row">
-                        <span>{client.employeesCount} employee{client.employeesCount !== 1 ? "s" : ""}</span>
-                        <span>{client.computationCount} computation{client.computationCount !== 1 ? "s" : ""}</span>
-                        <IonBadge color={getStatusColor(client.status)} className="client-status-badge">
-                          {getStatusLabel(client.status)}
-                        </IonBadge>
-                      </div>
-                      <IonText color="medium">
-                        <p className="client-detail-line">
-                          Created on {formatDate(client.createdAt)}
-                        </p>
-                        <p className="client-detail-line">
-                          Last activity: {formatDate(client.recentDraft?.updatedAt || client.lastUpdated)}
-                        </p>
-                        <p className="client-detail-line client-detail-line-strong">
-                          {getLatestComputationText(client)}
-                        </p>
-                      </IonText>
-                    </IonCol>
+            {!isLoading && !error && filteredClients.length > 0 && (
+              <div className="client-list-table">
+                <div className="client-list-table-header">
+                  <div>Client</div>
+                  <div>Summary</div>
+                  <div>Status</div>
+                  <div>Activity</div>
+                  <div>Actions</div>
+                </div>
 
-                    <IonCol size="12" sizeMd="4" className="client-action-column">
-                      <IonButton
-                        expand="block"
-                        className="client-action-btn"
-                        onClick={() => handleClientSelect(client)}
-                      >
-                        Compute Payroll
-                      </IonButton>
-                      <IonButton
-                        expand="block"
-                        fill="outline"
-                        className="client-action-btn"
-                        onClick={() => handleViewComputationHistory(client)}
-                      >
-                        <IonIcon icon={documentTextOutline} slot="start" />
-                        View History
-                      </IonButton>
-                    </IonCol>
-                  </IonRow>
-                </IonCardContent>
-              </IonCard>
-            ))}
+                {filteredClients.map((client) => (
+                  <IonCard key={client.id} className="client-card">
+                    <IonCardContent>
+                      <div className="client-card-grid">
+                        <button
+                          type="button"
+                          className="client-table-cell client-info-column"
+                          onClick={() => handleClientSelect(client)}
+                        >
+                          <span className="client-table-label">Client</span>
+                          <span className="client-card-title">{client.name}</span>
+                          <span className="client-detail-line">
+                            Created on {formatDate(client.createdAt)}
+                          </span>
+                        </button>
+
+                        <div className="client-table-cell">
+                          <span className="client-table-label">Summary</span>
+                          <div className="client-meta-stack">
+                            <span>{client.employeesCount} employee{client.employeesCount !== 1 ? "s" : ""}</span>
+                            <span>{client.computationCount} computation{client.computationCount !== 1 ? "s" : ""}</span>
+                          </div>
+                        </div>
+
+                        <div className="client-table-cell">
+                          <span className="client-table-label">Status</span>
+                          <IonBadge color={getStatusColor(client.status)} className="client-status-badge">
+                            {getStatusLabel(client.status)}
+                          </IonBadge>
+                        </div>
+
+                        <div className="client-table-cell">
+                          <span className="client-table-label">Activity</span>
+                          <span className="client-detail-line">
+                            Last activity: {formatDate(client.recentDraft?.updatedAt || client.lastUpdated)}
+                          </span>
+                          <span className="client-detail-line client-detail-line-strong">
+                            {getLatestComputationText(client)}
+                          </span>
+                        </div>
+
+                        <div className="client-table-cell client-action-column">
+                          <span className="client-table-label">Actions</span>
+                          <IonButton
+                            expand="block"
+                            className="client-action-btn"
+                            onClick={() => handleClientSelect(client)}
+                          >
+                            Compute Payroll
+                          </IonButton>
+                          <IonButton
+                            expand="block"
+                            fill="outline"
+                            className="client-action-btn"
+                            onClick={() => handleViewComputationHistory(client)}
+                          >
+                            <IonIcon icon={documentTextOutline} slot="start" />
+                            View History
+                          </IonButton>
+                        </div>
+                      </div>
+                    </IonCardContent>
+                  </IonCard>
+                ))}
+              </div>
+            )}
             
           </IonGrid>
           </div>
 
           {/* Notification List Modal */}
-          <IonModal isOpen={showNotificationList} onDidDismiss={() => setShowNotificationList(false)}>
-            <IonContent>
-              <IonGrid className="ion-padding">
-                <IonRow>
-                  <IonCol>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <IonText>
-                        <h2>Computation Status</h2>
-                        <p>{unreadNotifications.length} active items</p>
-                      </IonText>
-                      <IonButton fill="clear" onClick={() => setShowNotificationList(false)}>
-                        <IonIcon icon={closeOutline} />
-                      </IonButton>
-                    </div>
-                  </IonCol>
-                </IonRow>
+          <IonModal
+            className="notification-modal"
+            isOpen={showNotificationList}
+            onDidDismiss={() => setShowNotificationList(false)}
+            breakpoints={[0, 0.78, 1]}
+            initialBreakpoint={0.78}
+          >
+            <IonContent className="notification-modal-content">
+              <div className="notification-panel">
+                <div className="notification-panel-header">
+                  <div>
+                    <p className="notification-panel-kicker">Status updates</p>
+                    <h2>Computation Notifications</h2>
+                    <p className="notification-panel-subtitle">
+                      {unreadNotifications.length} active item{unreadNotifications.length !== 1 ? "s" : ""}
+                    </p>
+                  </div>
+                  <IonButton fill="clear" className="notification-close-btn" onClick={() => setShowNotificationList(false)}>
+                    <IonIcon icon={closeOutline} />
+                  </IonButton>
+                </div>
 
                 {unreadNotifications.length === 0 ? (
-                  <IonRow>
-                    <IonCol className="ion-text-center">
-                      <IonText color="medium">
-                        <p>No active notifications</p>
-                        <p><small>All computations are up to date</small></p>
-                      </IonText>
-                    </IonCol>
-                  </IonRow>
+                  <div className="notification-empty-state">
+                    <IonIcon icon={notificationsOutline} />
+                    <h3>No active notifications</h3>
+                    <p>All computations are up to date.</p>
+                  </div>
                 ) : (
                   <>
-                    <IonList>
-                      {unreadNotifications.map(notification => (
-                        <IonItem 
-                          key={notification.id}
-                          button
-                          onClick={() => handleNotificationClick(notification)}
-                          style={{ 
-                            borderLeft: `4px solid var(--ion-color-${getNotificationColor(notification.type)})` 
-                          }}
-                        >
-                          <IonIcon 
-                            icon={getNotificationIcon(notification.type)} 
-                            slot="start"
-                            color={getNotificationColor(notification.type)}
-                          />
-                          <IonLabel>
-                            <h3 style={{ fontWeight: 'bold' }}>
-                              {getNotificationTitle(notification.type)}
-                            </h3>
-                            <p>{notification.message}</p>
-                            <p className="notification-time" style={{ fontSize: '12px', color: '#666' }}>
-                              {formatDateTime(notification.createdAt)}
-                            </p>
-                            {notification.clientName && (
-                              <IonBadge color="light" style={{ marginTop: '4px' }}>
-                                {notification.clientName}
-                              </IonBadge>
-                            )}
-                          </IonLabel>
-                        </IonItem>
-                      ))}
-                    </IonList>
-                    <IonRow>
-                      <IonCol>
-                        <IonButton 
-                          expand="block" 
-                          fill="clear" 
-                          onClick={markAllNotificationsAsRead}
-                          color="medium"
-                        >
-                          Clear All
-                        </IonButton>
-                      </IonCol>
-                    </IonRow>
+                    <div className="notification-list">
+                      {unreadNotifications.map((notification) => {
+                        const color = getNotificationColor(notification.type);
+
+                        return (
+                          <button
+                            key={notification.id}
+                            type="button"
+                            className={`notification-item notification-item-${color}`}
+                            onClick={() => handleNotificationClick(notification)}
+                          >
+                            <span className="notification-item-icon">
+                              <IonIcon
+                                icon={getNotificationIcon(notification.type)}
+                                color={color}
+                              />
+                            </span>
+                            <span className="notification-item-content">
+                              <span className="notification-item-topline">
+                                <span className="notification-item-title">
+                                  {getNotificationTitle(notification.type)}
+                                </span>
+                                {notification.clientName && (
+                                  <IonBadge color="light" className="notification-client-badge">
+                                    {notification.clientName}
+                                  </IonBadge>
+                                )}
+                              </span>
+                              <span className="notification-item-message">
+                                {notification.message}
+                              </span>
+                              <span className="notification-item-time">
+                                {formatDateTime(notification.createdAt)}
+                              </span>
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
+
+                    <IonButton
+                      expand="block"
+                      fill="outline"
+                      className="notification-clear-btn"
+                      onClick={markAllNotificationsAsRead}
+                    >
+                      Clear All
+                    </IonButton>
                   </>
                 )}
-                
-              </IonGrid>
-              
+              </div>
             </IonContent>
           </IonModal>
         </IonContent>
