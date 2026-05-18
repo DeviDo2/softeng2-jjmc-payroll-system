@@ -268,8 +268,6 @@ function ComputationPage() {
     );
 
   return (
-    <IonApp>
-      <Sidebar />
       <IonPage id="main-content">
         <IonContent fullscreen className="computation-content">
           <IonImg src="/Gradient-Ellipses.png" className="ellipse-bg" />
@@ -403,7 +401,6 @@ function ComputationPage() {
         </IonContent>
         <FooterNav />
       </IonPage>
-    </IonApp>
   );
 }
 

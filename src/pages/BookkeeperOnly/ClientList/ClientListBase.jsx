@@ -80,11 +80,8 @@ const ClientListBase = () => {
   if (!user) return <p>You are not logged in.</p>;
 
   return (
-    <IonApp>
-      <Sidebar />
-
       <IonPage id="main-content">
-        <IonContent fullscreen className="client-list-content">
+        <IonContent className="client-list-content">
           <IonImg
             src="/Gradient-Ellipses.png"
             className="ellipse-bg"
@@ -105,7 +102,6 @@ const ClientListBase = () => {
                     <IonCardContent className="ion-text-center">
                       <IonText>
                         <p>No clients assigned yet.</p>
-                        <p>Please contact your admin.</p>
                       </IonText>
                     </IonCardContent>
                   </IonCard>
@@ -129,7 +125,6 @@ const ClientListBase = () => {
 
         <FooterNav />
       </IonPage>
-    </IonApp>
   );
 };
 

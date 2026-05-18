@@ -141,8 +141,6 @@ const ClientEmployeeList = () => {
   };
 
   return (
-    <IonApp>
-      <Sidebar />
       <IonPage id="main-content">
         <IonHeader>
           <IonToolbar>
@@ -263,7 +261,6 @@ const ClientEmployeeList = () => {
 
         <FooterNav />
       </IonPage>
-    </IonApp>
   );
 };
 
