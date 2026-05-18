@@ -3,13 +3,17 @@
   --background: #ffffff;
   position: relative;
   overflow-x: hidden;
+  /* Make IonContent the single scroll container on web */
+  height: 100vh;
+  overflow-y: auto;
 }
 
 .full-height-wrapper {
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  min-height: 100%;
+  /* keep wrapper within the viewport so only the parent scrolls */
+  min-height: calc(100vh - 6rem);
   width: 100%;
   padding: 15px;
 }
