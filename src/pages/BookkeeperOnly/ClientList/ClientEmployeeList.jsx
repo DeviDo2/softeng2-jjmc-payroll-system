@@ -48,6 +48,16 @@ const ClientEmployeeList = () => {
   const [searchText, setSearchText] = useState("");
   const [error, setError] = useState(null);
 
+  const getEmployeePosition = useCallback((employee) => {
+    return (
+      employee?.position ||
+      employee?.jobTitle ||
+      employee?.jobtitle ||
+      employee?.designation ||
+      "-"
+    );
+  }, []);
+
   // Redirect if no client selected
   useEffect(() => {
     if (!clientId) {
@@ -84,11 +94,11 @@ const ClientEmployeeList = () => {
   const filteredEmployees = useMemo(() => {
     const key = (searchText || "").toLowerCase();
     return employees.filter((e) =>
-      [e?.name, e?.employeeCode, e?.department]
+      [e?.name, e?.employeeCode, e?.department, getEmployeePosition(e)]
         .filter(Boolean)
         .some((field) => field.toLowerCase().includes(key))
     );
-  }, [searchText, employees]);
+  }, [searchText, employees, getEmployeePosition]);
 
   // Export CSV
   const handleExport = useCallback(() => {
@@ -173,28 +183,12 @@ const ClientEmployeeList = () => {
                   </IonText>
                 </IonCol>
               </IonRow>
-
-              <IonRow className="employee-summary-row">
-                <IonCol size="6" sizeMd="3">
-                  <div className="employee-summary-card">
-                    <span className="employee-summary-label">Total Employees</span>
-                    <strong>{employees.length}</strong>
-                  </div>
-                </IonCol>
-                <IonCol size="6" sizeMd="3">
-                  <div className="employee-summary-card">
-                    <span className="employee-summary-label">Showing</span>
-                    <strong>{filteredEmployees.length}</strong>
-                  </div>
-                </IonCol>
-              </IonRow>
-
               <IonRow>
                 <IonCol>
                   <IonCard className="employee-tools-card">
                     <IonCardContent>
                       <IonRow>
-                        <IonCol size="12" sizeLg="7">
+                        <IonCol class="ion-text-left" size="12" sizeLg="7">
                           <IonSearchbar
                             className="employee-searchbar"
                             value={searchText}
@@ -256,17 +250,11 @@ const ClientEmployeeList = () => {
                               <tr>
                                 <th>Code</th>
                                 <th>Name</th>
-                                <th>Period</th>
-                                <th>Unit</th>
-                                <th>Dept</th>
+                                <th>Department</th>
+                                <th>Position</th>
                                 <th>Rate/hr</th>
                                 <th>Hours</th>
-                                <th>Gross</th>
-                                <th>SSS</th>
-                                <th>PHIC</th>
-                                <th>HDMF</th>
-                                <th>Tax</th>
-                                <th>Net</th>
+                                <th>Period</th>
                               </tr>
                             </thead>
                             <tbody>
@@ -274,17 +262,11 @@ const ClientEmployeeList = () => {
                                 <tr key={idx}>
                                   <td>{emp.employeeCode}</td>
                                   <td>{emp.name}</td>
-                                  <td>{emp.payrollPeriod}</td>
-                                  <td>{emp.businessUnit}</td>
                                   <td>{emp.department}</td>
+                                  <td>{getEmployeePosition(emp)}</td>
                                   <td>₱{emp.ratePerHour}</td>
                                   <td>{emp.hoursWorked}</td>
-                                  <td>₱{emp.grossPay}</td>
-                                  <td>₱{emp.sss}</td>
-                                  <td>₱{emp.philHealth}</td>
-                                  <td>₱{emp.pagIbig}</td>
-                                  <td>₱{emp.tax}</td>
-                                  <td>{emp.netPay}</td>
+                                  <td>{emp.payrollPeriod}</td>
                                 </tr>
                               ))}
                             </tbody>
