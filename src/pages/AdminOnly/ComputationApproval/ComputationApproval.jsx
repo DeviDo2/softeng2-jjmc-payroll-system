@@ -270,9 +270,9 @@ export default function ComputationApproval() {
             <IonRow className="ion-margin-top">
               <IonCol>
                 <IonText>
-                  <h2 className="computation-main-title">Recent Disputed Computations</h2>
+                  <h2 className="computation-main-title">Recent Disputed / Resolved Computations</h2>
                   <p className="computation-subheader">
-                    Review client-staff disputes and decide whether the bookkeeper should recompute them.
+                    Review client-staff disputes (including recently resolved items) and decide whether the bookkeeper should recompute them.
                   </p>
                 </IonText>
               </IonCol>
@@ -296,7 +296,7 @@ export default function ComputationApproval() {
                       {disputesLoading ? (
                         <tr><td colSpan="6">Loading disputes...</td></tr>
                       ) : recentDisputes.length === 0 ? (
-                        <tr><td colSpan="6">No disputed computations yet.</td></tr>
+                        <tr><td colSpan="6">No disputed or resolved computations yet.</td></tr>
                       ) : recentDisputes.map((dispute) => (
                         <tr key={dispute.id}>
                           <td>{dispute.clientStaffName || dispute.employeeName || "Unknown"}</td>
@@ -395,11 +395,17 @@ export default function ComputationApproval() {
                   onIonInput={(event) => setDecisionReason(event.detail.value || "")}
                 />
 
+                {selectedDispute.status === "resolved" && (
+                  <div className="ion-margin-top">
+                    <p><strong>Resolved:</strong> This dispute was resolved on {selectedDispute.resolvedAt ? new Date(selectedDispute.resolvedAt?.toDate?.() || selectedDispute.resolvedAt).toLocaleString() : 'unknown'} by {selectedDispute.reviewedBy || selectedDispute.approvedBy || 'Admin'}.</p>
+                  </div>
+                )}
+
                 <div className="dispute-modal-actions">
                   <IonButton fill="outline" color="medium" onClick={closeDisputeModal}>
                     Close
                   </IonButton>
-                  {selectedDispute.status === "submitted" && (
+                  {(selectedDispute.status === "submitted" || selectedDispute.status === "pending") && (
                     <>
                       <IonButton color="danger" onClick={handleRejectDispute} disabled={!decisionReason.trim() || processing}>
                         Reject

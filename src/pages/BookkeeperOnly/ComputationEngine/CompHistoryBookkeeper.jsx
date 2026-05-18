@@ -702,6 +702,18 @@ Please confirm you want to send it again.`;
                                     <IonIcon icon={sendOutline} slot="start" />
                                     Send{sendCount > 0 ? ` (${sendCount})` : ""}
                                   </IonButton>
+
+                                  {draft.status === "disputed" && (
+                                    <IonButton
+                                      expand="block"
+                                      color="primary"
+                                      className="draft-history-action-btn"
+                                      onClick={() => history.push(`/bookkeeper-computation-engine?clientId=${draft.clientId || draft.clientCompanyId || ''}&clientName=${encodeURIComponent(draft.clientName || '')}`)}
+                                    >
+                                      <IonIcon icon={informationCircleOutline} slot="start" />
+                                      Recompute
+                                    </IonButton>
+                                  )}
                                 </div>
                               </div>
                             </IonCardContent>

@@ -124,10 +124,14 @@ export default function useDrafts() {
         const batch = writeBatch(db);
         draft.disputeIds.forEach((disputeId) => {
           batch.update(doc(db, "computationDisputes", disputeId), {
-            status: "approved",
+            status: "resolved",
             approvedAt: serverTimestamp(),
+            resolvedAt: serverTimestamp(),
             approvedDraftId: draft.id,
+            resolvedDraftId: draft.id,
             approvedBy: adminData?.name || "Admin",
+            reviewedBy: adminData?.name || "Admin",
+            reviewedById: adminData?.uid || "admin",
             updatedAt: serverTimestamp(),
           });
         });

@@ -38,6 +38,7 @@ const OPEN_DISPUTE_STATUSES = new Set([
   "pending",
   "approved",
   "disputed",
+  "resolved",
 ]);
 
 function CurrentComputation() {
@@ -139,6 +140,8 @@ function CurrentComputation() {
         return "Pending Review";
       case "approved":
         return "Approved";
+      case "resolved":
+        return "Resolved";
       case "disputed":
         return "Needs Recomputation";
       default:

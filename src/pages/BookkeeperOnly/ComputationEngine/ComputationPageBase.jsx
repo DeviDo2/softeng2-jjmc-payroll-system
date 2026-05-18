@@ -246,6 +246,10 @@ function ComputationPage() {
               latestDraftId: docRef.id,
               resubmittedDraftId: docRef.id,
               resubmittedAt: serverTimestamp(),
+              // mark that the bookkeeper recomputed the disputed payroll
+              bookkeeperRecomputed: true,
+              bookkeeperRecomputedBy: user.uid || null,
+              bookkeeperRecomputedAt: serverTimestamp(),
               updatedAt: serverTimestamp(),
             })
           )
