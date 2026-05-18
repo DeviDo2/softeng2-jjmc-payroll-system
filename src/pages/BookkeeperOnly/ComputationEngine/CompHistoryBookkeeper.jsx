@@ -500,52 +500,23 @@ Please confirm you want to send it again.`;
     <IonPage id="main-content">
           <IonContent fullscreen className="comp-history-content">
           <IonImg src="/Gradient-Ellipses.png" alt="BG" className="ellipse-bg" />
-
-          <div className="comp-history-panel">
+          <div className="comp-history-header">
             <IonGrid>
               <IonRow>
-                <IonCol>
-                  <IonText>
-                    <h1 className="comp-history-title">Computation History</h1>
-                    <p className="comp-history-subtitle">
-                      Review computation drafts, track approval status, and send approved payroll to clients.
-                    </p>
-                  </IonText>
-                </IonCol>
-              </IonRow>
-
-              <IonRow className="comp-history-summary-row">
-                <IonCol size="6" sizeMd="2">
-                  <div className="comp-history-summary-card">
-                    <span className="comp-history-summary-label">All Drafts</span>
-                    <strong>{drafts.length}</strong>
-                  </div>
-                </IonCol>
-                <IonCol size="6" sizeMd="2">
-                  <div className="comp-history-summary-card">
-                    <span className="comp-history-summary-label">Approved</span>
-                    <strong>{getCount("approved")}</strong>
-                  </div>
-                </IonCol>
-                <IonCol size="6" sizeMd="2">
-                  <div className="comp-history-summary-card">
-                    <span className="comp-history-summary-label">Pending</span>
-                    <strong>{getCount("pending_approval")}</strong>
-                  </div>
-                </IonCol>
-                <IonCol size="6" sizeMd="2">
-                  <div className="comp-history-summary-card">
-                    <span className="comp-history-summary-label">Disputed</span>
-                    <strong>{getDisputedCount}</strong>
-                  </div>
-                </IonCol>
-                <IonCol size="6" sizeMd="2">
-                  <div className="comp-history-summary-card">
-                    <span className="comp-history-summary-label">Needs Revision</span>
-                    <strong>{getRevisedCount}</strong>
-                  </div>
-                </IonCol>
-              </IonRow>
+                  <IonCol>
+                    <IonText>
+                      <h1 className="comp-history-title">Computation History</h1>
+                      <p className="comp-history-subtitle">
+                        Review computation drafts, track approval status, and send approved payroll to clients.
+                      </p>
+                    </IonText>
+                  </IonCol>
+                </IonRow>
+              </IonGrid>
+            </div>
+          <div className="comp-history-panel">
+            <IonGrid>
+              
               <IonRow>
                 <IonCol>
                   <IonCard className="comp-history-section-card comp-history-filter-card">
@@ -595,14 +566,7 @@ Please confirm you want to send it again.`;
 
               {!isLoading && (
                 <>
-                  <IonRow>
-                    <IonCol>
-                      <div className="comp-history-results-pill">
-                        {filteredDrafts.length} draft{filteredDrafts.length !== 1 ? "s" : ""} found
-                        {statusFilter !== "all" && ` (${statusFilter.toUpperCase().replace('_', ' ')})`}
-                      </div>
-                    </IonCol>
-                  </IonRow>
+                  
 
                   {filteredDrafts.length === 0 ? (
                     <IonRow>
