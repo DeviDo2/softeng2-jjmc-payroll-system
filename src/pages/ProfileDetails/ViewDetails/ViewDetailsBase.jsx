@@ -26,8 +26,9 @@ import Sidebar from "../../../components/Sidebar";
 import { db } from "../../../database-components/firebaseConfig";
 import { doc, onSnapshot } from "firebase/firestore";
 
-export default function ViewDetailsBase() {
-  const { loading, user } = useAuthRole();
+export default function ViewDetailsBase({ role: roleOverride }) {
+  const { loading, user, role } = useAuthRole();
+  const resolvedRole = roleOverride || role;
 
   const [details, setDetails] = useState({
     email: "",
@@ -97,7 +98,13 @@ export default function ViewDetailsBase() {
     { label: "Department", value: details.department },
     { label: "Salary", value: details.salary },
     { label: "Tax ID", value: details.taxId }
-  ];
+  ].filter((field) => {
+    if (resolvedRole === "admin" || resolvedRole === "bookkeeper") {
+      return field.label === "Phone";
+    }
+
+    return true;
+  });
 
   const renderFields = (fields) =>
     fields.map((item, i) => (
