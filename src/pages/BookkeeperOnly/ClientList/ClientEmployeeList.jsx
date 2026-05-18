@@ -1,7 +1,6 @@
 // src/pages/Computation/ClientList/ClientEmployeeList.jsx
 import React, { useEffect, useState, useMemo, useCallback } from "react";
 import {
-  IonApp,
   IonPage,
   IonContent,
   IonGrid,
@@ -16,6 +15,9 @@ import {
   IonImg,
   IonHeader,
   IonToolbar,
+  IonCardHeader,
+  IonCardTitle,
+  IonBadge,
 } from "@ionic/react";
 
 import { 
@@ -141,126 +143,165 @@ const ClientEmployeeList = () => {
   };
 
   return (
-      <IonPage id="main-content">
-        <IonHeader>
-          <IonToolbar>
-            <IonButton slot="start" fill="clear" onClick={handleBack}>
-              <IonIcon icon={arrowBackOutline} />
-            </IonButton>
-          </IonToolbar>
-        </IonHeader>
+      <>
+        <Sidebar />
+        <IonPage id="main-content">
+          <IonHeader>
+            <IonToolbar>
+              <IonButton slot="start" fill="clear" onClick={handleBack}>
+                <IonIcon icon={arrowBackOutline} />
+              </IonButton>
+            </IonToolbar>
+          </IonHeader>
 
-        <IonContent fullscreen className="employee-list-content">
-          <IonImg
-            src="/Gradient-Ellipses.png"
-            className="ellipse-bg"
-            onError={(e) => (e.target.style.display = "none")}
-          />
+          <IonContent fullscreen className="employee-list-content">
+            <IonImg
+              src="/Gradient-Ellipses.png"
+              className="ellipse-bg"
+              onError={(e) => (e.target.style.display = "none")}
+            />
 
-          <IonGrid className="ion-padding client-employee-grid">
-            <IonRow className="ion-text-center">
-              <IonCol>
-                <IonText>
-                  <h2>{clientName || "Unknown Client"} – Employee List</h2>
-                  <p>{employees.length} employees</p>
-                </IonText>
-              </IonCol>
-            </IonRow>
+            <div className="employee-list-panel">
+              <IonGrid className="ion-padding client-employee-grid">
+              <IonRow>
+                <IonCol>
+                  <IonText>
+                    <h1 className="employee-list-title">{clientName || "Unknown Client"} Employee List</h1>
+                    <p className="employee-list-subtitle">
+                      Review the imported payroll data before running a computation.
+                    </p>
+                  </IonText>
+                </IonCol>
+              </IonRow>
 
-            <IonRow>
-              <IonCol>
-                <IonSearchbar
-                  value={searchText}
-                  onIonInput={(e) => setSearchText(e.detail.value)}
-                  placeholder="Search employees..."
-                />
-              </IonCol>
-            </IonRow>
+              <IonRow className="employee-summary-row">
+                <IonCol size="6" sizeMd="3">
+                  <div className="employee-summary-card">
+                    <span className="employee-summary-label">Total Employees</span>
+                    <strong>{employees.length}</strong>
+                  </div>
+                </IonCol>
+                <IonCol size="6" sizeMd="3">
+                  <div className="employee-summary-card">
+                    <span className="employee-summary-label">Showing</span>
+                    <strong>{filteredEmployees.length}</strong>
+                  </div>
+                </IonCol>
+              </IonRow>
 
-            <IonRow className="ion-text-center ion-margin-bottom">
-              <IonCol>
-                <IonButton onClick={handleExport}>
-                  <IonIcon icon={downloadOutline} slot="start" />
-                  Export CSV
-                </IonButton>
-                <IonButton
-                  onClick={handleAddCSVRedirect}
-                  style={{ marginLeft: 12 }}
-                >
-                  <IonIcon icon={cloudUploadOutline} slot="start" />
-                  Add CSV
-                </IonButton>
-              </IonCol>
-            </IonRow>
-
-            {error && (
-              <IonCard color="danger">
-                <IonCardContent>{error}</IonCardContent>
-              </IonCard>
-            )}
-
-            <IonRow>
-              <IonCol>
-                {filteredEmployees.length === 0 ? (
-                  <IonCard className="empty-state-card">
-                    <IonCardContent className="ion-text-center">
-                      <IonText color="medium">
-                        <p>No employees found.</p>
-                        {employees.length > 0 && (
-                          <p>Try adjusting your search terms.</p>
-                        )}
-                      </IonText>
+              <IonRow>
+                <IonCol>
+                  <IonCard className="employee-tools-card">
+                    <IonCardContent>
+                      <IonRow>
+                        <IonCol size="12" sizeLg="7">
+                          <IonSearchbar
+                            className="employee-searchbar"
+                            value={searchText}
+                            onIonInput={(e) => setSearchText(e.detail.value)}
+                            placeholder="Search employees..."
+                          />
+                        </IonCol>
+                        <IonCol size="12" sizeLg="5">
+                          <div className="employee-action-grid">
+                            <IonButton onClick={handleExport}>
+                              <IonIcon icon={downloadOutline} slot="start" />
+                              Export CSV
+                            </IonButton>
+                            <IonButton onClick={handleAddCSVRedirect} fill="outline">
+                              <IonIcon icon={cloudUploadOutline} slot="start" />
+                              Open Computation
+                            </IonButton>
+                          </div>
+                        </IonCol>
+                      </IonRow>
                     </IonCardContent>
                   </IonCard>
-                ) : (
-                  <div className="table-scroll-container">
-                    <table className="employee-table">
-                      <thead>
-                        <tr>
-                          <th>Code</th>
-                          <th>Name</th>
-                          <th>Period</th>
-                          <th>Unit</th>
-                          <th>Dept</th>
-                          <th>Rate/hr</th>
-                          <th>Hours</th>
-                          <th>Gross</th>
-                          <th>SSS</th>
-                          <th>PHIC</th>
-                          <th>HDMF</th>
-                          <th>Tax</th>
-                          <th>Net</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {filteredEmployees.map((emp, idx) => (
-                          <tr key={idx}>
-                            <td>{emp.employeeCode}</td>
-                            <td>{emp.name}</td>
-                            <td>{emp.payrollPeriod}</td>
-                            <td>{emp.businessUnit}</td>
-                            <td>{emp.department}</td>
-                            <td>₱{emp.ratePerHour}</td>
-                            <td>{emp.hoursWorked}</td>
-                            <td>₱{emp.grossPay}</td>
-                            <td>₱{emp.sss}</td>
-                            <td>₱{emp.philHealth}</td>
-                            <td>₱{emp.pagIbig}</td>
-                            <td>₱{emp.tax}</td>
-                            <td>₱{emp.netPay}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                )}
-              </IonCol>
-            </IonRow>
-          </IonGrid>
-        </IonContent>
+                </IonCol>
+              </IonRow>
 
-        <FooterNav />
-      </IonPage>
+              {error && (
+                <IonRow>
+                  <IonCol>
+                    <IonCard color="danger">
+                      <IonCardContent>{error}</IonCardContent>
+                    </IonCard>
+                  </IonCol>
+                </IonRow>
+              )}
+
+              <IonRow>
+                <IonCol>
+                  {filteredEmployees.length === 0 ? (
+                    <IonCard className="empty-state-card">
+                      <IonCardContent className="ion-text-center">
+                        <IonText color="medium">
+                          <p>No employees found.</p>
+                          {employees.length > 0 && (
+                            <p>Try adjusting your search terms.</p>
+                          )}
+                        </IonText>
+                      </IonCardContent>
+                    </IonCard>
+                  ) : (
+                    <IonCard className="employee-table-card">
+                      <IonCardHeader>
+                        <IonCardTitle>Imported Payroll Rows</IonCardTitle>
+                        <IonBadge color="light">{filteredEmployees.length} rows</IonBadge>
+                      </IonCardHeader>
+                      <IonCardContent>
+                        <div className="table-scroll-container">
+                          <table className="employee-table">
+                            <thead>
+                              <tr>
+                                <th>Code</th>
+                                <th>Name</th>
+                                <th>Period</th>
+                                <th>Unit</th>
+                                <th>Dept</th>
+                                <th>Rate/hr</th>
+                                <th>Hours</th>
+                                <th>Gross</th>
+                                <th>SSS</th>
+                                <th>PHIC</th>
+                                <th>HDMF</th>
+                                <th>Tax</th>
+                                <th>Net</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {filteredEmployees.map((emp, idx) => (
+                                <tr key={idx}>
+                                  <td>{emp.employeeCode}</td>
+                                  <td>{emp.name}</td>
+                                  <td>{emp.payrollPeriod}</td>
+                                  <td>{emp.businessUnit}</td>
+                                  <td>{emp.department}</td>
+                                  <td>₱{emp.ratePerHour}</td>
+                                  <td>{emp.hoursWorked}</td>
+                                  <td>₱{emp.grossPay}</td>
+                                  <td>₱{emp.sss}</td>
+                                  <td>₱{emp.philHealth}</td>
+                                  <td>₱{emp.pagIbig}</td>
+                                  <td>₱{emp.tax}</td>
+                                  <td>{emp.netPay}</td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      </IonCardContent>
+                    </IonCard>
+                  )}
+                </IonCol>
+              </IonRow>
+              </IonGrid>
+            </div>
+          </IonContent>
+
+          <FooterNav />
+        </IonPage>
+      </>
   );
 };
 

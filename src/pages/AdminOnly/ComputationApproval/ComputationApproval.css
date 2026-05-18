@@ -73,7 +73,7 @@
   gap: 8px;
 }
 
-stats-row {
+.stats-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -141,4 +141,15 @@ stats-row {
   max-height: 90%;
   overflow-y: auto;
   width: 90%;
+}
+
+.dispute-modal-card {
+  max-width: 960px;
+}
+
+.dispute-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 16px;
 }

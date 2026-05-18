@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
 import {
-  IonApp,
   IonPage,
   IonContent,
   IonGrid,
@@ -15,12 +14,15 @@ import {
   IonText,
   IonIcon,
   IonBadge,
+  IonNote,
+  IonCardHeader,
+  IonCardTitle,
 } from "@ionic/react";
 import { personOutline } from "ionicons/icons";
 
 import "./ComputationPageBase.css";
 import useAuthRole from "../../../hooks/useAuthRole";
-import { collection, addDoc, serverTimestamp, doc, onSnapshot } from "firebase/firestore";
+import { collection, addDoc, serverTimestamp, doc, onSnapshot, getDocs, query, where, updateDoc } from "firebase/firestore";
 import { db } from "../../../database-components/firebaseConfig";
 import Sidebar from "../../../components/Sidebar";
 import FooterNav from "../../../components/FooterNav";
@@ -103,6 +105,7 @@ function ComputationPage() {
   const [computedPreview, setComputedPreview] = useState(null);
   const [isComputing, setIsComputing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [relatedDisputes, setRelatedDisputes] = useState([]);
 
   // Load CSV data
   useEffect(() => {
@@ -118,6 +121,32 @@ function ComputationPage() {
     });
 
     return () => unsub();
+  }, [clientId]);
+
+  useEffect(() => {
+    if (!clientId) {
+      setRelatedDisputes([]);
+      return;
+    }
+
+    const loadRelatedDisputes = async () => {
+      try {
+        const snapshot = await getDocs(
+          query(collection(db, "computationDisputes"), where("clientCompanyId", "==", clientId))
+        );
+
+        const openDisputes = snapshot.docs
+          .map((docSnap) => ({ id: docSnap.id, ...docSnap.data() }))
+          .filter((dispute) => ["accepted", "disputed"].includes((dispute.status || "").toLowerCase()));
+
+        setRelatedDisputes(openDisputes);
+      } catch (disputeError) {
+        console.error("Could not load related disputes:", disputeError);
+        setRelatedDisputes([]);
+      }
+    };
+
+    loadRelatedDisputes();
   }, [clientId]);
 
   // Filtered data
@@ -186,8 +215,8 @@ function ComputationPage() {
         netPay: r.monthlyDeductions.netPay,
         payrollPeriod: r.original.payrollPeriod || payrollPeriod,
       }));
-
-      await addDoc(collection(db, collectionName), {
+      const disputeIds = isDraft ? relatedDisputes.map((dispute) => dispute.id) : [];
+      const docRef = await addDoc(collection(db, collectionName), {
         clientId,
         clientName,
         payrollPeriod,
@@ -199,6 +228,8 @@ function ComputationPage() {
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
         status: isDraft ? "pending_approval" : "computed",
+        isDisputeRecompute: disputeIds.length > 0,
+        disputeIds,
         ...(isDraft
           ? {
               submittedToAdmin: true,
@@ -206,6 +237,20 @@ function ComputationPage() {
             }
           : {}),
       });
+
+      if (isDraft && disputeIds.length > 0) {
+        await Promise.all(
+          disputeIds.map((disputeId) =>
+            updateDoc(doc(db, "computationDisputes", disputeId), {
+              status: "pending",
+              latestDraftId: docRef.id,
+              resubmittedDraftId: docRef.id,
+              resubmittedAt: serverTimestamp(),
+              updatedAt: serverTimestamp(),
+            })
+          )
+        );
+      }
       return true;
     } catch (err) {
       console.error(err);
@@ -256,7 +301,7 @@ function ComputationPage() {
   if (!user) return <p>You are not logged in.</p>;
   if (!clientId)
     return (
-      <IonApp>
+      <>
         <Sidebar />
         <IonPage>
           <IonContent className="ion-padding ion-text-center">
@@ -264,143 +309,200 @@ function ComputationPage() {
             <IonButton routerLink="/bookkeeper-client-list-base">Back to Clients</IonButton>
           </IonContent>
         </IonPage>
-      </IonApp>
+      </>
     );
 
   return (
-      <IonPage id="main-content">
-        <IonContent fullscreen className="computation-content">
-          <IonImg src="/Gradient-Ellipses.png" className="ellipse-bg" />
-          <IonGrid className="ion-padding">
-           
-            <IonRow>
-              <IonCol className="ion-text-center">
-                <h1 className="computation-main-title">Payroll Computation</h1>
-                
-                   <p className="computation-main-subtitle">
-          Compute payroll and prepare for client delivery
-        </p>
-  </IonCol>
-</IonRow>
-
-            <IonRow className="client-selector-row">
-              <IonCol size="12" sizeMd="5" className="client-selector-col">
-                <IonButton
-                  className="client-selector-btn"
-                  expand="block"
-                  routerLink="/bookkeeper-client-list-base"
-                >
-                  <IonIcon icon={personOutline} slot="start" />
-                  {clientName || "Select Client"}
-                </IonButton>
-                <IonBadge color="primary" className="employee-count-badge">
-                  <IonIcon icon={personOutline} /> {csvData.length} Employees
-                </IonBadge>
-              </IonCol>
-            </IonRow>
-         
-
-            {/* CONTROLS */}
-            <IonRow className="ion-margin-bottom">
-              <IonCol size="12" sizeMd="6">
-                <IonSearchbar
-                  placeholder="Search employees..."
-                  value={searchText}
-                  onIonInput={e => setSearchText(e.detail.value)}
-                />
-                <IonButton onClick={computePreview} disabled={isComputing} style={{ marginTop: 8 }}>
-                  {isComputing ? <IonSpinner name="crescent"/> : "Compute Payroll"}
-                </IonButton>
-                <IonButton
-                  onClick={handleSaveDraft}
-                  disabled={!computedPreview || isSaving}
-                  style={{ marginLeft: 10, marginTop:8 }}
-                >
-                  {isSaving ? <IonSpinner name="crescent"/> : "Send Draft to Admin"}
-                </IonButton>
-                <IonButton
-                  onClick={handleSaveResults}
-                  disabled={!computedPreview || isSaving}
-                  style={{ marginLeft: 10, marginTop:8 }}
-                >
-                  {isSaving ? <IonSpinner name="crescent"/> : "Save Results"}
-                </IonButton>
-                <IonButton
-                  onClick={exportCSV}
-                  disabled={!computedPreview}
-                  style={{ marginLeft: 10, marginTop:8 }}
-                >
-                  Export CSV
-                </IonButton>
-              </IonCol>
-            </IonRow>
-
-            {/* SOURCE DATA TABLE - NO EMAIL COLUMN */}
-            <IonRow>
-              <IonCol>
-                <h3>Employee Data</h3>
-                <div className="table-scroll-container">
-                  <table className="results-data-table">
-                    <thead>
-                      <tr>
-                        <th>Code</th><th>Name</th><th>Gross</th><th>Rate</th><th>Hours</th><th>Dept</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {filteredData.map((r,i) => (
-                        <tr key={i}>
-                          <td>{r.employeeCode}</td>
-                          <td>{r.name}</td>
-                          <td>{formatCurrency(getMonthlyGrossPay(r))}</td>
-                          <td>{formatCurrency(r.ratePerHour)}</td>
-                          <td>{r.hoursWorked}</td>
-                          <td>{r.department}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </IonCol>
-            </IonRow>
-
-            {/* COMPUTED PREVIEW TABLE - NO EMAIL STATUS */}
-            {computedPreview && (
-              <IonRow className="ion-margin-top">
+      <>
+        <Sidebar />
+        <IonPage id="main-content">
+          <IonContent fullscreen className="computation-content">
+            <IonImg src="/Gradient-Ellipses.png" className="ellipse-bg" />
+            <div className="computation-panel">
+              <IonGrid>
+              <IonRow>
                 <IonCol>
-                  <h3>Computation Results</h3>
-                  <div className="table-scroll-container">
-                    <table className="results-data-table">
-                      <thead>
-                        <tr>
-                          <th>Code</th><th>Name</th>
-                          <th>Gross(M)</th><th>SSS</th><th>PHIC</th><th>HDMF</th>
-                          <th>BIR</th><th>Total Deductions</th><th>Net(M)</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {computedPreview.map((r,i)=>(
-                          <tr key={i}>
-                            <td>{r.original.employeeCode}</td>
-                            <td>{r.original.name}</td>
-                            <td>{formatCurrency(r.grossMonthly)}</td>
-                            <td>{formatCurrency(r.monthlyDeductions.sss)}</td>
-                            <td>{formatCurrency(r.monthlyDeductions.phic)}</td>
-                            <td>{formatCurrency(r.monthlyDeductions.hdmf)}</td>
-                            <td>{formatCurrency(r.monthlyDeductions.bir)}</td>
-                            <td>{formatCurrency(r.monthlyDeductions.totalDeductions)}</td>
-                            <td>{formatCurrency(r.monthlyDeductions.netPay)}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                  <h1 className="computation-main-title">Payroll Computation</h1>
+                  <p className="computation-main-subtitle">
+                    Compute payroll, review the results, and submit the draft for admin approval.
+                  </p>
+                </IonCol>
+              </IonRow>
+
+              <IonRow className="computation-summary-row">
+                <IonCol size="12" sizeMd="4">
+                  <div className="computation-summary-card">
+                    <span className="computation-summary-label">Client</span>
+                    <strong>{clientName || "Select Client"}</strong>
+                  </div>
+                </IonCol>
+                <IonCol size="6" sizeMd="4">
+                  <div className="computation-summary-card">
+                    <span className="computation-summary-label">Employees</span>
+                    <strong>{csvData.length}</strong>
+                  </div>
+                </IonCol>
+                <IonCol size="6" sizeMd="4">
+                  <div className="computation-summary-card">
+                    <span className="computation-summary-label">Open Disputes</span>
+                    <strong>{relatedDisputes.length}</strong>
                   </div>
                 </IonCol>
               </IonRow>
-            )}
-          </IonGrid>
-        </IonContent>
-        <FooterNav />
-      </IonPage>
+
+              {relatedDisputes.length > 0 && (
+                <IonRow>
+                  <IonCol>
+                    <IonCard className="computation-info-card">
+                      <IonCardContent>
+                        <IonNote color="warning">
+                          This client has {relatedDisputes.length} accepted dispute{relatedDisputes.length !== 1 ? "s" : ""}. Sending a new draft will route the recomputation back to admin review.
+                        </IonNote>
+                      </IonCardContent>
+                    </IonCard>
+                  </IonCol>
+                </IonRow>
+              )}
+
+              <IonRow>
+                <IonCol>
+                  <IonCard className="computation-controls-card">
+                    <IonCardContent>
+                      <IonRow>
+                        <IonCol size="12" sizeLg="7">
+                          <IonSearchbar
+                            className="computation-searchbar"
+                            placeholder="Search employees..."
+                            value={searchText}
+                            onIonInput={e => setSearchText(e.detail.value)}
+                          />
+                        </IonCol>
+                        <IonCol size="12" sizeLg="5">
+                          <IonButton
+                            className="client-selector-btn"
+                            expand="block"
+                            routerLink="/bookkeeper-client-list-base"
+                          >
+                            <IonIcon icon={personOutline} slot="start" />
+                            Open Client List
+                          </IonButton>
+                        </IonCol>
+                      </IonRow>
+
+                      <div className="computation-action-grid">
+                        <IonButton onClick={computePreview} disabled={isComputing}>
+                          {isComputing ? <IonSpinner name="crescent"/> : "Compute Payroll"}
+                        </IonButton>
+                        <IonButton
+                          onClick={handleSaveDraft}
+                          disabled={!computedPreview || isSaving}
+                        >
+                          {isSaving ? <IonSpinner name="crescent"/> : "Send Draft to Admin"}
+                        </IonButton>
+                        <IonButton
+                          onClick={handleSaveResults}
+                          disabled={!computedPreview || isSaving}
+                          fill="outline"
+                        >
+                          {isSaving ? <IonSpinner name="crescent"/> : "Save Results"}
+                        </IonButton>
+                        <IonButton
+                          onClick={exportCSV}
+                          disabled={!computedPreview}
+                          fill="outline"
+                        >
+                          Export CSV
+                        </IonButton>
+                      </div>
+                    </IonCardContent>
+                  </IonCard>
+                </IonCol>
+              </IonRow>
+
+              <IonRow>
+                <IonCol>
+                  <IonCard className="computation-table-card">
+                    <IonCardHeader>
+                      <IonCardTitle>Employee Data</IonCardTitle>
+                      <IonText color="medium">
+                        <p>Source employee records for this payroll run.</p>
+                      </IonText>
+                    </IonCardHeader>
+                    <IonCardContent>
+                      <div className="table-scroll-container">
+                        <table className="results-data-table">
+                          <thead>
+                            <tr>
+                              <th>Code</th><th>Name</th><th>Gross</th><th>Rate</th><th>Hours</th><th>Dept</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {filteredData.map((r,i) => (
+                              <tr key={i}>
+                                <td>{r.employeeCode}</td>
+                                <td>{r.name}</td>
+                                <td>{formatCurrency(getMonthlyGrossPay(r))}</td>
+                                <td>{formatCurrency(r.ratePerHour)}</td>
+                                <td>{r.hoursWorked}</td>
+                                <td>{r.department}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </IonCardContent>
+                  </IonCard>
+                </IonCol>
+              </IonRow>
+
+              {computedPreview && (
+                <IonRow className="ion-margin-top">
+                  <IonCol>
+                    <IonCard className="computation-table-card">
+                      <IonCardHeader>
+                        <IonCardTitle>Computation Results</IonCardTitle>
+                        <IonText color="medium">
+                          <p>Preview the payroll deductions and net pay before submitting.</p>
+                        </IonText>
+                      </IonCardHeader>
+                      <IonCardContent>
+                        <div className="table-scroll-container">
+                          <table className="results-data-table">
+                            <thead>
+                              <tr>
+                                <th>Code</th><th>Name</th>
+                                <th>Gross(M)</th><th>SSS</th><th>PHIC</th><th>HDMF</th>
+                                <th>BIR</th><th>Total Deductions</th><th>Net(M)</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {computedPreview.map((r,i)=>(
+                                <tr key={i}>
+                                  <td>{r.original.employeeCode}</td>
+                                  <td>{r.original.name}</td>
+                                  <td>{formatCurrency(r.grossMonthly)}</td>
+                                  <td>{formatCurrency(r.monthlyDeductions.sss)}</td>
+                                  <td>{formatCurrency(r.monthlyDeductions.phic)}</td>
+                                  <td>{formatCurrency(r.monthlyDeductions.hdmf)}</td>
+                                  <td>{formatCurrency(r.monthlyDeductions.bir)}</td>
+                                  <td>{formatCurrency(r.monthlyDeductions.totalDeductions)}</td>
+                                  <td>{formatCurrency(r.monthlyDeductions.netPay)}</td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      </IonCardContent>
+                    </IonCard>
+                  </IonCol>
+                </IonRow>
+              )}
+              </IonGrid>
+            </div>
+          </IonContent>
+          <FooterNav />
+        </IonPage>
+      </>
   );
 }
 

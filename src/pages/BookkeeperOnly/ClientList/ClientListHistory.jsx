@@ -323,6 +323,17 @@ function ClientListHistory() {
               priority: "high"
             });
             break;
+          case "disputed":
+            newNotifications.push({
+              id: `draft-${draft.id}-disputed`,
+              type: "computation_disputed",
+              message: `Computation for ${clientName} has a dispute and needs recomputation`,
+              clientName,
+              draftId: draft.id,
+              createdAt: updatedAt,
+              priority: "high"
+            });
+            break;
             
           default:
             if (!draft.sentToClient && draft.status === "draft") {
@@ -517,7 +528,8 @@ function ClientListHistory() {
       'computation_approved': 'Computation Approved',
       'computation_needs_revision': 'Needs Revision',
       'computation_created': 'New Draft',
-      'computation_sent': 'Sent to Client'
+      'computation_sent': 'Sent to Client',
+      'computation_disputed': 'Disputed Computation'
     };
     return titles[type] || 'Notification';
   };
@@ -528,7 +540,8 @@ function ClientListHistory() {
       'computation_approved': checkmarkDoneOutline,
       'computation_needs_revision': timeOutline,
       'computation_created': documentTextOutline,
-      'computation_sent': checkmarkDoneOutline
+      'computation_sent': checkmarkDoneOutline,
+      'computation_disputed': timeOutline
     };
     return icons[type] || notificationsOutline;
   };
@@ -539,7 +552,8 @@ function ClientListHistory() {
       'computation_approved': 'success',
       'computation_needs_revision': 'danger',
       'computation_created': 'primary',
-      'computation_sent': 'medium'
+      'computation_sent': 'medium',
+      'computation_disputed': 'tertiary'
     };
     return colors[type] || 'medium';
   };

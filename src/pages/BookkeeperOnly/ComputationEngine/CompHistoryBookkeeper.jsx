@@ -34,6 +34,7 @@ import {
   doc,
   serverTimestamp,
   addDoc,
+  writeBatch,
 } from "firebase/firestore";
 
 import { db } from "../../../database-components/firebaseConfig";
@@ -55,6 +56,8 @@ const getStatusBadgeProps = (status) => {
     case "revised":
     case "needs_revision":
       return { color: "danger", text: (status?.toUpperCase() || 'NEEDS REVISION').replace('_', ' ') };
+    case "disputed":
+      return { color: "tertiary", text: "DISPUTED" };
     case "sent_to_client":
       // <<< NEW STATUS: Matches the status written by confirmSendToClient and allowed by Rules >>>
       return { color: "primary", text: "SENT TO CLIENT" }; 
@@ -220,6 +223,8 @@ function CompHistoryBookkeeper() {
       filtered = filtered.filter(draft => 
         draft.status === "revised" || draft.status === "needs_revision"
       );
+    } else if (statusFilter === "disputed") {
+      filtered = filtered.filter(draft => draft.status === "disputed");
     } else if (statusFilter === "draft") {
       filtered = filtered.filter(draft => draft.status === "draft");
     }
@@ -389,9 +394,24 @@ function CompHistoryBookkeeper() {
               lastSentAt: new Date(),
               clientVisible: true,
               status: "sent_to_client" // Update status locally
-            }
+          }
           : draft
       ));
+
+      if (Array.isArray(draftToSend.disputeIds) && draftToSend.disputeIds.length > 0) {
+        const batch = writeBatch(db);
+        draftToSend.disputeIds.forEach((disputeId) => {
+          batch.update(doc(db, "computationDisputes", disputeId), {
+            status: "resolved",
+            resolvedAt: serverTimestamp(),
+            deliveredAt: serverTimestamp(),
+            deliveredDraftId: draftToSend.id,
+            deliveredBy: user.uid,
+            updatedAt: serverTimestamp(),
+          });
+        });
+        await batch.commit();
+      }
 
     } catch (error) {
       console.error("Error sending to client:", error);
@@ -471,6 +491,7 @@ Please confirm you want to send it again.`;
 
   // Calculate status counts for filter options
   const getCount = (status) => drafts.filter(d => d.status === status).length;
+  const getDisputedCount = getCount('disputed');
   const getRevisedCount = getCount('revised') + getCount('needs_revision');
 
   return (
@@ -514,6 +535,12 @@ Please confirm you want to send it again.`;
                 </IonCol>
                 <IonCol size="6" sizeMd="3">
                   <div className="comp-history-summary-card">
+                    <span className="comp-history-summary-label">Disputed</span>
+                    <strong>{getDisputedCount}</strong>
+                  </div>
+                </IonCol>
+                <IonCol size="6" sizeMd="3">
+                  <div className="comp-history-summary-card">
                     <span className="comp-history-summary-label">Needs Revision</span>
                     <strong>{getRevisedCount}</strong>
                   </div>
@@ -544,6 +571,7 @@ Please confirm you want to send it again.`;
                             <IonSelectOption value="approved">Approved ({getCount('approved')})</IonSelectOption>
                             <IonSelectOption value="sent">Sent to Client ({getCount('sent_to_client')})</IonSelectOption>
                             <IonSelectOption value="pending_approval">Pending Approval ({getCount('pending_approval')})</IonSelectOption>
+                            <IonSelectOption value="disputed">Disputed ({getDisputedCount})</IonSelectOption>
                             <IonSelectOption value="revised">Needs Revision ({getRevisedCount})</IonSelectOption>
                             <IonSelectOption value="draft">Drafts ({getCount('draft')})</IonSelectOption>
                           </IonSelect>
@@ -643,6 +671,12 @@ Please confirm you want to send it again.`;
                                       <IonIcon icon={lockClosedOutline} /> {draft.status === "pending_approval" ? "Awaiting approval" : "Cannot send yet"}
                                     </IonNote>
                                   )}
+
+                                  {draft.status === "disputed" && (draft.disputeReason || draft.revisionNotes) && (
+                                    <p className="draft-history-note draft-history-note-warning">
+                                      Dispute note: {draft.disputeReason || draft.revisionNotes}
+                                    </p>
+                                  )}
                                 </div>
 
                                 <div className="draft-history-actions">
@@ -683,9 +717,9 @@ Please confirm you want to send it again.`;
         </IonContent>
 
       {/* Full Data Preview Modal */}
-      <IonModal isOpen={showPreviewModal} onDidDismiss={() => setShowPreviewModal(false)}>
+      <IonModal className="draft-preview-modal" isOpen={showPreviewModal} onDidDismiss={() => setShowPreviewModal(false)}>
         <IonHeader>
-          <IonToolbar>
+          <IonToolbar className="draft-preview-toolbar">
             <IonButton slot="start" fill="clear" onClick={() => setShowPreviewModal(false)}>
               <IonIcon icon={closeOutline} />
             </IonButton>
@@ -709,12 +743,13 @@ Please confirm you want to send it again.`;
             )}
           </IonToolbar>
         </IonHeader>
-        <IonContent className="ion-padding">
+        <IonContent className="draft-preview-content">
           {selectedDraft && (
-            <IonGrid>
+            <div className="draft-preview-shell">
+              <IonGrid className="draft-preview-grid">
               <IonRow>
                 <IonCol>
-                  <IonCard color={getStatusBadgeProps(selectedDraft.status).color}>
+                    <IonCard className="draft-preview-summary-card" color={getStatusBadgeProps(selectedDraft.status).color}>
                     <IonCardContent>
                       <IonText>
                         <h3>Computation Summary</h3>
@@ -745,47 +780,50 @@ Please confirm you want to send it again.`;
               </IonRow>
               
               {/* Complete Employee Data Table */}
-              <IonRow>
-                <IonCol>
-                  <h4>Complete Payroll Computation Results</h4>
-                  <div style={{ maxHeight: '500px', overflow: 'auto', border: '1px solid #ddd' }}>
-                    <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.8em' }}>
-                      <thead>
-                        <tr style={{ backgroundColor: '#f5f5f5', position: 'sticky', top: 0 }}>
-                          <th style={{ padding: '8px', border: '1px solid #ddd', textAlign: 'left' }}>Name</th>
-                          <th style={{ padding: '8px', border: '1px solid #ddd', textAlign: 'left' }}>Code</th>
-                          <th style={{ padding: '8px', border: '1px solid #ddd', textAlign: 'left' }}>Department</th>
-                          <th style={{ padding: '8px', border: '1px solid #ddd', textAlign: 'left' }}>Rate/Hour</th>
-                          <th style={{ padding: '8px', border: '1px solid #ddd', textAlign: 'left' }}>Hours</th>
-                          <th style={{ padding: '8px', border: '1px solid #ddd', textAlign: 'left' }}>Gross Pay</th>
-                          <th style={{ padding: '8px', border: '1px solid #ddd', textAlign: 'left' }}>SSS</th>
-                          <th style={{ padding: '8px', border: '1px solid #ddd', textAlign: 'left' }}>PHIC</th>
-                          <th style={{ padding: '8px', border: '1px solid #ddd', textAlign: 'left' }}>HDMF</th>
-                          <th style={{ padding: '8px', border: '1px solid #ddd', textAlign: 'left' }}>BIR Tax</th>
-                          <th style={{ padding: '8px', border: '1px solid #ddd', textAlign: 'left' }}>Total Deductions</th>
-                          <th style={{ padding: '8px', border: '1px solid #ddd', textAlign: 'left' }}>Net Pay</th>
-                        </tr>
-                      </thead>
-                      <tbody>
+                <IonRow>
+                  <IonCol>
+                    <div className="draft-preview-table-header">
+                      <h4>Complete Payroll Computation Results</h4>
+                      <p>Scroll horizontally to review the full payroll table.</p>
+                    </div>
+                    <div className="draft-preview-table-shell">
+                      <table className="draft-preview-table">
+                        <thead>
+                          <tr>
+                            <th>Name</th>
+                            <th>Code</th>
+                            <th>Department</th>
+                            <th>Rate/Hour</th>
+                            <th>Hours</th>
+                            <th>Gross Pay</th>
+                            <th>SSS</th>
+                            <th>PHIC</th>
+                            <th>HDMF</th>
+                            <th>BIR Tax</th>
+                            <th>Total Deductions</th>
+                            <th>Net Pay</th>
+                          </tr>
+                        </thead>
+                        <tbody>
                         {selectedDraft.data?.map((employee, index) => {
                           const totalDeductions = (employee.sss || 0) + (employee.philHealth || employee.phic || 0) + (employee.pagIbig || employee.hdmf || 0) + (employee.tax || employee.bir || 0);
                           
                           return (
-                            <tr key={index} style={{ backgroundColor: index % 2 === 0 ? '#fff' : '#f9f9f9' }}>
-                              <td style={{ padding: '6px', border: '1px solid #ddd' }}>{employee.name || 'N/A'}</td>
-                              <td style={{ padding: '6px', border: '1px solid #ddd' }}>{employee.employeeCode || 'N/A'}</td>
-                              <td style={{ padding: '6px', border: '1px solid #ddd' }}>{employee.department || 'N/A'}</td>
-                              <td style={{ padding: '6px', border: '1px solid #ddd' }}>{formatCurrency(employee.ratePerHour)}</td>
-                              <td style={{ padding: '6px', border: '1px solid #ddd' }}>{employee.hoursWorked || 'N/A'}</td>
-                              <td style={{ padding: '6px', border: '1px solid #ddd', fontWeight: 'bold' }}>{formatCurrency(employee.grossPay)}</td>
-                              <td style={{ padding: '6px', border: '1px solid #ddd', color: '#d32f2f' }}>{formatCurrency(employee.sss)}</td>
-                              <td style={{ padding: '6px', border: '1px solid #ddd', color: '#d32f2f' }}>{formatCurrency(employee.philHealth || employee.phic)}</td>
-                              <td style={{ padding: '6px', border: '1px solid #ddd', color: '#d32f2f' }}>{formatCurrency(employee.pagIbig || employee.hdmf)}</td>
-                              <td style={{ padding: '6px', border: '1px solid #ddd', color: '#d32f2f' }}>{formatCurrency(employee.tax || employee.bir)}</td>
-                              <td style={{ padding: '6px', border: '1px solid #ddd', color: '#d32f2f', fontWeight: 'bold' }}>
+                            <tr key={index}>
+                              <td>{employee.name || 'N/A'}</td>
+                              <td>{employee.employeeCode || 'N/A'}</td>
+                              <td>{employee.department || 'N/A'}</td>
+                              <td>{formatCurrency(employee.ratePerHour)}</td>
+                              <td>{employee.hoursWorked || 'N/A'}</td>
+                              <td className="draft-preview-cell-strong">{formatCurrency(employee.grossPay)}</td>
+                              <td className="draft-preview-cell-negative">{formatCurrency(employee.sss)}</td>
+                              <td className="draft-preview-cell-negative">{formatCurrency(employee.philHealth || employee.phic)}</td>
+                              <td className="draft-preview-cell-negative">{formatCurrency(employee.pagIbig || employee.hdmf)}</td>
+                              <td className="draft-preview-cell-negative">{formatCurrency(employee.tax || employee.bir)}</td>
+                              <td className="draft-preview-cell-negative draft-preview-cell-strong">
                                 {formatCurrency(totalDeductions)}
                               </td>
-                              <td style={{ padding: '6px', border: '1px solid #ddd', fontWeight: 'bold', color: '#2e7d32' }}>
+                              <td className="draft-preview-cell-positive draft-preview-cell-strong">
                                 {formatCurrency(employee.netPay)}
                               </td>
                             </tr>
@@ -793,7 +831,7 @@ Please confirm you want to send it again.`;
                         })}
                         {!selectedDraft.data || selectedDraft.data.length === 0 ? (
                           <tr>
-                            <td colSpan="12" style={{ padding: '20px', textAlign: 'center', fontStyle: 'italic' }}>
+                              <td colSpan="12" className="draft-preview-empty-row">
                               No employee data available
                             </td>
                           </tr>
@@ -804,6 +842,7 @@ Please confirm you want to send it again.`;
                 </IonCol>
               </IonRow>
             </IonGrid>
+            </div>
           )}
         </IonContent>
       </IonModal>

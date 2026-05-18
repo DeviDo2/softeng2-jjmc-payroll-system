@@ -1,0 +1,183 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+.bookkeeper-home-content {
+  --background: transparent;
+  font-family: 'Poppins', sans-serif;
+  position: relative;
+  overflow-x: hidden;
+}
+
+.bookkeeper-home-content::part(scroll) {
+  overflow-x: hidden;
+}
+
+.bookkeeper-home-panel {
+  background: linear-gradient(145deg, #ffffff 0%, #f4fbfc 100%);
+  border-radius: 28px;
+  box-shadow: 0 10px 30px rgba(10, 63, 89, 0.1);
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 20px 30px;
+  position: relative;
+  z-index: 2;
+  overflow: hidden;
+}
+
+.bookkeeper-home-title {
+  margin: 20px 0 0;
+  color: #0A3F59;
+  font-size: 1.8rem;
+  font-weight: 700;
+  text-align: left;
+}
+
+.bookkeeper-home-subtitle {
+  margin: 8px 0 20px;
+  color: #4c5b65;
+  font-size: 1rem;
+  text-align: left;
+}
+
+.bookkeeper-home-summary-row {
+  margin-bottom: 8px;
+}
+
+.bookkeeper-home-summary-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 16px 18px;
+  border-radius: 18px;
+  background: #ffffff;
+  border: 1px solid rgba(10, 63, 89, 0.08);
+  box-shadow: 0 8px 24px rgba(10, 63, 89, 0.06);
+}
+
+.bookkeeper-home-summary-card strong {
+  color: #0A3F59;
+  font-size: 1.45rem;
+}
+
+.bookkeeper-home-summary-label {
+  color: #64808f;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.bookkeeper-home-card {
+  margin: 12px 0;
+  border-radius: 20px;
+  background: #ffffff;
+  border: 1px solid rgba(10, 63, 89, 0.08);
+  box-shadow: 0 8px 24px rgba(10, 63, 89, 0.06);
+}
+
+.bookkeeper-home-section-title {
+  margin: 0 0 14px;
+  color: #0A3F59;
+  font-size: 1.08rem;
+  font-weight: 700;
+}
+
+.bookkeeper-home-latest-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.bookkeeper-home-latest-topline {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.bookkeeper-home-latest-topline h3,
+.bookkeeper-home-latest-topline p {
+  margin: 0;
+}
+
+.bookkeeper-home-latest-topline h3 {
+  color: #0A3F59;
+  font-size: 1.1rem;
+}
+
+.bookkeeper-home-latest-topline p,
+.bookkeeper-home-latest-meta,
+.bookkeeper-home-empty-text {
+  color: #5b7581;
+  line-height: 1.45;
+}
+
+.bookkeeper-home-client-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.bookkeeper-home-client-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.bookkeeper-home-client-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: 16px;
+  border: 1px solid rgba(10, 63, 89, 0.08);
+  background: #f8fcfd;
+  cursor: pointer;
+  text-align: left;
+}
+
+.bookkeeper-home-client-name {
+  color: #0A3F59;
+  font-weight: 600;
+}
+
+.bookkeeper-home-client-count {
+  color: #6b8491;
+  font-size: 0.92rem;
+}
+
+.bookkeeper-home-loading {
+  min-height: 60vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: #5d7682;
+}
+
+@media (max-width: 768px) {
+  .bookkeeper-home-title {
+    font-size: 1.5rem;
+  }
+
+  .bookkeeper-home-panel {
+    padding: 20px 16px 24px;
+  }
+}
+
+@media (max-width: 480px) {
+  .bookkeeper-home-title {
+    font-size: 1.35rem;
+  }
+
+  .bookkeeper-home-client-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

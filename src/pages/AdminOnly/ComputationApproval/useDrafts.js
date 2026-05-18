@@ -6,6 +6,7 @@ import {
   updateDoc, 
   serverTimestamp,
   onSnapshot,
+  writeBatch,
 } from "firebase/firestore";
 
 const isPendingDraft = (draft) => {
@@ -19,10 +20,16 @@ const isPendingDraft = (draft) => {
 };
 
 const toDate = (value) => value?.toDate?.() || value || null;
+const getTime = (value) => {
+  const dateValue = toDate(value);
+  return dateValue ? new Date(dateValue).getTime() || 0 : 0;
+};
 
 export default function useDrafts() {
   const [drafts, setDrafts] = useState([]);
+  const [disputes, setDisputes] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [disputesLoading, setDisputesLoading] = useState(true);
 
   useEffect(() => {
     console.log("🔄 ADMIN: Setting up real-time listener for pending drafts");
@@ -66,13 +73,45 @@ export default function useDrafts() {
     return () => unsubscribe();
   }, []);
 
-  const approveDraft = async (draftId, adminData) => {
-    console.log("👑 ADMIN: Approving draft", draftId);
+  useEffect(() => {
+    console.log("🔄 ADMIN: Setting up real-time listener for computation disputes");
+
+    const unsubscribe = onSnapshot(
+      collection(db, "computationDisputes"),
+      (snapshot) => {
+        const disputesData = snapshot.docs
+          .map((docSnap) => {
+            const data = docSnap.data();
+            return {
+              id: docSnap.id,
+              ...data,
+              createdAt: toDate(data.createdAt),
+              updatedAt: toDate(data.updatedAt),
+              acceptedAt: toDate(data.acceptedAt),
+              rejectedAt: toDate(data.rejectedAt),
+              resolvedAt: toDate(data.resolvedAt),
+            };
+          })
+          .sort((left, right) => getTime(right.updatedAt || right.createdAt) - getTime(left.updatedAt || left.createdAt));
+
+        setDisputes(disputesData);
+        setDisputesLoading(false);
+      },
+      (error) => {
+        console.error("❌ ADMIN: Error listening to disputes:", error);
+        setDisputesLoading(false);
+      }
+    );
+
+    return () => unsubscribe();
+  }, []);
+
+  const approveDraft = async (draft, adminData) => {
+    console.log("👑 ADMIN: Approving draft", draft?.id);
     
     try {
-      const draftRef = doc(db, "clientPayrollDrafts", draftId);
+      const draftRef = doc(db, "clientPayrollDrafts", draft.id);
       
-      // SIMPLE UPDATE - Just change status to "approved"
       await updateDoc(draftRef, { 
         status: "approved",
         approvedAt: serverTimestamp(),
@@ -80,6 +119,20 @@ export default function useDrafts() {
         approvedById: adminData?.uid || "admin",
         lastUpdated: serverTimestamp()
       });
+
+      if (Array.isArray(draft.disputeIds) && draft.disputeIds.length > 0) {
+        const batch = writeBatch(db);
+        draft.disputeIds.forEach((disputeId) => {
+          batch.update(doc(db, "computationDisputes", disputeId), {
+            status: "approved",
+            approvedAt: serverTimestamp(),
+            approvedDraftId: draft.id,
+            approvedBy: adminData?.name || "Admin",
+            updatedAt: serverTimestamp(),
+          });
+        });
+        await batch.commit();
+      }
       
       console.log("✅ ADMIN: Draft approved successfully!");
       return { success: true };
@@ -90,19 +143,34 @@ export default function useDrafts() {
     }
   };
 
-  const reviseDraft = async (draftId, notes, adminData) => {
-    console.log("👑 ADMIN: Requesting revision for", draftId);
+  const reviseDraft = async (draft, notes, adminData) => {
+    console.log("👑 ADMIN: Requesting revision for", draft?.id);
     
     try {
-      const draftRef = doc(db, "clientPayrollDrafts", draftId);
+      const draftRef = doc(db, "clientPayrollDrafts", draft.id);
+      const isDisputedDraft = Array.isArray(draft.disputeIds) && draft.disputeIds.length > 0;
+      const nextStatus = isDisputedDraft ? "disputed" : "needs_revision";
       
       await updateDoc(draftRef, { 
-        status: "needs_revision",
+        status: nextStatus,
         revisionNotes: notes || "Please revise",
         revisedAt: serverTimestamp(),
         revisedBy: adminData?.name || "Admin",
         lastUpdated: serverTimestamp()
       });
+
+      if (isDisputedDraft) {
+        const batch = writeBatch(db);
+        draft.disputeIds.forEach((disputeId) => {
+          batch.update(doc(db, "computationDisputes", disputeId), {
+            status: "disputed",
+            adminDecisionReason: notes || "Please revise",
+            disputedAt: serverTimestamp(),
+            updatedAt: serverTimestamp(),
+          });
+        });
+        await batch.commit();
+      }
       
       console.log("✅ ADMIN: Revision requested!");
       return { success: true };
@@ -113,5 +181,51 @@ export default function useDrafts() {
     }
   };
 
-  return { drafts, loading, approveDraft, reviseDraft };
+  const acceptDispute = async (dispute, reason, adminData) => {
+    const disputeRef = doc(db, "computationDisputes", dispute.id);
+
+    await updateDoc(disputeRef, {
+      status: "accepted",
+      adminDecisionReason: reason || "Dispute accepted",
+      acceptedAt: serverTimestamp(),
+      reviewedBy: adminData?.name || "Admin",
+      reviewedById: adminData?.uid || "admin",
+      updatedAt: serverTimestamp(),
+    });
+
+    const linkedDraftId = dispute.sourceDraftId || dispute.latestDraftId;
+
+    if (linkedDraftId) {
+      await updateDoc(doc(db, "clientPayrollDrafts", linkedDraftId), {
+        status: "disputed",
+        disputeId: dispute.id,
+        disputeReason: reason || "Dispute accepted",
+        revisionNotes: reason || "Dispute accepted",
+        disputedAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+      });
+    }
+  };
+
+  const rejectDispute = async (dispute, reason, adminData) => {
+    await updateDoc(doc(db, "computationDisputes", dispute.id), {
+      status: "rejected",
+      adminDecisionReason: reason || "Dispute rejected",
+      rejectedAt: serverTimestamp(),
+      reviewedBy: adminData?.name || "Admin",
+      reviewedById: adminData?.uid || "admin",
+      updatedAt: serverTimestamp(),
+    });
+  };
+
+  return {
+    drafts,
+    disputes,
+    loading,
+    disputesLoading,
+    approveDraft,
+    reviseDraft,
+    acceptDispute,
+    rejectDispute,
+  };
 }
