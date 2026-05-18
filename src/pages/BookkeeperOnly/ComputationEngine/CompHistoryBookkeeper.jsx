@@ -725,31 +725,34 @@ Please confirm you want to send it again.`;
               <IonGrid className="draft-preview-grid">
               <IonRow>
                 <IonCol>
-                    <IonCard className="draft-preview-summary-card" color={getStatusBadgeProps(selectedDraft.status).color}>
-                    <IonCardContent>
-                      <IonText>
-                        <h3>Computation Summary</h3>
+                    <IonCard className="draft-preview-summary-card">
+                    <IonCardContent>
+                      <IonCol>
+                      <IonText>
+                        <div className="draft-preview-summary-title">
+                          <h3>Computation Summary</h3>
+                          <span
+                            className={`draft-preview-status-pill status-${selectedDraft?.status || "draft"}`}
+                          >
+                            {getStatusBadgeProps(selectedDraft?.status).text}
+                          </span>
+                        </div>
                         <p><strong>Client:</strong> {selectedDraft.clientName}</p>
-                        <p>
-                          <strong>Status:</strong> 
-                          <IonBadge 
-                            color={getStatusBadgeProps(selectedDraft.status).color}
-                            style={{ marginLeft: '8px' }}
-                          >
-                            {getStatusBadgeProps(selectedDraft.status).text}
-                          </IonBadge>
-                          {selectedDraft.status === "approved" && (
-                            <IonText color="success">
-                              {' '}Ready to send to client
-                            </IonText>
-                          )}
-                        </p>
+                        <p>
+                          <strong>Status:</strong> {getStatusBadgeProps(selectedDraft.status).text}
+                          {selectedDraft.status === "approved" && (
+                            <IonText color="success">
+                              {' '}Ready to send to client
+                            </IonText>
+                          )}
+                        </p>
                         <p><strong>Total Employees:</strong> {selectedDraft.data?.length || 0}</p>
                         <p><strong>Created:</strong> {selectedDraft.createdAt?.toDate?.().toLocaleDateString() || "Unknown"}</p>
                         {selectedDraft.sentToClient && (
                           <p><strong>Last Sent:</strong> {selectedDraft.lastSentAt?.toDate?.().toLocaleDateString() || "Previously sent"}</p>
                         )}
                       </IonText>
+                      </IonCol>
                     </IonCardContent>
                   </IonCard>
                 </IonCol>
@@ -758,10 +761,7 @@ Please confirm you want to send it again.`;
               {/* Complete Employee Data Table */}
                 <IonRow>
                   <IonCol>
-                    <div className="draft-preview-table-header">
-                      <h4>Complete Payroll Computation Results</h4>
-                      <p>Scroll horizontally to review the full payroll table.</p>
-                    </div>
+                    
                     <div className="draft-preview-table-shell">
                       <table className="draft-preview-table">
                         <thead>

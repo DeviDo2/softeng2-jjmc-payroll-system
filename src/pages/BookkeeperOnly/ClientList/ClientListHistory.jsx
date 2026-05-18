@@ -794,15 +794,6 @@ function ClientListHistory() {
                           >
                             Compute Payroll
                           </IonButton>
-                          <IonButton
-                            expand="block"
-                            fill="outline"
-                            className="client-action-btn"
-                            onClick={() => handleViewComputationHistory(client)}
-                          >
-                            <IonIcon icon={documentTextOutline} slot="start" />
-                            View History
-                          </IonButton>
                         </div>
                       </div>
                     </IonCardContent>
