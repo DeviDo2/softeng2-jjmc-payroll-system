@@ -596,22 +596,20 @@ function ClientListHistory() {
       <IonPage id="main-content">
         <IonContent fullscreen className="client-list-content">
           <IonImg src="/Gradient-Ellipses.png" alt="BG" className="ellipse-bg" />
-
-          <div className="client-card-container">
-          <IonGrid>
-             
-            {/* Header */}
+          {/* Header */}
             <IonRow>
               <IonCol>
                 <IonText>
                   <h1 className="client-list-history-title">Client List</h1>
                   <p className="client-list-subheader">
-                    Choose a client to start payroll computation or open its computation history.
+                    Choose a client to start payroll computation.
                   </p>
                 </IonText>
                 </IonCol>
             </IonRow>
-
+          <div className="client-card-container">
+          <IonGrid>
+             
                 {/* Notification Indicator - Only show if there are unread notifications */}
                 {unreadNotifications.length > 0 && (
                   <IonRow>
