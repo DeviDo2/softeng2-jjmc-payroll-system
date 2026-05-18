@@ -217,8 +217,6 @@ export default function AssignBookkeeper() {
   };
 
   return (
-    <IonApp>
-      <Sidebar />
 
       <IonPage id="assign-content">
         <IonContent>
@@ -305,6 +303,5 @@ export default function AssignBookkeeper() {
           onDidDismiss={() => setToastMessage("")}
         />
       </IonPage>
-    </IonApp>
   );
 }

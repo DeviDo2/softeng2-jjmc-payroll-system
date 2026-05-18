@@ -250,3 +250,55 @@ ion-button {
 ion-menu, ion-menu-toggle, ion-header, ion-toolbar, ion-title {
   font-family: 'Poppins', sans-serif !important;
 }
+
+.dispute-status-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.dispute-status-text {
+  margin: 0;
+  color: #5b7581;
+  line-height: 1.45;
+}
+
+.dispute-submit-btn {
+  --background: #0A3F59;
+  --color: #E9FBFC;
+  --border-radius: 14px;
+  font-weight: 600;
+}
+
+.dispute-modal-content {
+  --background: linear-gradient(180deg, #f8fcfd 0%, #eef6f8 100%);
+}
+
+.dispute-modal-shell {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 20px 0 32px;
+}
+
+.dispute-modal-shell h2 {
+  color: #0A3F59;
+  margin-bottom: 8px;
+}
+
+.dispute-modal-shell p {
+  color: #56707d;
+}
+
+.dispute-input-item {
+  --background: rgba(255, 255, 255, 0.9);
+  border-radius: 16px;
+  margin-top: 14px;
+  border: 1px solid rgba(10, 63, 89, 0.1);
+}
+
+.dispute-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 18px;
+}

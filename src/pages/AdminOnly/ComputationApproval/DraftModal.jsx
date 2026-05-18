@@ -1,5 +1,6 @@
 import { IonButton, IonIcon, IonGrid, IonRow, IonCol } from "@ionic/react";
 import { checkmarkOutline, closeOutline } from "ionicons/icons";
+import "./DraftModal.css";
 
 const money = (value) => `₱${(Number(value) || 0).toFixed(2)}`;
 
@@ -13,7 +14,7 @@ export default function DraftModal({ draft, onClose, onApprove, onRevise }) {
 
         <IonRow>
           <IonCol className="ion-text-center">
-            <h2>Draft: {draft.clientName}</h2>
+            <h2>{draft.clientName}</h2>
             <p>Bookkeeper: {draft.bookkeeperName}</p>
             <p>Payroll Period: {draft.payrollPeriod}</p>
           </IonCol>

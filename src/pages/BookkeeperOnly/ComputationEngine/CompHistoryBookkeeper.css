@@ -51,13 +51,17 @@
 
 .comp-history-summary-row {
   margin-bottom: 8px;
+  
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: center;
 }
 
 .comp-history-summary-card {
   height: 100%;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 5px;
   padding: 16px 18px;
   border-radius: 18px;
   background: #ffffff;
@@ -262,6 +266,108 @@
   margin: 0;
 }
 
+.draft-preview-modal {
+  --width: min(96vw, 1380px);
+  --height: min(92vh, 920px);
+}
+
+.draft-preview-modal::part(content) {
+  width: min(96vw, 1380px);
+  height: min(92vh, 920px);
+  border-radius: 24px;
+}
+
+.draft-preview-toolbar {
+  --background: #0A3F59;
+  --color: #E9FBFC;
+}
+
+.draft-preview-content {
+  --background: linear-gradient(180deg, #f8fcfd 0%, #eef6f8 100%);
+}
+
+.draft-preview-shell {
+  padding: 20px;
+}
+
+.draft-preview-summary-card {
+  border-radius: 18px;
+  box-shadow: 0 8px 24px rgba(10, 63, 89, 0.12);
+}
+
+.draft-preview-table-header h4,
+.draft-preview-table-header p {
+  margin: 0;
+}
+
+.draft-preview-table-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+  color: #4f6875;
+}
+
+.draft-preview-table-shell {
+  max-height: 62vh;
+  overflow: auto;
+  border-radius: 18px;
+  border: 1px solid rgba(10, 63, 89, 0.12);
+  background: #ffffff;
+}
+
+.draft-preview-table {
+  width: 100%;
+  min-width: 1400px;
+  border-collapse: collapse;
+}
+
+.draft-preview-table th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: #E9FBFC;
+  color: #0A3F59;
+  font-size: 0.92rem;
+  font-weight: 700;
+  padding: 12px 14px;
+  text-align: left;
+  white-space: nowrap;
+  border-bottom: 2px solid rgba(10, 63, 89, 0.15);
+}
+
+.draft-preview-table td {
+  padding: 12px 14px;
+  color: #20323b;
+  font-size: 0.92rem;
+  border-bottom: 1px solid rgba(10, 63, 89, 0.08);
+  white-space: nowrap;
+}
+
+.draft-preview-table tr:nth-child(even) td {
+  background: #f9fcfd;
+}
+
+.draft-preview-cell-strong {
+  font-weight: 700;
+}
+
+.draft-preview-cell-negative {
+  color: #c05050;
+}
+
+.draft-preview-cell-positive {
+  color: #2c7d4b;
+}
+
+.draft-preview-empty-row {
+  text-align: center;
+  font-style: italic;
+  padding: 20px;
+}
+
 @media (max-width: 900px) {
   .draft-history-card-grid {
     grid-template-columns: 1fr;
@@ -300,5 +406,9 @@
   .draft-history-meta {
     flex-direction: column;
     gap: 6px;
+  }
+
+  .draft-preview-shell {
+    padding: 12px;
   }
 }
