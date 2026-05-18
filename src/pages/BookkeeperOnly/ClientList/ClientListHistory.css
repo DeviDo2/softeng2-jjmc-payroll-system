@@ -42,8 +42,9 @@
 
 .client-list-subheader {
   font-size: 1rem;
-  color: #000000;
-  margin-bottom: 20px;
+  color: #4c5b65;
+  margin: 8px 0 20px;
+  text-align: center;
 }
 
 .notification-badge {
@@ -106,11 +107,15 @@
 
 .month-filter-btn {
   --border-radius: 40px;
+  --background: #0A3F59;
+  --color: #E9FBFC;
+  --border-color: #0A3F59;
   font-weight: 600;
   height: 44px;
   --padding-start: 20px;
   --padding-end: 20px;
   margin: 0;
+  width: 100%;
 }
 
 .month-filter-btn-active {
@@ -160,9 +165,68 @@
   transition: transform 0.2s;
 }
 
+.client-card ion-card-content {
+  padding: 20px;
+}
+
 .client-card:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(10, 63, 89, 0.1);
+}
+
+.client-card-row {
+  gap: 16px 0;
+}
+
+.client-info-column {
+  cursor: pointer;
+}
+
+.client-card-title {
+  color: #0A3F59;
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin: 0 0 10px;
+}
+
+.client-meta-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  color: #36596b;
+  font-size: 0.92rem;
+  font-weight: 500;
+}
+
+.client-status-badge {
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-weight: 700;
+}
+
+.client-detail-line {
+  margin: 0 0 6px;
+  line-height: 1.45;
+}
+
+.client-detail-line-strong {
+  color: #0A3F59;
+  font-weight: 600;
+}
+
+.client-action-column {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  justify-content: center;
+}
+
+.client-action-btn {
+  --border-radius: 14px;
+  font-weight: 600;
+  margin: 0;
 }
 
 .client-card-content {
@@ -348,23 +412,20 @@ ion-page {
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
-  .client-list-title {
+  .client-list-history-title {
     font-size: 22px;
   }
   
   .client-searchbar {
-    height: 45px;
     margin: 12px 0;
   }
   
-  .client-card {
-    width: 90%;
-    max-width: 368px;
-    height: 68px;
+  .month-filter-row {
+    gap: 10px;
   }
-  
-  .client-card-content {
-    padding: 18px 20px;
+
+  .client-card ion-card-content {
+    padding: 18px;
   }
   
   .sort-button {
@@ -380,13 +441,8 @@ ion-page {
 }
 
 @media (max-width: 480px) {
-  .client-list-title {
+  .client-list-history-title {
     font-size: 20px;
-  }
-  
-  .client-searchbar {
-    height: 42px;
-    margin: 10px 0;
   }
   
   .sort-section {
@@ -399,20 +455,17 @@ ion-page {
     margin-right: 8px;
   }
   
-  .client-card {
-    width: 95%;
-    height: 65px;
+  .client-card-title {
+    font-size: 1.05rem;
   }
-  
-  .client-card-content {
-    padding: 16px 18px;
-  }
-  
+
+  .client-meta-row,
+  .client-detail-line,
   .company-name {
     font-size: 14px;
   }
-  
-  .forward-icon {
-    font-size: 18px;
+
+  .client-action-column {
+    gap: 8px;
   }
 } 

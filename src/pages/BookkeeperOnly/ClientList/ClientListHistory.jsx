@@ -21,15 +21,93 @@ import {
   IonLabel,
   IonModal,
 } from "@ionic/react";
-import { chevronForward, documentTextOutline, notificationsOutline, closeOutline, timeOutline, checkmarkDoneOutline } from "ionicons/icons";
+import { documentTextOutline, notificationsOutline, closeOutline, timeOutline, checkmarkDoneOutline } from "ionicons/icons";
 
 import Sidebar from "../../../components/Sidebar";
 import FooterNav from "../../../components/FooterNav";
 import useAuthRole from "../../../hooks/useAuthRole";
 
-import { collection, query, where, onSnapshot, orderBy, updateDoc, doc, getDocs } from "firebase/firestore";
+import { collection, query, where, onSnapshot, getDocs } from "firebase/firestore";
 import { db } from "../../../database-components/firebaseConfig";
 import { useHistory } from "react-router-dom";
+import "./ClientListHistory.css";
+
+const formatDate = (value) => {
+  if (!(value instanceof Date) || Number.isNaN(value.getTime())) {
+    return "N/A";
+  }
+
+  return value.toLocaleDateString(undefined, {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+};
+
+const formatDateTime = (value) => {
+  if (!(value instanceof Date) || Number.isNaN(value.getTime())) {
+    return "N/A";
+  }
+
+  return value.toLocaleString(undefined, {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+  });
+};
+
+const formatMonthYear = (value) => {
+  if (!value) return null;
+
+  const parsedDate = new Date(value);
+  if (Number.isNaN(parsedDate.getTime())) {
+    return null;
+  }
+
+  return parsedDate.toLocaleDateString(undefined, {
+    month: "long",
+    year: "numeric",
+  });
+};
+
+const getStatusLabel = (status) => {
+  switch ((status || "").toLowerCase()) {
+    case "pending":
+      return "Pending";
+    case "inactive":
+      return "Inactive";
+    default:
+      return "Active";
+  }
+};
+
+const getStatusColor = (status) => {
+  switch ((status || "").toLowerCase()) {
+    case "pending":
+      return "warning";
+    case "inactive":
+      return "medium";
+    default:
+      return "success";
+  }
+};
+
+const getLatestComputationText = (client) => {
+  const latestMonth = formatMonthYear(client.recentDraft?.monthYear);
+  if (latestMonth) {
+    return `Latest computation: ${latestMonth}`;
+  }
+
+  if (client.computationCount > 0) {
+    return `Latest computation updated ${formatDate(
+      client.recentDraft?.updatedAt || client.lastUpdated
+    )}`;
+  }
+
+  return "Latest computation: No drafts yet";
+};
 
 function ClientListHistory() {
   const { loading, user } = useAuthRole();
@@ -37,7 +115,7 @@ function ClientListHistory() {
 
   const [clients, setClients] = useState([]);
   const [search, setSearch] = useState("");
-  const [selectedSort, setSelectedSort] = useState("current");
+  const [selectedSort, setSelectedSort] = useState("all");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
   
@@ -517,6 +595,9 @@ function ClientListHistory() {
               <IonCol>
                 <IonText>
                   <h1 className="client-list-history-title">Client List</h1>
+                  <p className="client-list-subheader">
+                    Choose a client to start payroll computation or open its computation history.
+                  </p>
                 </IonText>
                 </IonCol>
             </IonRow>
@@ -557,9 +638,18 @@ function ClientListHistory() {
 
             {/* Time Filter Buttons */}
             <IonRow className="month-filter-row">
+              <IonCol size="12" sizeMd="4">
+                <IonButton
+                  className="month-filter-btn"
+                  fill={selectedSort === "all" ? "solid" : "outline"}
+                  onClick={() => setSelectedSort("all")}
+                >
+                  All Clients ({getMonthFilterCounts.all})
+                </IonButton>
+              </IonCol>
               <IonCol size="6">
                 <IonButton
-                className="month-filter-btn"
+                  className="month-filter-btn"
                   fill={selectedSort === "current" ? "solid" : "outline"}
                   onClick={() => setSelectedSort("current")}
                 >
@@ -567,8 +657,9 @@ function ClientListHistory() {
                 </IonButton>
               </IonCol>
 
-              <IonCol>
+              <IonCol size="6" sizeMd="4">
                 <IonButton
+                  className="month-filter-btn"
                   fill={selectedSort === "previous" ? "solid" : "outline"}
                   onClick={() => setSelectedSort("previous")}
                 >
@@ -636,63 +727,53 @@ function ClientListHistory() {
             {!isLoading && !error && filteredClients.map((client) => (
               <IonCard key={client.id} className="client-card">
                 <IonCardContent>
-                  <IonRow className="ion-align-items-center">
-                    {/* Client Info - Clickable Area */}
-                    <IonCol 
-                      style={{ cursor: "pointer" }}
+                  <IonRow className="ion-align-items-center client-card-row">
+                    <IonCol
+                      size="12"
+                      sizeMd="8"
+                      className="client-info-column"
                       onClick={() => handleClientSelect(client)}
                     >
                       <IonText>
-                        <h3><strong>{client.name}</strong></h3>
+                        <h3 className="client-card-title">{client.name}</h3>
                       </IonText>
+                      <div className="client-meta-row">
+                        <span>{client.employeesCount} employee{client.employeesCount !== 1 ? "s" : ""}</span>
+                        <span>{client.computationCount} computation{client.computationCount !== 1 ? "s" : ""}</span>
+                        <IonBadge color={getStatusColor(client.status)} className="client-status-badge">
+                          {getStatusLabel(client.status)}
+                        </IonBadge>
+                      </div>
                       <IonText color="medium">
-                        <p>
-                          {client.employeesCount} employees • 
-                          Created {client.createdAt.toLocaleDateString()}
+                        <p className="client-detail-line">
+                          Created on {formatDate(client.createdAt)}
                         </p>
-                        {client.computationCount > 0 && (
-                          <p style={{color: 'var(--ion-color-success)'}}>
-                            {client.computationCount} computation{client.computationCount !== 1 ? 's' : ''} available
-                          </p>
-                        )}
+                        <p className="client-detail-line">
+                          Last activity: {formatDate(client.recentDraft?.updatedAt || client.lastUpdated)}
+                        </p>
+                        <p className="client-detail-line client-detail-line-strong">
+                          {getLatestComputationText(client)}
+                        </p>
                       </IonText>
                     </IonCol>
 
-                    {/* Status Badge */}
-                    <IonCol size="auto">
+                    <IonCol size="12" sizeMd="4" className="client-action-column">
                       <IonButton
-                        fill="outline"
-                        size="small"
-                        color={
-                          client.status === "active" ? "success" :
-                          client.status === "pending" ? "warning" : "medium"
-                        }
+                        expand="block"
+                        className="client-action-btn"
+                        onClick={() => handleClientSelect(client)}
                       >
-                        {client.status?.toUpperCase() || "ACTIVE"}
+                        Compute Payroll
                       </IonButton>
-                    </IonCol>
-
-                    {/* Computation History Button */}
-                    <IonCol size="auto">
                       <IonButton
-                        fill="solid"
-                        color="primary"
-                        size="small"
+                        expand="block"
+                        fill="outline"
+                        className="client-action-btn"
                         onClick={() => handleViewComputationHistory(client)}
                       >
                         <IonIcon icon={documentTextOutline} slot="start" />
-                        History
+                        View History
                       </IonButton>
-                    </IonCol>
-
-                    {/* Forward Arrow */}
-                    <IonCol size="auto">
-                      <IonIcon 
-                        icon={chevronForward} 
-                        color="medium"
-                        style={{ cursor: "pointer" }}
-                        onClick={() => handleClientSelect(client)}
-                      />
                     </IonCol>
                   </IonRow>
                 </IonCardContent>
@@ -752,7 +833,7 @@ function ClientListHistory() {
                             </h3>
                             <p>{notification.message}</p>
                             <p className="notification-time" style={{ fontSize: '12px', color: '#666' }}>
-                              {notification.createdAt.toLocaleDateString()} at {notification.createdAt.toLocaleTimeString()}
+                              {formatDateTime(notification.createdAt)}
                             </p>
                             {notification.clientName && (
                               <IonBadge color="light" style={{ marginTop: '4px' }}>
