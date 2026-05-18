@@ -148,7 +148,7 @@ function LoginBase() {
           {/* Logo Row */}
           <IonRow>
                 <IonCol size="12">
-                  <IonImg src="/assets/JJMCLogo.png" className="JJMClogo" />
+                  <IonImg src="/JJMCLogo.png" className="JJMClogo" />
                 </IonCol>
               </IonRow>
               
