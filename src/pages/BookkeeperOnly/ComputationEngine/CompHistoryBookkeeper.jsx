@@ -87,6 +87,30 @@ const formatDisplayDate = (value) => {
   });
 };
 
+const getDateValue = (value) => {
+  const dateValue = value?.toDate?.() || (value ? new Date(value) : null);
+
+  if (!(dateValue instanceof Date) || Number.isNaN(dateValue.getTime())) {
+    return null;
+  }
+
+  return dateValue;
+};
+
+const getLatestDraftActivityTime = (draft) => {
+  const candidateDates = [
+    getDateValue(draft?.lastSentAt),
+    getDateValue(draft?.updatedAt),
+    getDateValue(draft?.createdAt),
+  ].filter(Boolean);
+
+  if (candidateDates.length === 0) {
+    return 0;
+  }
+
+  return Math.max(...candidateDates.map((date) => date.getTime()));
+};
+
 const normalize = (value) =>
   String(value || "").trim().toLowerCase().replace(/\s+/g, " ");
 
@@ -183,7 +207,7 @@ function CompHistoryBookkeeper() {
 
   // Filter drafts based on status and search
   const filteredDrafts = useMemo(() => {
-    let filtered = drafts;
+    let filtered = [...drafts];
 
     if (statusFilter === "pending_approval") {
       filtered = filtered.filter(draft => draft.status === "pending_approval");
@@ -207,6 +231,10 @@ function CompHistoryBookkeeper() {
         draft.data?.[0]?.name?.toLowerCase().includes(term)
       );
     }
+
+    filtered.sort(
+      (left, right) => getLatestDraftActivityTime(right) - getLatestDraftActivityTime(left)
+    );
 
     return filtered;
   }, [drafts, statusFilter, searchTerm]);
