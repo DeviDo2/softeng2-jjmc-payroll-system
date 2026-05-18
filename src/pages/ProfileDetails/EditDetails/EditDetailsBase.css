@@ -3,17 +3,22 @@
   --background: #ffffff;
   position: relative;
   overflow-x: hidden;
-  /* Make IonContent the single scroll container on web */
+  /* let the parent page contain layout; inner content will scroll */
+  height: 100%;
+  overflow: hidden;
+}
+
+/* Ensure the page wrapper handles the viewport and prevents body scrolling */
+#main-page {
   height: 100vh;
-  overflow-y: auto;
+  overflow: hidden;
 }
 
 .full-height-wrapper {
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  /* keep wrapper within the viewport so only the parent scrolls */
-  min-height: calc(100vh - 6rem);
+  /* keep wrapper within the page so only IonContent scrolls */
   width: 100%;
   padding: 15px;
 }
@@ -33,10 +38,9 @@
   position: relative;
   background: linear-gradient(145deg, #ffffff 0%, #f4fbfc 100%);
   z-index: 10;
-  padding-bottom: 6rem; /* leave space for footer */
   border-radius: 28px;
-
-
+  width: 50%;
+  padding: 20px;
 }
 
 /* page title */
@@ -52,7 +56,10 @@ ion-input {
   --box-shadow: none !important;
   border: none !important;
   background: transparent !important;
-  
+}
+
+.edit-details-btn {
+  margin-top: 35px;
 }
 
 /* form item styling (kept minimal) */
@@ -64,6 +71,7 @@ ion-input {
   --padding-start: 16px;
   margin-bottom: 16px;
   background: white;
+  width: 100%;
 }
 
 ion-label[position="stacked"] {

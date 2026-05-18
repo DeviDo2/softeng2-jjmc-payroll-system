@@ -90,11 +90,8 @@ export default function EditDetailsBase({
   if (loading || !user) return null;
 
   return (
-    <IonApp>
-      <Sidebar />
-
       <IonPage id="main-page">
-        <IonContent fullscreen className="edit-content">
+        <IonContent className="edit-content">
           <IonImg src="/Gradient-Ellipses.png" className="ellipse-bg" />
 
           <div className="full-height-wrapper">
@@ -140,6 +137,7 @@ export default function EditDetailsBase({
                               }
                             />
                             <IonButton
+                              className="edit-details-btn"
                               slot="end"
                               fill="clear"
                               onClick={() =>
@@ -169,6 +167,7 @@ export default function EditDetailsBase({
 
                     {field.name === "birthdate" && (
                       <IonButton
+                        className="edit-details-btn"
                         slot="end"
                         fill="clear"
                         onClick={() => setCalendarOpen(true)}
@@ -252,6 +251,5 @@ export default function EditDetailsBase({
 
         <FooterNav />
       </IonPage>
-    </IonApp>
   );
 }
