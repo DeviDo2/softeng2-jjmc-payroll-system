@@ -13,7 +13,6 @@ import {
   IonIcon,
   IonImg,
   IonSpinner,
-  IonApp,
   IonBadge,
   IonAlert,
   IonModal,
@@ -574,7 +573,7 @@ function ClientListHistory() {
   if (!user) return <p>You are not logged in.</p>;
 
   return (
-    <IonApp>
+    <>
       <Sidebar 
         notificationCount={unreadNotifications.length}
         onNotificationClick={() => setShowNotificationList(true)}
@@ -806,8 +805,6 @@ function ClientListHistory() {
             className="notification-modal"
             isOpen={showNotificationList}
             onDidDismiss={() => setShowNotificationList(false)}
-            breakpoints={[0, 0.78, 1]}
-            initialBreakpoint={0.78}
           >
             <IonContent className="notification-modal-content">
               <div className="notification-panel">
@@ -911,7 +908,7 @@ function ClientListHistory() {
 
         <FooterNav />
       </IonPage>
-    </IonApp>
+    </>
   );
 }
 

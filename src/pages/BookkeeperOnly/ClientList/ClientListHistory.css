@@ -7,6 +7,10 @@
   overflow-x: hidden;
 }
 
+.client-list-content::part(scroll) {
+  overflow-x: hidden;
+}
+
 .ellipse-bg {
   position: absolute;
   top: 0;
@@ -27,6 +31,7 @@
   padding: 24px 20px 30px;
   position: relative;
   z-index: 2;
+  overflow: hidden;
 }
 
 /* Client List - Semi Bold 26 Poppins 0A3F59 */
@@ -313,7 +318,16 @@
 }
 
 .notification-modal {
-  --border-radius: 28px 28px 0 0;
+  --width: min(680px, calc(100vw - 32px));
+  --height: min(76vh, 720px);
+  --border-radius: 28px;
+  --box-shadow: 0 24px 60px rgba(10, 63, 89, 0.22);
+}
+
+.notification-modal::part(content) {
+  width: min(680px, calc(100vw - 32px));
+  height: min(76vh, 720px);
+  border-radius: 28px;
 }
 
 .notification-modal-content {
@@ -672,6 +686,12 @@ ion-page {
   .notification-panel {
     padding: 16px;
   }
+
+  .notification-modal,
+  .notification-modal::part(content) {
+    width: min(680px, calc(100vw - 24px));
+    height: min(82vh, 760px);
+  }
   
   .sort-button {
     --padding-start: 16px;
@@ -722,5 +742,36 @@ ion-page {
 
   .notification-item {
     padding: 14px;
+  }
+
+  .notification-modal,
+  .notification-modal::part(content) {
+    width: calc(100vw - 20px);
+    height: min(84vh, 760px);
+    border-radius: 22px;
+  }
+}
+
+@media (max-width: 1080px) {
+  .client-list-table-header {
+    display: none;
+  }
+
+  .client-card-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .client-table-cell {
+    padding: 16px 18px;
+    border-right: none;
+    border-bottom: 1px solid rgba(10, 63, 89, 0.08);
+  }
+
+  .client-table-cell:last-child {
+    border-bottom: none;
+  }
+
+  .client-table-label {
+    display: inline-block;
   }
 } 

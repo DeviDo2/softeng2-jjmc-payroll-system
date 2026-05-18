@@ -6,9 +6,6 @@ import {
   IonToolbar,
   IonTitle,
   IonButton,
-  IonList,
-  IonItem,
-  IonLabel,
   IonSelect,
   IonSelectOption,
   IonSearchbar,
@@ -24,6 +21,7 @@ import {
   IonRow,
   IonCol,
   IonNote,
+  IonImg,
 } from "@ionic/react";
 import { eyeOutline, arrowBackOutline, sendOutline, closeOutline, checkmarkCircleOutline, informationCircleOutline, lockClosedOutline } from "ionicons/icons";
 
@@ -43,6 +41,7 @@ import useAuthRole from "../../../hooks/useAuthRole";
 import { useHistory } from "react-router-dom";
 import Sidebar from "../../../components/Sidebar";
 import FooterNav from "../../../components/FooterNav";
+import "./CompHistoryBookkeeper.css";
 
 // --- HELPER FUNCTIONS ---
 
@@ -72,6 +71,20 @@ const formatCurrency = (amount) => {
     style: 'currency',
     currency: 'PHP'
   }).format(numericAmount);
+};
+
+const formatDisplayDate = (value) => {
+  const dateValue = value?.toDate?.() || (value ? new Date(value) : null);
+
+  if (!(dateValue instanceof Date) || Number.isNaN(dateValue.getTime())) {
+    return "Unknown";
+  }
+
+  return dateValue.toLocaleDateString(undefined, {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
 };
 
 const normalize = (value) =>
@@ -436,198 +449,248 @@ Please confirm you want to send it again.`;
     <>
       <Sidebar />
     <IonPage id="main-content">
-      <IonHeader>
-        <IonToolbar color="primary">
-          <IonButton slot="start" fill="clear" onClick={() => history.goBack()}>
-            <IonIcon icon={arrowBackOutline} />
-          </IonButton>
-          <IonTitle>Computation History</IonTitle>
-        </IonToolbar>
-      </IonHeader>
+          <IonContent fullscreen className="comp-history-content">
+          <IonImg src="/Gradient-Ellipses.png" alt="BG" className="ellipse-bg" />
 
-      <IonContent className="ion-padding">
-        <IonText>
-          <h2>Your Computation Drafts</h2>
-          <p>Manage your payroll computation drafts</p>
-        </IonText>
+          <div className="comp-history-panel">
+            <IonGrid>
+              <IonRow>
+                <IonCol>
+                  <IonText>
+                    <h1 className="comp-history-title">Computation History</h1>
+                    <p className="comp-history-subtitle">
+                      Review computation drafts, track approval status, and send approved payroll to clients.
+                    </p>
+                  </IonText>
+                </IonCol>
+              </IonRow>
 
-        {/* Instructions Card */}
-        <IonCard color="light">
-          <IonCardContent>
-            <IonText>
-              <h4>
-                <IonIcon icon={informationCircleOutline} color="primary" /> 
-                Sending Instructions:
-              </h4>
-              <ul style={{ paddingLeft: '20px', marginBottom: '0' }}>
-                <li>Only **approved** computations can be sent to clients</li>
-                <li>You must **view the computation details** first before sending</li>
-                <li>Click 'View Full Data' to review the computation before sending</li>
-                <li>Multiple sends are allowed but require confirmation</li>
-              </ul>
-            </IonText>
-          </IonCardContent>
-        </IonCard>
+              <IonRow className="comp-history-summary-row">
+                <IonCol size="6" sizeMd="3">
+                  <div className="comp-history-summary-card">
+                    <span className="comp-history-summary-label">All Drafts</span>
+                    <strong>{drafts.length}</strong>
+                  </div>
+                </IonCol>
+                <IonCol size="6" sizeMd="3">
+                  <div className="comp-history-summary-card">
+                    <span className="comp-history-summary-label">Approved</span>
+                    <strong>{getCount("approved")}</strong>
+                  </div>
+                </IonCol>
+                <IonCol size="6" sizeMd="3">
+                  <div className="comp-history-summary-card">
+                    <span className="comp-history-summary-label">Pending</span>
+                    <strong>{getCount("pending_approval")}</strong>
+                  </div>
+                </IonCol>
+                <IonCol size="6" sizeMd="3">
+                  <div className="comp-history-summary-card">
+                    <span className="comp-history-summary-label">Needs Revision</span>
+                    <strong>{getRevisedCount}</strong>
+                  </div>
+                </IonCol>
+              </IonRow>
 
-        {/* Status Legend */}
-        <IonCard color="secondary">
-          <IonCardContent>
-            <IonText>
-              <h5>Status Legend:</h5>
-              <center>
-                <IonBadge color="success">APPROVED</IonBadge> - Ready to send
-                {' '}
-                <IonBadge color="primary">SENT TO CLIENT</IonBadge> - View only
-                {' '}
-                <IonBadge color="warning">PENDING APPROVAL</IonBadge> - Waiting for approval
-                {' '}
-                <IonBadge color="danger">NEEDS REVISION</IonBadge> - Requires changes
-              </center>
-            </IonText>
-          </IonCardContent>
-        </IonCard>
+              <IonRow>
+                <IonCol size="12" sizeLg="7">
+                  <IonCard className="comp-history-section-card">
+                    <IonCardContent>
+                      <IonText>
+                        <h3 className="comp-history-section-title">
+                          <IonIcon icon={informationCircleOutline} color="primary" />
+                          Sending Instructions
+                        </h3>
+                      </IonText>
+                      <div className="comp-history-instruction-list">
+                        <p>Only approved computations can be sent to clients.</p>
+                        <p>Open the full computation details before sending.</p>
+                        <p>Use View Full Data to review the payroll output carefully.</p>
+                        <p>Resending is allowed, but it always asks for confirmation.</p>
+                      </div>
+                    </IonCardContent>
+                  </IonCard>
+                </IonCol>
 
-        {/* Search and Filter */}
-        <IonSearchbar
-          value={searchTerm}
-          placeholder="Search by client name..."
-          onIonInput={(e) => setSearchTerm(e.detail.value)}
-          style={{ marginBottom: '16px' }}
-        />
+                <IonCol size="12" sizeLg="5">
+                  <IonCard className="comp-history-section-card">
+                    <IonCardContent>
+                      <IonText>
+                        <h3 className="comp-history-section-title">Status Legend</h3>
+                      </IonText>
+                      <div className="comp-history-legend-list">
+                        <div><IonBadge color="success">APPROVED</IonBadge><span>Ready to send</span></div>
+                        <div><IonBadge color="primary">SENT TO CLIENT</IonBadge><span>Already delivered</span></div>
+                        <div><IonBadge color="warning">PENDING APPROVAL</IonBadge><span>Waiting for review</span></div>
+                        <div><IonBadge color="danger">NEEDS REVISION</IonBadge><span>Changes required</span></div>
+                      </div>
+                    </IonCardContent>
+                  </IonCard>
+                </IonCol>
+              </IonRow>
 
-        <IonSelect
-          value={statusFilter}
-          onIonChange={(e) => setStatusFilter(e.detail.value)}
-          label="Filter by status:"
-          labelPlacement="stacked"
-          style={{ marginBottom: '16px', width: '100%' }}
-        >
-          <IonSelectOption value="all">All Drafts ({drafts.length})</IonSelectOption>
-          <IonSelectOption value="approved">Approved ({getCount('approved')})</IonSelectOption>
-          <IonSelectOption value="sent">Sent to Client ({getCount('sent_to_client')})</IonSelectOption> {/* Matches new status filter */}
-          <IonSelectOption value="pending_approval">Pending Approval ({getCount('pending_approval')})</IonSelectOption>
-          <IonSelectOption value="revised">Needs Revision ({getRevisedCount})</IonSelectOption>
-          <IonSelectOption value="draft">Drafts ({getCount('draft')})</IonSelectOption>
-        </IonSelect>
+              <IonRow>
+                <IonCol>
+                  <IonCard className="comp-history-section-card comp-history-filter-card">
+                    <IonCardContent>
+                      <IonRow>
+                        <IonCol size="12" sizeMd="7">
+                          <IonSearchbar
+                            className="comp-history-searchbar"
+                            value={searchTerm}
+                            placeholder="Search by client name..."
+                            onIonInput={(e) => setSearchTerm(e.detail.value)}
+                          />
+                        </IonCol>
+                        <IonCol size="12" sizeMd="5">
+                          <IonSelect
+                            className="comp-history-select"
+                            value={statusFilter}
+                            onIonChange={(e) => setStatusFilter(e.detail.value)}
+                            label="Filter by status"
+                            labelPlacement="stacked"
+                          >
+                            <IonSelectOption value="all">All Drafts ({drafts.length})</IonSelectOption>
+                            <IonSelectOption value="approved">Approved ({getCount('approved')})</IonSelectOption>
+                            <IonSelectOption value="sent">Sent to Client ({getCount('sent_to_client')})</IonSelectOption>
+                            <IonSelectOption value="pending_approval">Pending Approval ({getCount('pending_approval')})</IonSelectOption>
+                            <IonSelectOption value="revised">Needs Revision ({getRevisedCount})</IonSelectOption>
+                            <IonSelectOption value="draft">Drafts ({getCount('draft')})</IonSelectOption>
+                          </IonSelect>
+                        </IonCol>
+                      </IonRow>
+                    </IonCardContent>
+                  </IonCard>
+                </IonCol>
+              </IonRow>
 
-        {/* Loading State */}
-        {isLoading && (
-          <div className="ion-text-center">
-            <IonSpinner name="crescent" />
-            <IonText><p>Loading your drafts...</p></IonText>
-          </div>
-        )}
+              {isLoading && (
+                <IonRow>
+                  <IonCol className="ion-text-center">
+                    <div className="comp-history-loading">
+                      <IonSpinner name="crescent" />
+                      <IonText><p>Loading your drafts...</p></IonText>
+                    </div>
+                  </IonCol>
+                </IonRow>
+              )}
 
-        {/* Drafts List */}
-        {!isLoading && (
-          <>
-            <IonText>
-              <h3>
-                {filteredDrafts.length} draft{filteredDrafts.length !== 1 ? 's' : ''} found
-                {statusFilter !== "all" && ` (${statusFilter.toUpperCase().replace('_', ' ')})`}
-              </h3>
-            </IonText>
+              {!isLoading && (
+                <>
+                  <IonRow>
+                    <IonCol>
+                      <div className="comp-history-results-pill">
+                        {filteredDrafts.length} draft{filteredDrafts.length !== 1 ? "s" : ""} found
+                        {statusFilter !== "all" && ` (${statusFilter.toUpperCase().replace('_', ' ')})`}
+                      </div>
+                    </IonCol>
+                  </IonRow>
 
-            {filteredDrafts.length === 0 ? (
-              <IonCard color="warning">
-                <IonCardContent className="ion-text-center">
-                  <IonText>
-                    <h4>No drafts found</h4>
-                    <p>
-                      {drafts.length === 0 
-                        ? "You don't have any computation drafts yet." 
-                        : `No drafts match the selected filter.`
-                      }
-                    </p>
-                  </IonText>
-                </IonCardContent>
-              </IonCard>
-            ) : (
-              <IonList>
-                {filteredDrafts.map((draft) => {
-                  const hasBeenViewed = viewedDrafts.has(draft.id);
-                  const sendCount = draft.sendCount || 0;
-                  const sendButtonProps = getSendButtonProps(draft);
-                  const statusProps = getStatusBadgeProps(draft.status); 
-                  
-                  return (
-                    <IonItem key={draft.id}>
-                      <IonLabel>
-                        <h2>{draft.clientName || "Unknown Client"}</h2>
-                        <p>
-                          <strong>Status:</strong> 
-                          <IonBadge 
-                            color={statusProps.color}
-                            style={{ marginLeft: '8px' }}
-                          >
-                            {statusProps.text}
-                          </IonBadge>
-                          {' • '}
-                          <strong>Employees:</strong> {draft.data?.length || 0}
-                        </p>
-                        <p>
-                          <strong>Created:</strong> {draft.createdAt?.toDate?.().toLocaleDateString() || "Unknown"}
-                        </p>
-                        {draft.sentToClient && (
-                          <IonText color="success">
-                            <small>
-                              Sent to client **{sendCount} time{sendCount !== 1 ? 's' : ''}**
-                              {draft.lastSentAt && ` (Last: ${draft.lastSentAt.toDate?.().toLocaleDateString()})`}
-                            </small>
-                          </IonText>
-                        )}
-                        {draft.status === "approved" && hasBeenViewed && (
-                          <IonNote color="success">
-                            <small>
-                              <IonIcon icon={checkmarkCircleOutline} /> **Ready to send**
-                            </small>
-                          </IonNote>
-                        )}
-                        {draft.status === "approved" && !hasBeenViewed && (
-                          <IonNote color="warning">
-                            <small>
-                              <IonIcon icon={eyeOutline} /> **View required** before sending
-                            </small>
-                          </IonNote>
-                        )}
-                        {draft.status !== "approved" && draft.status !== "sent_to_client" && (
-                          <IonNote color="medium">
-                            <small>
-                              <IonIcon icon={lockClosedOutline} /> {draft.status === "pending_approval" ? "Awaiting approval" : "Cannot send"}
-                            </small>
-                          </IonNote>
-                        )}
-                      </IonLabel>
+                  {filteredDrafts.length === 0 ? (
+                    <IonRow>
+                      <IonCol>
+                        <IonCard className="comp-history-empty-card">
+                          <IonCardContent className="ion-text-center">
+                            <IonText>
+                              <h4>No drafts found</h4>
+                              <p>
+                                {drafts.length === 0
+                                  ? "You don't have any computation drafts yet."
+                                  : "No drafts match the selected filter."}
+                              </p>
+                            </IonText>
+                          </IonCardContent>
+                        </IonCard>
+                      </IonCol>
+                    </IonRow>
+                  ) : (
+                    <div className="draft-history-list">
+                      {filteredDrafts.map((draft) => {
+                        const hasBeenViewed = viewedDrafts.has(draft.id);
+                        const sendCount = draft.sendCount || 0;
+                        const sendButtonProps = getSendButtonProps(draft);
+                        const statusProps = getStatusBadgeProps(draft.status);
 
-                      <IonButton 
-                        fill="outline" 
-                        size="small"
-                        onClick={() => handleViewDraft(draft)}
-                      >
-                        <IonIcon icon={eyeOutline} slot="start" />
-                        View{hasBeenViewed ? ' Again' : ''}
-                      </IonButton>
+                        return (
+                          <IonCard key={draft.id} className="draft-history-card">
+                            <IonCardContent>
+                              <div className="draft-history-card-grid">
+                                <div className="draft-history-main">
+                                  <div className="draft-history-topline">
+                                    <h3 className="draft-history-title">{draft.clientName || "Unknown Client"}</h3>
+                                    <IonBadge color={statusProps.color} className="draft-history-status-badge">
+                                      {statusProps.text}
+                                    </IonBadge>
+                                  </div>
 
-                      <IonButton 
-                        size="small"
-                        onClick={() => handleSendToClient(draft)}
-                        style={{ marginLeft: '8px' }}
-                        disabled={sendButtonProps.disabled}
-                        fill={sendButtonProps.fill}
-                        color={sendButtonProps.color}
-                        title={sendButtonProps.tooltip}
-                      >
-                        <IonIcon icon={sendOutline} slot="start" />
-                        Send{sendCount > 0 ? ` (${sendCount})` : ''}
-                      </IonButton>
-                    </IonItem>
-                  );
-                })}
-              </IonList>
-            )}
-          </>
-        )}
-      </IonContent>
+                                  <div className="draft-history-meta">
+                                    <span>{draft.data?.length || 0} employee{(draft.data?.length || 0) !== 1 ? "s" : ""}</span>
+                                    <span>Created {formatDisplayDate(draft.createdAt)}</span>
+                                    <span>Updated {formatDisplayDate(draft.updatedAt || draft.createdAt)}</span>
+                                  </div>
+
+                                  {draft.sentToClient && (
+                                    <p className="draft-history-note draft-history-note-success">
+                                      Sent to client {sendCount} time{sendCount !== 1 ? "s" : ""}
+                                      {draft.lastSentAt && ` • Last sent ${formatDisplayDate(draft.lastSentAt)}`}
+                                    </p>
+                                  )}
+
+                                  {draft.status === "approved" && hasBeenViewed && (
+                                    <IonNote color="success" className="draft-history-note draft-history-note-success">
+                                      <IonIcon icon={checkmarkCircleOutline} /> Ready to send
+                                    </IonNote>
+                                  )}
+
+                                  {draft.status === "approved" && !hasBeenViewed && (
+                                    <IonNote color="warning" className="draft-history-note draft-history-note-warning">
+                                      <IonIcon icon={eyeOutline} /> View required before sending
+                                    </IonNote>
+                                  )}
+
+                                  {draft.status !== "approved" && draft.status !== "sent_to_client" && (
+                                    <IonNote color="medium" className="draft-history-note">
+                                      <IonIcon icon={lockClosedOutline} /> {draft.status === "pending_approval" ? "Awaiting approval" : "Cannot send yet"}
+                                    </IonNote>
+                                  )}
+                                </div>
+
+                                <div className="draft-history-actions">
+                                  <IonButton
+                                    expand="block"
+                                    fill="outline"
+                                    className="draft-history-action-btn"
+                                    onClick={() => handleViewDraft(draft)}
+                                  >
+                                    <IonIcon icon={eyeOutline} slot="start" />
+                                    View{hasBeenViewed ? " Again" : " Full Data"}
+                                  </IonButton>
+
+                                  <IonButton
+                                    expand="block"
+                                    className="draft-history-action-btn"
+                                    onClick={() => handleSendToClient(draft)}
+                                    disabled={sendButtonProps.disabled}
+                                    fill={sendButtonProps.fill}
+                                    color={sendButtonProps.color}
+                                    title={sendButtonProps.tooltip}
+                                  >
+                                    <IonIcon icon={sendOutline} slot="start" />
+                                    Send{sendCount > 0 ? ` (${sendCount})` : ""}
+                                  </IonButton>
+                                </div>
+                              </div>
+                            </IonCardContent>
+                          </IonCard>
+                        );
+                      })}
+                    </div>
+                  )}
+                </>
+              )}
+            </IonGrid>
+          </div>
+        </IonContent>
 
       {/* Full Data Preview Modal */}
       <IonModal isOpen={showPreviewModal} onDidDismiss={() => setShowPreviewModal(false)}>
