@@ -160,8 +160,7 @@ export default function HomeBookkeeper() {
       <IonPage id="main-content">
         <IonContent fullscreen className="bookkeeper-home-content">
           <IonImg src="/Gradient-Ellipses.png" alt="BG" className="ellipse-bg" />
-
-          <div className="bookkeeper-home-panel">
+          <div className="bookkeeper-home-header">
             <IonGrid>
               <IonRow>
                 <IonCol>
@@ -173,10 +172,13 @@ export default function HomeBookkeeper() {
                   </IonText>
                 </IonCol>
               </IonRow>
-
+            </IonGrid>
+          </div>
+          <div>
+            <IonGrid>
               <IonRow className="bookkeeper-home-summary-row">
                 {summary.map((item) => (
-                  <IonCol key={item.label} size="6" sizeMd="4" sizeLg="3">
+                  <IonCol key={item.label} size="6" sizeMd="3" sizeLg="2">
                     <div className="bookkeeper-home-summary-card">
                       <span className="bookkeeper-home-summary-label">{item.label}</span>
                       <strong>{item.value}</strong>

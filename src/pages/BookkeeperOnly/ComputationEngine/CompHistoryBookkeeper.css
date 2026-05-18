@@ -51,13 +51,17 @@
 
 .comp-history-summary-row {
   margin-bottom: 8px;
+  
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: center;
 }
 
 .comp-history-summary-card {
   height: 100%;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 5px;
   padding: 16px 18px;
   border-radius: 18px;
   background: #ffffff;

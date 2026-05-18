@@ -515,31 +515,31 @@ Please confirm you want to send it again.`;
               </IonRow>
 
               <IonRow className="comp-history-summary-row">
-                <IonCol size="6" sizeMd="3">
+                <IonCol size="6" sizeMd="2">
                   <div className="comp-history-summary-card">
                     <span className="comp-history-summary-label">All Drafts</span>
                     <strong>{drafts.length}</strong>
                   </div>
                 </IonCol>
-                <IonCol size="6" sizeMd="3">
+                <IonCol size="6" sizeMd="2">
                   <div className="comp-history-summary-card">
                     <span className="comp-history-summary-label">Approved</span>
                     <strong>{getCount("approved")}</strong>
                   </div>
                 </IonCol>
-                <IonCol size="6" sizeMd="3">
+                <IonCol size="6" sizeMd="2">
                   <div className="comp-history-summary-card">
                     <span className="comp-history-summary-label">Pending</span>
                     <strong>{getCount("pending_approval")}</strong>
                   </div>
                 </IonCol>
-                <IonCol size="6" sizeMd="3">
+                <IonCol size="6" sizeMd="2">
                   <div className="comp-history-summary-card">
                     <span className="comp-history-summary-label">Disputed</span>
                     <strong>{getDisputedCount}</strong>
                   </div>
                 </IonCol>
-                <IonCol size="6" sizeMd="3">
+                <IonCol size="6" sizeMd="2">
                   <div className="comp-history-summary-card">
                     <span className="comp-history-summary-label">Needs Revision</span>
                     <strong>{getRevisedCount}</strong>

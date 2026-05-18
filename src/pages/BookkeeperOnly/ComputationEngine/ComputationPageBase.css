@@ -78,6 +78,10 @@
 
 .computation-summary-row {
   margin-bottom: 8px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: nowrap;
+  justify-content: center;
 }
 
 .computation-summary-card {
