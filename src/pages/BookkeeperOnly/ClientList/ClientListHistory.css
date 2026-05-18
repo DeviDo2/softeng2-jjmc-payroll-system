@@ -40,7 +40,7 @@
   font-size: 1.8rem;
   font-weight: bold;
   color: #0A3F59 !important;
-  text-align: left;
+  text-align: center;
   margin: 20px 0 0 0;
   padding: 0;
 }
@@ -49,7 +49,7 @@
   font-size: 1rem;
   color: #4c5b65;
   margin: 8px 0 20px;
-  text-align: left;
+  text-align: center;
 }
 
 .notification-badge {
@@ -108,9 +108,10 @@
 
 .month-filter-row {
   display: flex;
-  gap: 12px;
+  gap: 10px;
   margin-bottom: 20px;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  justify-content: center;
 }
 
 .month-filter-btn {
@@ -124,7 +125,7 @@
   --padding-start: 10px;
   --padding-end: 10px;
   margin: 0;
-  width: 100%;
+  width: 80%;
 }
 
 .month-filter-btn-active {

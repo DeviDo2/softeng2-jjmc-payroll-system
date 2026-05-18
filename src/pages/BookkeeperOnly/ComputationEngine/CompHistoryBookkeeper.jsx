@@ -491,50 +491,12 @@ Please confirm you want to send it again.`;
                   </div>
                 </IonCol>
               </IonRow>
-
-              <IonRow>
-                <IonCol size="12" sizeLg="7">
-                  <IonCard className="comp-history-section-card">
-                    <IonCardContent>
-                      <IonText>
-                        <h3 className="comp-history-section-title">
-                          <IonIcon icon={informationCircleOutline} color="primary" />
-                          Sending Instructions
-                        </h3>
-                      </IonText>
-                      <div className="comp-history-instruction-list">
-                        <p>Only approved computations can be sent to clients.</p>
-                        <p>Open the full computation details before sending.</p>
-                        <p>Use View Full Data to review the payroll output carefully.</p>
-                        <p>Resending is allowed, but it always asks for confirmation.</p>
-                      </div>
-                    </IonCardContent>
-                  </IonCard>
-                </IonCol>
-
-                <IonCol size="12" sizeLg="5">
-                  <IonCard className="comp-history-section-card">
-                    <IonCardContent>
-                      <IonText>
-                        <h3 className="comp-history-section-title">Status Legend</h3>
-                      </IonText>
-                      <div className="comp-history-legend-list">
-                        <div><IonBadge color="success">APPROVED</IonBadge><span>Ready to send</span></div>
-                        <div><IonBadge color="primary">SENT TO CLIENT</IonBadge><span>Already delivered</span></div>
-                        <div><IonBadge color="warning">PENDING APPROVAL</IonBadge><span>Waiting for review</span></div>
-                        <div><IonBadge color="danger">NEEDS REVISION</IonBadge><span>Changes required</span></div>
-                      </div>
-                    </IonCardContent>
-                  </IonCard>
-                </IonCol>
-              </IonRow>
-
               <IonRow>
                 <IonCol>
                   <IonCard className="comp-history-section-card comp-history-filter-card">
                     <IonCardContent>
                       <IonRow>
-                        <IonCol size="12" sizeMd="7">
+                        <IonCol className="ion-text-left" size="12" sizeMd="7">
                           <IonSearchbar
                             className="comp-history-searchbar"
                             value={searchTerm}
@@ -542,7 +504,7 @@ Please confirm you want to send it again.`;
                             onIonInput={(e) => setSearchTerm(e.detail.value)}
                           />
                         </IonCol>
-                        <IonCol size="12" sizeMd="5">
+                        <IonCol className="ion-text-left" size="12" sizeMd="5">
                           <IonSelect
                             className="comp-history-select"
                             value={statusFilter}
