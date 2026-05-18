@@ -56,7 +56,7 @@
   font-size: 26px;
   font-weight: 600;
   color: #0A3F59;
-  text-align: left;
+  text-align: center;
   margin: 20px 0 0 0;
   padding: 0;
   position: relative;
@@ -69,7 +69,7 @@
   font-size: 16px;
   font-weight: 400;
   color: #4c5b65;
-  text-align: left;
+  text-align: center;
   margin: 8px 0 20px 0;
   padding: 0;
   position: relative;
@@ -98,7 +98,8 @@
 
 .computation-summary-card strong {
   color: #0A3F59;
-  font-size: 1.45rem;
+  font-size: 1.30rem;
+  text-align: center;
 }
 
 .computation-summary-label {
@@ -126,7 +127,7 @@
 }
 
 .computation-action-grid {
-  display: grid;
+  display: flex;
   grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
   gap: 10px;
   margin-top: 12px;

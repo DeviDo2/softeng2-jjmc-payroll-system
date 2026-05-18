@@ -17,6 +17,7 @@ import {
   IonNote,
   IonCardHeader,
   IonCardTitle,
+  IonToast,
 } from "@ionic/react";
 import { personOutline } from "ionicons/icons";
 
@@ -106,6 +107,7 @@ function ComputationPage() {
   const [isComputing, setIsComputing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [relatedDisputes, setRelatedDisputes] = useState([]);
+  const [toastState, setToastState] = useState({ isOpen: false, message: "" });
 
   // Load CSV data
   useEffect(() => {
@@ -268,17 +270,12 @@ function ComputationPage() {
   const handleSaveDraft = async () => {
     const success = await saveToFirestore("clientPayrollDrafts");
     if (success) {
-      alert("Draft sent to admin for approval!");
+      setToastState({
+        isOpen: true,
+        message: "Draft sent to admin for approval!",
+      });
     }
   };
-
-  const handleSaveResults = async () => {
-    const success = await saveToFirestore("computationResults");
-    if (success) {
-      alert("Computation results saved successfully!");
-    }
-  };
-
   const exportCSV = () => {
     if (!computedPreview) return;
     const headers = [
@@ -322,28 +319,38 @@ function ComputationPage() {
         <IonPage id="main-content">
           <IonContent fullscreen className="computation-content">
             <IonImg src="/Gradient-Ellipses.png" className="ellipse-bg" />
+            <IonToast
+              isOpen={toastState.isOpen}
+              message={toastState.message}
+              duration={2500}
+              position="top"
+              color="success"
+              onDidDismiss={() => setToastState({ isOpen: false, message: "" })}
+            />
             <div className="computation-panel">
               <IonGrid>
-              <IonRow>
-                <IonCol>
-                  <h1 className="computation-main-title">Payroll Computation</h1>
-                  <p className="computation-main-subtitle">
-                    Compute payroll, review the results, and submit the draft for admin approval.
-                  </p>
-                </IonCol>
-              </IonRow>
+                <IonRow>
+                  <IonCol>
+                    <IonText>
+                     <h1 className="computation-main-title">Payroll Computation</h1>
+                      <p className="computation-main-subtitle">
+                        Compute payroll, review the results, and submit the draft for admin approval.
+                      </p>
+                    </IonText>
+                  </IonCol>
+                </IonRow>
 
               <IonRow className="computation-summary-row">
-                <IonCol size="12" sizeMd="4">
-                  <div className="computation-summary-card">
-                    <span className="computation-summary-label">Client</span>
-                    <strong>{clientName || "Select Client"}</strong>
-                  </div>
-                </IonCol>
                 <IonCol size="6" sizeMd="4">
                   <div className="computation-summary-card">
                     <span className="computation-summary-label">Employees</span>
                     <strong>{csvData.length}</strong>
+                  </div>
+                </IonCol>
+                <IonCol size="12" sizeMd="4">
+                  <div className="computation-summary-card">
+                    <span className="computation-summary-label">Client</span>
+                    <strong>{clientName || "Select Client"}</strong>
                   </div>
                 </IonCol>
                 <IonCol size="6" sizeMd="4">
@@ -404,13 +411,6 @@ function ComputationPage() {
                           {isSaving ? <IonSpinner name="crescent"/> : "Send Draft to Admin"}
                         </IonButton>
                         <IonButton
-                          onClick={handleSaveResults}
-                          disabled={!computedPreview || isSaving}
-                          fill="outline"
-                        >
-                          {isSaving ? <IonSpinner name="crescent"/> : "Save Results"}
-                        </IonButton>
-                        <IonButton
                           onClick={exportCSV}
                           disabled={!computedPreview}
                           fill="outline"
@@ -422,43 +422,6 @@ function ComputationPage() {
                   </IonCard>
                 </IonCol>
               </IonRow>
-
-              <IonRow>
-                <IonCol>
-                  <IonCard className="computation-table-card">
-                    <IonCardHeader>
-                      <IonCardTitle>Employee Data</IonCardTitle>
-                      <IonText color="medium">
-                        <p>Source employee records for this payroll run.</p>
-                      </IonText>
-                    </IonCardHeader>
-                    <IonCardContent>
-                      <div className="table-scroll-container">
-                        <table className="results-data-table">
-                          <thead>
-                            <tr>
-                              <th>Code</th><th>Name</th><th>Gross</th><th>Rate</th><th>Hours</th><th>Dept</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {filteredData.map((r,i) => (
-                              <tr key={i}>
-                                <td>{r.employeeCode}</td>
-                                <td>{r.name}</td>
-                                <td>{formatCurrency(getMonthlyGrossPay(r))}</td>
-                                <td>{formatCurrency(r.ratePerHour)}</td>
-                                <td>{r.hoursWorked}</td>
-                                <td>{r.department}</td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
-                      </div>
-                    </IonCardContent>
-                  </IonCard>
-                </IonCol>
-              </IonRow>
-
               {computedPreview && (
                 <IonRow className="ion-margin-top">
                   <IonCol>
@@ -501,6 +464,43 @@ function ComputationPage() {
                   </IonCol>
                 </IonRow>
               )}
+              <IonRow>
+                <IonCol>
+                  <IonCard className="computation-table-card">
+                    <IonCardHeader>
+                      <IonCardTitle>Employee Data</IonCardTitle>
+                      <IonText color="medium">
+                        <p>Source employee records for this payroll run.</p>
+                      </IonText>
+                    </IonCardHeader>
+                    <IonCardContent>
+                      <div className="table-scroll-container">
+                        <table className="results-data-table">
+                          <thead>
+                            <tr>
+                              <th>Code</th><th>Name</th><th>Gross</th><th>Rate</th><th>Hours</th><th>Dept</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {filteredData.map((r,i) => (
+                              <tr key={i}>
+                                <td>{r.employeeCode}</td>
+                                <td>{r.name}</td>
+                                <td>{formatCurrency(getMonthlyGrossPay(r))}</td>
+                                <td>{formatCurrency(r.ratePerHour)}</td>
+                                <td>{r.hoursWorked}</td>
+                                <td>{r.department}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </IonCardContent>
+                  </IonCard>
+                </IonCol>
+              </IonRow>
+
+              
               </IonGrid>
             </div>
           </IonContent>
