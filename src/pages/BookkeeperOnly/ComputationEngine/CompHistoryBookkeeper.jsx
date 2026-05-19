@@ -702,21 +702,22 @@ Please confirm you want to send it again.`;
             <IonTitle>
               {selectedDraft?.clientName} - Complete Payroll Data
             </IonTitle>
-            {selectedDraft?.status === "approved" && (
-              <IonButton 
-                slot="end" 
-                fill="solid"
-                color="primary"
-                onClick={() => {
-                  // This button triggers the send validation (handleSendToClient)
-                  handleSendToClient(selectedDraft);
-                  setShowPreviewModal(false);
-                }}
-              >
-                <IonIcon icon={sendOutline} slot="start" />
-                Send to Client
-              </IonButton>
-            )}
+            {selectedDraft?.status === "approved" && (
+              <IonButton 
+                className="draft-action-btn draft-action-btn--send"
+                slot="end" 
+                fill="solid"
+                color="primary"
+                onClick={() => {
+                  // This button triggers the send validation (handleSendToClient)
+                  handleSendToClient(selectedDraft);
+                  setShowPreviewModal(false);
+                }}
+              >
+                <IonIcon icon={sendOutline} slot="start" />
+                Send to Client
+              </IonButton>
+            )}
           </IonToolbar>
         </IonHeader>
         <IonContent className="draft-preview-content">
@@ -726,34 +727,47 @@ Please confirm you want to send it again.`;
               <IonRow>
                 <IonCol>
                     <IonCard className="draft-preview-summary-card">
+                      <IonCol>
+                        <IonText>
+                              <div className="draft-preview-summary-title">
+                                <h3>Computation Summary</h3>
+                              </div>
+                        </IonText>
+                      </IonCol>
                     <IonCardContent>
                       <IonCol>
-                      <IonText>
-                        <div className="draft-preview-summary-title">
-                          <h3>Computation Summary</h3>
-                          <span
-                            className={`draft-preview-status-pill status-${selectedDraft?.status || "draft"}`}
-                          >
-                            {getStatusBadgeProps(selectedDraft?.status).text}
-                          </span>
-                        </div>
-                        <p><strong>Client:</strong> {selectedDraft.clientName}</p>
-                        <p>
-                          <strong>Status:</strong> {getStatusBadgeProps(selectedDraft.status).text}
-                          {selectedDraft.status === "approved" && (
-                            <IonText color="success">
-                              {' '}Ready to send to client
-                            </IonText>
-                          )}
-                        </p>
-                        <p><strong>Total Employees:</strong> {selectedDraft.data?.length || 0}</p>
-                        <p><strong>Created:</strong> {selectedDraft.createdAt?.toDate?.().toLocaleDateString() || "Unknown"}</p>
-                        {selectedDraft.sentToClient && (
-                          <p><strong>Last Sent:</strong> {selectedDraft.lastSentAt?.toDate?.().toLocaleDateString() || "Previously sent"}</p>
-                        )}
-                      </IonText>
+                        <IonRow size="12" sizeMd="6" className="draft-preview-summary-row">
+                          <IonText>
+                            <IonCol className="ion-col-padding">
+                              <IonRow size="12" sizeMd="6">
+                                <p><strong>Client:</strong> {selectedDraft.clientName}</p>
+                              </IonRow>
+                              <IonRow size="12" sizeMd="6">
+                                <p>
+                                  <strong>Status: </strong>
+                                  <span className={`draft-preview-status-pill status-${selectedDraft?.status || "draft"}`}>
+                                    {getStatusBadgeProps(selectedDraft?.status).text}
+                                  </span>
+                                </p>
+                              </IonRow>
+                              <IonRow size="12" sizeMd="6">
+                                <p><strong>Total Employees:</strong> {selectedDraft.data?.length || 0}</p>
+                              </IonRow>
+                              <IonRow size="12" sizeMd="6">
+                                <p>
+                                  <strong>Created:</strong> {selectedDraft.createdAt?.toDate?.().toLocaleDateString() || "Unknown"}
+                                </p>
+                              </IonRow>
+                              {selectedDraft.sentToClient && (
+                                <IonRow size="12" sizeMd="6">
+                                  <p><strong>Last Sent:</strong> {selectedDraft.lastSentAt?.toDate?.().toLocaleDateString() || "Previously sent"}</p>
+                                </IonRow>
+                              )}
+                            </IonCol>
+                          </IonText>
+                        </IonRow>
                       </IonCol>
-                    </IonCardContent>
+                    </IonCardContent>
                   </IonCard>
                 </IonCol>
               </IonRow>
