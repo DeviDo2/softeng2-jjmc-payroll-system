@@ -17,23 +17,6 @@ import { checkmarkOutline, closeOutline } from "ionicons/icons";
 import "./DraftModal.css";
 
 const money = (value) => `₱${(Number(value) || 0).toFixed(2)}`;
-const statusLabel = (status) => {
-  switch (status) {
-    case "approved":
-      return "Approved";
-    case "revised":
-    case "needs_revision":
-      return "Needs Revision";
-    case "disputed":
-      return "Disputed";
-    case "sent_to_client":
-      return "Sent to Client";
-    case "pending_approval":
-      return "Pending Approval";
-    default:
-      return "Draft";
-  }
-};
 
 export default function DraftModal({ draft, onClose, onApprove, onRevise }) {
   if (!draft) return null;

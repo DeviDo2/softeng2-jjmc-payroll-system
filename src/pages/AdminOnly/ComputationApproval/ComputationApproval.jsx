@@ -14,7 +14,14 @@ import {
   IonCard,
   IonCardContent,
   IonTextarea,
+  IonModal,
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonButtons,
+  IonIcon,
 } from "@ionic/react";
+import { checkmarkOutline, closeOutline } from "ionicons/icons";
 
 import Sidebar from "../../../components/Sidebar";
 import FooterNav from "../../../components/FooterNav";
@@ -24,6 +31,8 @@ import useDrafts from "./useDrafts";
 import useAuthRole from "../../../hooks/useAuthRole";
 
 import "./ComputationApproval.css";
+
+const money = (value) => `₱${(Number(value) || 0).toFixed(2)}`;
 
 export default function ComputationApproval() {
   const {
@@ -342,82 +351,145 @@ export default function ComputationApproval() {
           )}
 
           {selectedDispute && (
-            <div className="modal-overlay">
-              <div className="modal-card dispute-modal-card">
-                <h2>Dispute Review</h2>
-                <p><strong>Client staff:</strong> {selectedDispute.clientStaffName || selectedDispute.employeeName}</p>
-                <p><strong>Client:</strong> {selectedDispute.clientName}</p>
-                <p><strong>Status:</strong> {(selectedDispute.status || "unknown").replace(/_/g, " ")}</p>
-                <p><strong>Reason:</strong> {selectedDispute.disputeReason}</p>
-                {selectedDispute.disputeDetails && (
-                  <p><strong>Details:</strong> {selectedDispute.disputeDetails}</p>
-                )}
-
-                {selectedDispute.computationSnapshot && (
-                  <div className="table-scroll-container ion-margin-top">
-                    <table className="results-data-table">
-                      <thead>
-                        <tr>
-                          <th>Employee</th>
-                          <th>Code</th>
-                          <th>Gross Pay</th>
-                          <th>Net Pay</th>
-                          <th>SSS</th>
-                          <th>PHIC</th>
-                          <th>HDMF</th>
-                          <th>Tax</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr>
-                          <td>{selectedDispute.computationSnapshot.name || selectedDispute.employeeName || "N/A"}</td>
-                          <td>{selectedDispute.computationSnapshot.employeeCode || "N/A"}</td>
-                          <td>{selectedDispute.computationSnapshot.grossPay || 0}</td>
-                          <td>{selectedDispute.computationSnapshot.netPay || 0}</td>
-                          <td>{selectedDispute.computationSnapshot.sss || 0}</td>
-                          <td>{selectedDispute.computationSnapshot.philHealth || 0}</td>
-                          <td>{selectedDispute.computationSnapshot.pagIbig || 0}</td>
-                          <td>{selectedDispute.computationSnapshot.tax || 0}</td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                )}
-
-                <IonTextarea
-                  className="ion-margin-top"
-                  label="Admin Reason"
-                  labelPlacement="stacked"
-                  autoGrow
-                  rows={4}
-                  value={decisionReason}
-                  placeholder="Explain your decision for this dispute."
-                  onIonInput={(event) => setDecisionReason(event.detail.value || "")}
-                />
-
-                {selectedDispute.status === "resolved" && (
-                  <div className="ion-margin-top">
-                    <p><strong>Resolved:</strong> This dispute was resolved on {selectedDispute.resolvedAt ? new Date(selectedDispute.resolvedAt?.toDate?.() || selectedDispute.resolvedAt).toLocaleString() : 'unknown'} by {selectedDispute.reviewedBy || selectedDispute.approvedBy || 'Admin'}.</p>
-                  </div>
-                )}
-
-                <div className="dispute-modal-actions">
-                  <IonButton fill="outline" color="medium" onClick={closeDisputeModal}>
-                    Close
-                  </IonButton>
+            <IonModal
+              className="draft-preview-modal dispute-preview-modal"
+              isOpen={Boolean(selectedDispute)}
+              onDidDismiss={closeDisputeModal}
+            >
+              <IonHeader className="draft-preview-header">
+                <IonToolbar className="draft-preview-toolbar">
+                  <IonButtons slot="start">
+                    <IonButton fill="clear" onClick={closeDisputeModal}>
+                      <IonIcon icon={closeOutline} />
+                    </IonButton>
+                  </IonButtons>
+                  <IonTitle>Dispute Review</IonTitle>
                   {(selectedDispute.status === "submitted" || selectedDispute.status === "pending") && (
-                    <>
-                      <IonButton color="danger" onClick={handleRejectDispute} disabled={!decisionReason.trim() || processing}>
-                        Reject
-                      </IonButton>
-                      <IonButton color="success" onClick={handleAcceptDispute} disabled={!decisionReason.trim() || processing}>
+                    <IonButtons slot="end" className="draft-preview-toolbar-actions">
+                      <IonButton
+                        className="dispute-action-btn dispute-action-btn--accept"
+                        color="success"
+                        fill="solid"
+                        onClick={handleAcceptDispute}
+                        disabled={!decisionReason.trim() || processing}
+                      >
+                        <IonIcon icon={checkmarkOutline} slot="start" />
                         Accept
                       </IonButton>
-                    </>
+                      <IonButton
+                        className="dispute-action-btn dispute-action-btn--reject"
+                        color="danger"
+                        fill="solid"
+                        onClick={handleRejectDispute}
+                        disabled={!decisionReason.trim() || processing}
+                      >
+                        <IonIcon icon={closeOutline} slot="start" />
+                        Reject
+                      </IonButton>                      
+                    </IonButtons>
                   )}
+                </IonToolbar>
+              </IonHeader>
+              <IonContent className="draft-preview-content">
+                <div className="draft-preview-shell">
+                  <IonGrid className="draft-preview-grid">
+                    <IonRow>
+                      <IonCol>
+                        <div className="draft-preview-summary-card dispute-preview-card">
+                          <IonCol>
+                            <IonText>
+                              <div className="draft-preview-summary-title">
+                                <h3>Dispute Summary</h3>
+                                <span className={`draft-preview-status-pill status-${selectedDispute.status || "unknown"}`}>
+                                  {(selectedDispute.status || "unknown").replace(/_/g, " ")}
+                                </span>
+                              </div>
+                            </IonText>
+                          </IonCol>
+                          <IonCardContent>
+                            <IonRow>
+                              <IonCol className="dispute-preview-details" size="12">
+                                <p><strong>Employee:</strong> {selectedDispute.clientStaffName || selectedDispute.employeeName}</p>
+                                <p><strong>Client Company:</strong> {selectedDispute.clientName}</p>
+                              </IonCol>
+                            </IonRow>
+                            <IonRow>
+                              <IonCol className="dispute-preview-details-reason" size="12">
+                              <p><strong>Reason:</strong> {selectedDispute.disputeReason}</p>
+                                {selectedDispute.disputeDetails && (
+                                  <p><strong>Details:</strong> {selectedDispute.disputeDetails}</p>
+                                )}
+                              </IonCol>
+                            </IonRow>
+                          </IonCardContent>
+                        </div>
+                      </IonCol>
+                    </IonRow>
+
+                    {selectedDispute.computationSnapshot && (
+                      <IonRow>
+                        <IonCol>
+                          <div className="draft-preview-table-shell dispute-preview-table">
+                            <table className="draft-preview-table">
+                              <thead>
+                                <tr>
+                                  <th>Employee</th>
+                                  <th>Code</th>
+                                  <th>Gross Pay</th>
+                                  <th>Net Pay</th>
+                                  <th>SSS</th>
+                                  <th>PHIC</th>
+                                  <th>HDMF</th>
+                                  <th>Tax</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr>
+                                  <td>{selectedDispute.computationSnapshot.employeeCode || "N/A"}</td>
+                                  <td>{selectedDispute.computationSnapshot.name || selectedDispute.employeeName || "N/A"}</td>
+                                  <td>{money(selectedDispute.computationSnapshot.grossPay || 0)}</td>
+                                  <td>{money(selectedDispute.computationSnapshot.netPay || 0)}</td>
+                                  <td>{money(selectedDispute.computationSnapshot.sss || 0)}</td>
+                                  <td>{money(selectedDispute.computationSnapshot.philHealth || 0)}</td>
+                                  <td>{money(selectedDispute.computationSnapshot.pagIbig || 0)}</td>
+                                  <td>{money(selectedDispute.computationSnapshot.tax || 0)}</td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
+                        </IonCol>
+                      </IonRow>
+                    )}
+
+                    <IonRow>
+                      <IonCol>
+                        {(selectedDispute.status === "resolved") && (
+                          <div className="dispute-preview-resolved">
+                            <p><strong>Resolved:</strong> This dispute was resolved on {selectedDispute.resolvedAt ? new Date(selectedDispute.resolvedAt?.toDate?.() || selectedDispute.resolvedAt).toLocaleString() : "unknown"} by {selectedDispute.reviewedBy || selectedDispute.approvedBy || "Admin"}.</p>
+                          </div>
+                        )}
+
+                        {selectedDispute.status == "submitted" && (
+                          <IonTextarea
+                            className="dispute-preview-textarea"
+                            autoGrow
+                            rows={4}
+                            value={decisionReason}
+                            placeholder="Explain your decision for this dispute."
+                            onIonInput={(event) => setDecisionReason(event.detail.value || "")}
+                          />
+                        )}
+                      </IonCol>
+                    </IonRow>
+
+                    <IonRow>
+                      <IonCol className="dispute-modal-actions">
+                      </IonCol>
+                    </IonRow>
+                  </IonGrid>
                 </div>
-              </div>
-            </div>
+              </IonContent>
+            </IonModal>
           )}
 
           {/* Alert */}
