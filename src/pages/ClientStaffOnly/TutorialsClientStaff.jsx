@@ -84,8 +84,8 @@ const TutorialsClientStaff = () => {
                       <div className="video-count">
                         {filteredTutorials.length}{" "}
                         {filteredTutorials.length === 1
-                          ? "Tutorial"
-                          : "Tutorials"}
+                          ? 'Tutorials'
+                          : 'Tutorial'}
                       </div>
                     </IonCol>
                   </IonRow>
