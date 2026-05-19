@@ -83,12 +83,12 @@
 }
 
 .stats-badge {
-  background-color: #ffc107;
+  background-color: #0A3F59;
   padding: 6px 14px;
   border-radius: 20px;
   font-weight: 600;
   font-family: 'Poppins', sans-serif;
-  color: #0A3F59;
+  color: #E9FBFC;
   font-size: 0.9rem;
   z-index: 10;
 }

@@ -69,7 +69,6 @@
   border-radius: 16px;
   margin: 20px 0 0;
   background: white;
-  -webkit-overflow-scrolling: touch;
 }
 
 .employee-table {

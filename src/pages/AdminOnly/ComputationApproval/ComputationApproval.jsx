@@ -242,7 +242,7 @@ export default function ComputationApproval() {
               <IonCol>
                   <div className="stats-row">
                     <div className="stats-badge">
-                      📋 {drafts.length} Drafts Pending Approval
+                      {drafts.length} Drafts Pending Approval
                     </div>
                     {!loading && drafts.length === 0 && (
                       <div className="empty-message">
