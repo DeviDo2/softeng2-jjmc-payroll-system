@@ -275,6 +275,24 @@
   border-radius: 24px;
 }
 
+.draft-action-btn {
+  --border-radius: 999px;
+  --padding-start: 18px;
+  --padding-end: 18px;
+  --min-height: 38px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  box-shadow: 0 8px 18px rgba(10, 63, 89, 0.2);
+}
+
+.draft-action-btn--send {
+  --background: #1d4ed8;
+  --background-hover: #1e40af;
+  --background-activated: #1e3a8a;
+  --color: #eff6ff;
+}
+
 .draft-preview-toolbar {
   --background: #0A3F59;
   --color: #E9FBFC;
@@ -295,19 +313,17 @@
   width: 100%;
   background: #ffffff;
   color: #20323b;
+  padding: 10px 10px;
 }
 
 .draft-preview-summary-title {
   display: flex;
   align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
-  margin-bottom: 6px;
 }
 
 .draft-preview-summary-title h3  {
-  margin: 10px 10px 0;
-  color: #0A3F59;
+  margin: 0;
+  color: #0a3f59;
   font-size: 1.20rem;
   font-weight: 700;
   align-items: center;
@@ -325,7 +341,6 @@
   text-transform: uppercase;
   background: #e5e7eb;
   color: #4b5563;
-  margin: 10px 0 0;
 }
 
 .draft-preview-status-pill.status-approved {
@@ -360,10 +375,19 @@
 }
 
 .draft-preview-summary-card p {
-  margin: 0;
-  color: #0A3F59;
+  margin: 4px 0 0;
+  color: #0a3f59;
   font-size: 0.95rem;
   text-align: center;
+}
+
+.draft-preview-summary-row {
+  display: flex;
+  justify-content: center;
+}
+
+.ion-col-padding {
+  gap: 50px;
 }
 
 .draft-preview-table-header h4,
