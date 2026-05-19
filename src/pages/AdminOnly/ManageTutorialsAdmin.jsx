@@ -36,7 +36,7 @@ import {
 import { db } from "../../database-components/firebaseConfig";
 import useAuthRole from "../../hooks/useAuthRole";
 
-import { uploadMedia } from "../../database-components/handleUpload";
+import { uploadMedia, buildVideoThumbnailUrl } from "../../database-components/handleUpload";
 import { deleteFromCloudinary } from "../../database-components/deleteFromCloudinary";
 
 import "./ManageTutorialsAdmin.css";
@@ -90,12 +90,13 @@ const ManageTutorialsAdmin = () => {
 
     try {
       const { url: videoUrl, publicId } = await uploadMedia(videoFile, "video");
+      const thumbnailUrl = buildVideoThumbnailUrl(videoUrl);
 
       await addDoc(tutorialsRef, {
         title,
         description: desc,
         videoUrl,
-        thumbnailUrl: null,
+        thumbnailUrl,
         publicId,
         createdAt: new Date(),
       });
@@ -211,94 +212,105 @@ const ManageTutorialsAdmin = () => {
      RENDER
   -------------------------------------------------- */
   return (
-    <IonApp>
-      <Sidebar />
       <IonPage>
 
-        <IonContent className="tutorial-content" fullscreen>
+        <IonContent className="tutorial-content">
           <IonImg
                       src="../Gradient-Ellipses.png"
                       alt="Background Ellipse"
                       className="ellipse-bg"
                     />
-          <div className="full-height-wrapper" style={{ padding: '16px' }}>
+          <div className="full-height-wrapper">
           <div className="tutorial-card-container">
             {/* Title and Subheader */}
             <h1 className="tutorial-title">Manage Tutorial Videos</h1>
             <p className="tutorial-subheader">Upload a new tutorial for your users</p>
-
-            {/* Search bar – rounded */}
-            <IonSearchbar
-              className="tutorial-searchbar"
-              value={search}
-              onIonInput={(e) => setSearch(e.detail.value ?? "")}
-              placeholder="Search tutorials..."
-            />
-
-            {/* Video counter */}
-            <div className="video-count">
-              {filteredTutorials.length} {filteredTutorials.length === 1 ? 'Tutorial' : 'Tutorials'}
-            </div>
-
+          <IonCard className="tutorial-search-card">
+            <IonCardContent>
+              <IonRow>
+                <IonCol size="7">
+                  {/* Search bar – rounded */}
+                  <IonSearchbar
+                    className="tutorial-searchbar"
+                    value={search}
+                    onIonInput={(e) => setSearch(e.detail.value ?? "")}
+                    placeholder="Search tutorials..."
+                  />
+                </IonCol>
+                <IonCol size="2">
+                  {/* Video counter */}
+                  <div className="video-count">
+                    {filteredTutorials.length} {filteredTutorials.length === 1 ? 'Tutorials' : 'Tutorial'}
+                  </div>
+                </IonCol>
+                <IonCol size="auto">
+                  {/* Upload button */}
+                  <div className="upload-button-wrapper">
+                    <IonButton
+                      className="upload-tutorial-btn"
+                      onClick={() => setShowModal(true)}
+                    >
+                      + Upload New Tutorial
+                    </IonButton>
+                  </div>
+                </IonCol>
+              </IonRow>
+            </IonCardContent>
+          </IonCard>
+          
             {/* List of videos */}
             {loading && <IonSpinner className="ion-text-center" />}
-
-            <div className="video-grid">
-              {filteredTutorials.map((item) => (
-                <IonCard key={item.id} className="video-card">
-                  <IonCardContent className="video-card-content">
-                    <IonGrid>
-                      <IonRow>
-                        <IonCol size="12" size-md="4">
-                          <img
-                            src={item.thumbnailUrl || "/video-placeholder.png"}
-                            alt="thumbnail"
-                            className="video-thumb"
-                          />
-                        </IonCol>
-                        <IonCol size="12" size-md="8">
-                          <div className="video-info">
-                            <div>
-                              <h3 className="video-title">{item.title}</h3>
-                              <p className="video-description">{item.description}</p>
+            <IonCard className="tutorial-search-card">
+              <IonCardContent>
+                <div className="video-grid">
+                  {filteredTutorials.map((item) => (
+                    <IonCard key={item.id} className="video-card">
+                      <IonCardContent className="video-card-content">
+                        <IonGrid>
+                        <IonRow>
+                          <IonCol size="12" size-md="4">
+                            <img
+                              src={item.thumbnailUrl || "/video-placeholder.png"}
+                              alt="video thumbnail"
+                              className="video-thumb"
+                            />
+                          </IonCol>
+                          <IonCol size="12" size-md="8">
+                            <div className="video-info">
+                              <div>
+                                <h3 className="video-title">{item.title}</h3>
+                                <p className="video-description">{item.description}</p>
+                              </div>
+                              <div className="video-actions">
+                                <IonButton
+                                  size="small"
+                                  className="edit-btn"
+                                  onClick={() => {
+                                    setEditData(item);
+                                    setEditModal(true);
+                                  }}
+                                >
+                                  Edit
+                                </IonButton>
+                                <IonButton
+                                  size="small"
+                                  className="delete-btn"
+                                  onClick={() => confirmDeleteVideo(item)}
+                                >
+                                  Delete
+                                </IonButton>
+                              </div>
                             </div>
-                            <div className="video-actions">
-                              <IonButton
-                                size="small"
-                                className="edit-btn"
-                                onClick={() => {
-                                  setEditData(item);
-                                  setEditModal(true);
-                                }}
-                              >
-                                Edit
-                              </IonButton>
-                              <IonButton
-                                size="small"
-                                className="delete-btn"
-                                onClick={() => confirmDeleteVideo(item)}
-                              >
-                                Delete
-                              </IonButton>
-                            </div>
-                          </div>
-                        </IonCol>
-                      </IonRow>
-                    </IonGrid>
-                  </IonCardContent>
-                </IonCard>
-              ))}
-            </div>
-
-            {/* Upload button below videos */}
-            <div className="upload-button-wrapper">
-              <IonButton
-                className="upload-tutorial-btn"
-                onClick={() => setShowModal(true)}
-              >
-                + Upload New Tutorial
-              </IonButton>
-            </div>
+                          </IonCol>
+                        </IonRow>
+                      </IonGrid>
+                    </IonCardContent>
+                  </IonCard>
+                ))}
+                </div>
+              </IonCardContent>
+            </IonCard>
+            
           </div>
         </div>
 
@@ -453,7 +465,6 @@ const ManageTutorialsAdmin = () => {
 
         <FooterNav />
       </IonPage>
-    </IonApp>
   );
 };
 

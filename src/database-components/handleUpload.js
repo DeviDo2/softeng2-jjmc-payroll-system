@@ -23,6 +23,18 @@ export const uploadMedia = async (file, type = "image") => {
   return { url, publicId };
 };
 
+export const buildVideoThumbnailUrl = (videoUrl) => {
+  if (!videoUrl) return null;
+
+  const transformed = videoUrl.replace("/video/upload/", "/video/upload/so_0/");
+
+  if (/\.(mp4|mov|avi|mkv|webm)(\?.*)?$/i.test(transformed)) {
+    return transformed.replace(/\.(mp4|mov|avi|mkv|webm)(\?.*)?$/i, ".jpg$2");
+  }
+
+  return `${transformed}.jpg`;
+};
+
 /* -------------------------------------------------------
    PROFILE IMAGE UPLOAD
 ------------------------------------------------------- */
@@ -85,12 +97,13 @@ export const handleVideoUpload = async ({
     setLoading(true);
 
     const { url: videoUrl, publicId } = await uploadMedia(file, "video");
+    const thumbnailUrl = buildVideoThumbnailUrl(videoUrl);
 
     await addDoc(tutorialsRef, {
       title,
       description,
       videoUrl,
-      thumbnailUrl: null, // change if you generate thumbnails later
+      thumbnailUrl,
       publicId,
       createdAt: new Date(),
     });
