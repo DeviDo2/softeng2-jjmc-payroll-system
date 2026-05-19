@@ -1,137 +1,226 @@
-/* AdminTutorials.css */
+/* TutorialsClientStaff.css */
+
+:root {
+  --tutorial-ink: #0a3f59;
+  --tutorial-ink-soft: #4a627a;
+  --tutorial-mist: #e8f9fc;
+  --tutorial-card: #ffffff;
+  --tutorial-accent: #0b3954;
+  --tutorial-accent-light: #b7e0eb;
+}
 
 /* Main content styles */
 .tutorial-content {
-  --background: #e8f9fc;
+  --background: var(--tutorial-mist);
+  background: radial-gradient(
+      circle at 15% 0%,
+      rgba(183, 224, 235, 0.6),
+      transparent 45%
+    ),
+    linear-gradient(180deg, #f7fcfd 0%, #e8f9fc 60%, #e4f3f6 100%);
   position: relative;
+  overflow: hidden;
+  font-family: "Poppins", sans-serif;
 }
 
-/* Title styles - Responsive font size */
+.ellipse-bg {
+  position: absolute;
+  top: -80px;
+  right: -120px;
+  width: 60%;
+  opacity: 0.65;
+  pointer-events: none;
+}
+
+.full-height-wrapper {
+  min-height: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 18px 0 32px;
+}
+
+.tutorial-card-container {
+  width: 100%;
+  max-width: 1200px;
+  padding: 24px 20px 30px;
+  position: relative;
+  z-index: 2;
+}
+
+/* Title styles */
 .tutorial-title {
-  font-size: 2rem;
+  font-family: "DM Serif Display", serif;
+  font-size: 2.2rem;
   font-weight: 700;
-  color: #0b3954;
+  color: var(--tutorial-ink);
+  margin: 0 0 6px;
+  text-align: center;
+}
+
+.tutorial-subheader {
+  font-size: 1rem;
+  color: var(--tutorial-ink-soft);
+  margin: 0 0 22px;
+  text-align: center;
 }
 
 @media (max-width: 576px) {
   .tutorial-title {
-    font-size: 1.5rem; /* Smaller on mobile */
+    font-size: 1.6rem;
+  }
+
+  .tutorial-subheader {
+    font-size: 0.95rem;
   }
 }
 
-.tutorial-subtitle {
-  font-size: 0.95rem;
-  color: #333;
-  margin-bottom: 10px;
+/* Cards */
+.tutorial-search-card,
+.tutorial-list-card {
+  border-radius: 20px;
+  background: var(--tutorial-card);
+  border: 1px solid rgba(10, 63, 89, 0.08);
+  box-shadow: 0 8px 24px rgba(10, 63, 89, 0.06);
+  width: 100%;
+}
+
+.tutorial-search-row {
+  align-items: center;
 }
 
 /* Searchbar styles */
 .tutorial-searchbar {
-  --background: white;
-  --border-radius: 20px;
+  --border-radius: 40px;
+  --background: #ffffff;
+  --box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
 }
 
 /* Video count styles */
+.video-count-col {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
 .video-count {
-  font-weight: bold;
-  font-size: 2rem;
-  color: #0A3F59;
-  margin: 8px 0 20px;
-  display: inline-block;
-  background: #E9FBFC;
-  padding: 4px 12px;
-  border-radius: 20px;
+  background-color: var(--tutorial-accent);
+  padding: 6px 16px;
+  border-radius: 999px;
+  font-weight: 600;
+  color: var(--tutorial-accent-light);
+  font-size: 0.95rem;
+  letter-spacing: 0.2px;
 }
 
-/* Video card styles */
+@media (max-width: 768px) {
+  .video-count-col {
+    justify-content: flex-start;
+    margin-top: 8px;
+  }
+}
+
+/* Video list styles */
+.video-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
 .video-card {
-  border-radius: 15px;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
-  margin-bottom: 15px; /* Add spacing */
+  border-radius: 20px;
+  box-shadow: 0 6px 18px rgba(10, 63, 89, 0.08);
+  margin: 0;
+  overflow: hidden;
+  background: #fdfefe;
 }
 
-/* Video thumbnail styles - Ensure responsive */
-.video-thumbnail {
-  border-radius: 10px;
+.video-card-content {
+  padding: 16px;
+}
+
+.video-thumb {
+  border-radius: 12px;
   width: 100%;
-  height: auto;
+  height: 100%;
+  min-height: 140px;
   object-fit: cover;
-  min-height: 70px; /* Prevent squishing */
+  background: #f2f6f9;
 }
 
-/* Video title styles */
+.video-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  gap: 12px;
+}
+
 .video-title {
-  font-size: 1rem;
-  font-weight: 600;
-  color: #0b3954;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--tutorial-ink);
+  margin: 0 0 6px;
 }
 
-@media (max-width: 576px) {
-  .video-title {
-    font-size: 0.9rem; /* Slightly smaller on mobile */
-  }
-}
-
-/* Video description styles */
 .video-description {
-  font-size: 0.85rem;
-  color: #555;
+  font-size: 0.9rem;
+  color: var(--tutorial-ink-soft);
+  margin: 0;
 }
 
-/* Footer bar styles */
-.footer-bar {
-  --background: #0b3954;
-}
-
-/* Footer buttons - Ensure touch-friendly */
-.footer-bar ion-button {
-  min-height: 50px; /* Better touch targets */
-  --padding: 10px;
-}
-
-/* Upload Modal Styles */
-.modal-input {
-  --background: white;
-  --border-radius: 10px;
-  --padding-start: 15px;
-  --padding-end: 15px;
-  --padding-top: 10px;
-  --padding-bottom: 10px;
-  margin-bottom: 15px;
-  border: 1px solid #ddd;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  font-family: poppins, sans-serif;
-  border-radius: 10px;
-}
-
-@media (max-width: 576px) {
-  .modal-input {
-    --padding-start: 10px;
-    --padding-end: 10px;
-  }
-}
-
-.modal-upload-btn {
-  --background: #0b3954;
-  --color: white;
-  --border-radius: 10px;
+.watch-btn {
+  --background: var(--tutorial-accent);
+  --color: var(--tutorial-accent-light);
+  --border-radius: 30px;
   font-weight: 600;
-  margin-top: 20px;
+  height: 36px;
+  margin: 0;
 }
 
-/* Modal container styles */
-.ion-modal {
-  --border-radius: 15px;
-  --background: #f9f9f9;
-
+.watch-btn:hover {
+  --background: #0a2f44 !important;
+  --color: #e9fbfc !important;
+  transform: translateY(-1px);
+  transition: all 0.2s ease;
 }
 
-.ion-modal .ion-content {
+/* Empty state */
+.empty-state {
+  text-align: center;
+  padding: 32px 12px;
+  color: var(--tutorial-ink-soft);
+}
+
+.empty-state h3 {
+  font-family: "DM Serif Display", serif;
+  font-size: 1.4rem;
+  color: var(--tutorial-ink);
+  margin-bottom: 6px;
+}
+
+/* Modal styles */
+.watch-modal-content {
   --padding: 20px;
 }
 
+.watch-video {
+  width: 100%;
+  border-radius: 14px;
+  margin-bottom: 16px;
+  box-shadow: 0 8px 18px rgba(10, 63, 89, 0.12);
+}
+
+.watch-description {
+  color: var(--tutorial-ink-soft);
+  font-size: 0.95rem;
+}
+
 @media (max-width: 576px) {
-  .ion-modal .ion-content {
-    --padding: 15px; /* Less padding on small screens */
+  .watch-modal-content {
+    --padding: 16px;
+  }
+
+  .video-title {
+    font-size: 1rem;
   }
 }

@@ -55,85 +55,97 @@ const TutorialsClientStaff = () => {
       <IonPage id="main-content">
         <IonContent className="tutorial-content">
           {/* Background Ellipse */}
-          <IonImg src="/Gradient-Ellipses.png" className="ellipse-bg" />
+          <IonImg
+            src="/Gradient-Ellipses.png"
+            alt="Background Ellipse"
+            className="ellipse-bg"
+          />
 
-          {/* HEADER */}
-          <IonGrid>
-            <IonRow>
-              <IonCol className="ion-text-center">
-                <IonTitle className="tutorial-title" style={{ marginTop: 20 }}>
-                  Tutorials
-                </IonTitle>
-              </IonCol>
-            </IonRow>
-          </IonGrid>
+          <div className="full-height-wrapper">
+            <div className="tutorial-card-container">
+              {/* Title and Subheader */}
+              <h1 className="tutorial-title">Tutorials</h1>
+              <p className="tutorial-subheader">
+                Quick walkthroughs to help you move faster.
+              </p>
 
-          {/* SEARCH BAR */}
-          <IonGrid>
-            <IonRow>
-              <IonCol>
-                <IonSearchbar
-                  value={search}
-                  placeholder="Search video..."
-                  onIonInput={(e) => setSearch(e.detail.value ?? "")}
-                />
-              </IonCol>
-            </IonRow>
-          </IonGrid>
+              <IonCard className="tutorial-search-card">
+                <IonCardContent>
+                  <IonRow className="tutorial-search-row">
+                    <IonCol size="12" sizeMd="7">
+                      <IonSearchbar
+                        className="tutorial-searchbar"
+                        value={search}
+                        placeholder="Search tutorials..."
+                        onIonInput={(e) => setSearch(e.detail.value ?? "")}
+                      />
+                    </IonCol>
+                    <IonCol size="12" sizeMd="5" className="video-count-col">
+                      <div className="video-count">
+                        {filteredTutorials.length}{" "}
+                        {filteredTutorials.length === 1
+                          ? "Tutorial"
+                          : "Tutorials"}
+                      </div>
+                    </IonCol>
+                  </IonRow>
+                </IonCardContent>
+              </IonCard>
 
-          {/* VIDEO COUNT */}
-          <IonGrid>
-            <IonRow>
-              <IonCol>
-                <IonText>
-                  <h2 className="video-count">{filteredTutorials.length} Videos</h2>
-                </IonText>
-              </IonCol>
-            </IonRow>
-          </IonGrid>
-
-          {/* VIDEO LIST */}
-          <IonGrid>
-            {filteredTutorials.map((item) => (
-              <IonRow key={item.id}>
-                <IonCol size="12" sizeMd="6" sizeLg="12">
-                  <IonCard className="video-card">
-                    <IonCardContent>
-                      <IonGrid>
-                        <IonRow>
-                          {/* Thumbnail */}
-                          <IonCol size="4">
-                            <img
-                              src={item.thumbnailUrl}
-                              alt="thumbnail"
-                              style={{ width: "100%", borderRadius: "8px" }}
-                            />
-                          </IonCol>
-
-                          {/* Details */}
-                          <IonCol size="8">
-                            <IonText className="video-title">
-                              {item.title}
-                            </IonText>
-                            <p className="video-description">
-                              {item.description}
-                            </p>
-                            <IonButton
-                              size="small"
-                              expand="block"
-                              onClick={() => setSelectedVideo(item)}
-                            >
-                              Watch Video
-                            </IonButton>
-                          </IonCol>
-                        </IonRow>
-                      </IonGrid>
-                    </IonCardContent>
-                  </IonCard>
-                </IonCol>
-              </IonRow>
-            ))}
-          </IonGrid>
+              <IonCard className="tutorial-list-card">
+                <IonCardContent>
+                  {filteredTutorials.length === 0 ? (
+                    <div className="empty-state">
+                      <h3>No tutorials yet</h3>
+                      <p>Try a different search or check back later.</p>
+                    </div>
+                  ) : (
+                    <div className="video-grid">
+                      {filteredTutorials.map((item) => (
+                        <IonCard key={item.id} className="video-card">
+                          <IonCardContent className="video-card-content">
+                            <IonGrid>
+                              <IonRow>
+                                <IonCol size="12" sizeMd="4">
+                                  <img
+                                    src={
+                                      item.thumbnailUrl ||
+                                      "/video-placeholder.png"
+                                    }
+                                    alt="video thumbnail"
+                                    className="video-thumb"
+                                  />
+                                </IonCol>
+                                <IonCol size="12" sizeMd="8">
+                                  <div className="video-info">
+                                    <div>
+                                      <h3 className="video-title">
+                                        {item.title}
+                                      </h3>
+                                      <p className="video-description">
+                                        {item.description}
+                                      </p>
+                                    </div>
+                                    <IonButton
+                                      size="small"
+                                      className="watch-btn"
+                                      onClick={() => setSelectedVideo(item)}
+                                    >
+                                      Watch Video
+                                    </IonButton>
+                                  </div>
+                                </IonCol>
+                              </IonRow>
+                            </IonGrid>
+                          </IonCardContent>
+                        </IonCard>
+                      ))}
+                    </div>
+                  )}
+                </IonCardContent>
+              </IonCard>
+            </div>
+          </div>
 
           {/* WATCH MODAL */}
           <IonModal
@@ -153,20 +165,16 @@ const TutorialsClientStaff = () => {
               </IonToolbar>
             </IonHeader>
 
-            <IonContent className="ion-padding">
+            <IonContent className="watch-modal-content ion-padding">
               {selectedVideo && (
                 <video
                   controls
-                  style={{
-                    width: "100%",
-                    borderRadius: "12px",
-                    marginBottom: "16px",
-                  }}
+                  className="watch-video"
                 >
                   <source src={selectedVideo.videoUrl} type="video/mp4" />
                 </video>
               )}
-              <IonText>
+              <IonText className="watch-description">
                 <p>{selectedVideo?.description}</p>
               </IonText>
             </IonContent>
