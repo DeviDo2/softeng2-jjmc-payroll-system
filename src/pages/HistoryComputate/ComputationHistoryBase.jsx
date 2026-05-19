@@ -120,9 +120,6 @@ function ComputationHistory() {
 
               {/* TITLE AND SUBTITLE */}
               <h1 className="history-title">Computation History</h1>
-              <p className="history-subtitle">
-                Showing {computations.length} computation{computations.length !== 1 ? 's' : ''}
-              </p>
 
               {/* PERIOD BUTTONS */}
               <IonGrid className="period-row">
