@@ -88,6 +88,11 @@ service cloud.firestore {
             isBookkeeper()
             && request.resource.data.messageType == "answer"
             && request.resource.data.createdBy == request.auth.uid
+          )
+          || (
+            isAdmin()
+            && request.resource.data.messageType == "answer"
+            && request.resource.data.createdBy == request.auth.uid
           );
 
         allow update: if (
