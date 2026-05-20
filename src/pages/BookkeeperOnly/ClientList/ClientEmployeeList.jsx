@@ -110,6 +110,7 @@ const ClientEmployeeList = () => {
       "payrollPeriod",
       "businessUnit",
       "department",
+      "position",
       "ratePerHour",
       "hoursWorked",
       "grossPay",

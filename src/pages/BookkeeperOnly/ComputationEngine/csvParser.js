@@ -37,6 +37,13 @@ export const parseCSV = (file) => {
           const grossPay = ratePerHour * hoursWorked;
           const deductions = calculateDeductions(grossPay);
 
+          const position =
+            row.position ||
+            row.jobtitle ||
+            row["job title"] ||
+            row.designation ||
+            "";
+
           return {
             employeeCode:
               row.employeecode ||
@@ -49,6 +56,7 @@ export const parseCSV = (file) => {
             payrollPeriod: row.payrollperiod || "Monthly 2024",
             businessUnit: row.businessunit || "General",
             department: row.department || "",
+            position,
 
             ratePerHour,
             hoursWorked,
