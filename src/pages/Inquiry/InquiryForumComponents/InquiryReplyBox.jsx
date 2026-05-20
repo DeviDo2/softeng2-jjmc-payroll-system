@@ -1,5 +1,5 @@
-import React from "react";
-import { IonTextarea, IonButton } from "@ionic/react";
+import React, { useState } from "react";
+import { IonTextarea, IonButton, IonText } from "@ionic/react";
 
 export default function InquiryReplyBox({
   reply,
@@ -8,16 +8,23 @@ export default function InquiryReplyBox({
   role,
   onSend,
 }) {
+  const [error, setError] = useState("");
+
   const handleSend = async () => {
     if (typeof onSend !== "function") return;
 
-    await onSend({
+    const didSend = await onSend({
       reply,
       activeInquiry,
       role,
     });
 
-    setReply("");
+    if (didSend) {
+      setError("");
+      setReply("");
+    } else {
+      setError("Reply failed to send. Please try again.");
+    }
   };
 
   return (
@@ -26,7 +33,10 @@ export default function InquiryReplyBox({
         placeholder="Write a reply..."
         value={reply}
         autoGrow
-        onIonChange={(e) => setReply(e.detail.value || "")}
+        onIonChange={(e) => {
+          setReply(e.detail.value || "");
+          if (error) setError("");
+        }}
       />
 
       <IonButton
@@ -36,6 +46,12 @@ export default function InquiryReplyBox({
       >
         Send Reply
       </IonButton>
+
+      {error && (
+        <IonText color="danger">
+          <p style={{ marginTop: 8 }}>{error}</p>
+        </IonText>
+      )}
     </>
   );
 }

@@ -129,8 +129,8 @@ export default function InquiryForumBase({ role: propRole }) {
 
   // send reply from the reply box component
   const handleSendReply = useCallback(async () => {
-    if (!activeInquiry) return;
-    if (!reply || !reply.trim()) return;
+    if (!activeInquiry) return false;
+    if (!reply || !reply.trim()) return false;
 
     try {
       // sendReplyToFirebase expects: { reply, activeInquiry, role }
@@ -139,15 +139,16 @@ export default function InquiryForumBase({ role: propRole }) {
         activeInquiry,
         role: effectiveRole,
       });
-      setReply("");
-      // Show notification modal for bookkeeper/admin about reply status
-      if (effectiveRole === "bookkeeper" || effectiveRole === "admin") {
+      // Show notification modal for bookkeeper replies that require approval
+      if (effectiveRole === "bookkeeper") {
         setActionType("reply-sent");
         setNotificationOpen(true);
       }
+      return true;
     } catch (err) {
       console.error("Failed to send reply:", err);
       // optionally show toast
+      return false;
     }
   }, [activeInquiry, reply, sendReplyToFirebase, effectiveRole]);
 
