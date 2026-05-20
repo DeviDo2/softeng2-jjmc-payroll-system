@@ -64,6 +64,7 @@ export default function AddClientModal({ isOpen, onDismiss, onSubmit }) {
         payrollPeriod: row.payrollPeriod || "Monthly 2024",
         businessUnit: row.businessUnit || "General",
         department: row.department || "",
+        position: row.position || "",
         ratePerHour: Number(row.ratePerHour) || 0,
         hoursWorked: Number(row.hoursWorked) || 0,
         grossPay: Number(row.grossPay) || 0,
