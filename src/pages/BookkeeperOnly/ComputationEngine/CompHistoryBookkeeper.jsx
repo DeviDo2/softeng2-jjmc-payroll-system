@@ -612,7 +612,6 @@ Please confirm you want to send it again.`;
 
                                   {draft.sentToClient && (
                                     <p className="draft-history-note draft-history-note-success">
-                                      Sent to client {sendCount} time{sendCount !== 1 ? "s" : ""}
                                       {draft.lastSentAt && ` • Last sent ${formatDisplayDate(draft.lastSentAt)}`}
                                     </p>
                                   )}
