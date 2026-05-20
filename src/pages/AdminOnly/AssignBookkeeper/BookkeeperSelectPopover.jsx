@@ -21,11 +21,13 @@ const getDisplayName = (user) =>
   user.email ||
   "Unnamed Bookkeeper";
 
+const EMPTY_BOOKKEEPERS = [];
+
 export default function BookkeeperSelectPopover({
   isOpen,
   onDismiss,
   onSelect,
-  bookkeepers: providedBookkeepers = [],
+  bookkeepers: providedBookkeepers = EMPTY_BOOKKEEPERS,
 }) {
   const [bookkeepers, setBookkeepers] = useState([]);
   const [loading, setLoading] = useState(false);
