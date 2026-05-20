@@ -20,6 +20,7 @@ import {
 import {
   auth,
   db,
+  firebaseConfig,
   functions,
 } from "../database-components/firebaseConfig";
 

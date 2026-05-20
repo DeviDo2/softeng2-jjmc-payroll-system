@@ -30,6 +30,7 @@ const app = initializeApp(firebaseConfig);
 const functions = getFunctions(app);
 
 export { app, functions };
+export { firebaseConfig };
 
 export const auth = getAuth(app);
 export const db = getFirestore(app);
