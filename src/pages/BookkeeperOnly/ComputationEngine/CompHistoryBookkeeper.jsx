@@ -544,7 +544,6 @@ Please confirm you want to send it again.`;
                             <IonSelectOption value="pending_approval">Pending Approval ({getCount('pending_approval')})</IonSelectOption>
                             <IonSelectOption value="disputed">Disputed ({getDisputedCount})</IonSelectOption>
                             <IonSelectOption value="revised">Needs Revision ({getRevisedCount})</IonSelectOption>
-                            <IonSelectOption value="draft">Drafts ({getCount('draft')})</IonSelectOption>
                           </IonSelect>
                         </IonCol>
                       </IonRow>
