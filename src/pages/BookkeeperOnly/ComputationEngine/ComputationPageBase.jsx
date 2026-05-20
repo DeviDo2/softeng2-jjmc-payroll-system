@@ -478,7 +478,7 @@ function ComputationPage() {
                         <table className="results-data-table">
                           <thead>
                             <tr>
-                              <th>Code</th><th>Name</th><th>Gross</th><th>Rate</th><th>Hours</th><th>Dept</th>
+                              <th>Code</th><th>Name</th><th>Gross</th><th>Rate</th><th>Hours</th>
                             </tr>
                           </thead>
                           <tbody>
@@ -489,7 +489,6 @@ function ComputationPage() {
                                 <td>{formatCurrency(getMonthlyGrossPay(r))}</td>
                                 <td>{formatCurrency(r.ratePerHour)}</td>
                                 <td>{r.hoursWorked}</td>
-                                <td>{r.department}</td>
                               </tr>
                             ))}
                           </tbody>
