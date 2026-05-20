@@ -28,8 +28,9 @@ export default function InquiryReplyBox({
   };
 
   return (
-    <>
+    <div className="reply-box">
       <IonTextarea
+        className="reply-textarea"
         placeholder="Write a reply..."
         value={reply}
         autoGrow
@@ -39,19 +40,21 @@ export default function InquiryReplyBox({
         }}
       />
 
-      <IonButton
-        className="ion-margin-top"
-        onClick={handleSend}
-        disabled={!reply?.trim() || !activeInquiry || typeof onSend !== "function"}
-      >
-        Send Reply
-      </IonButton>
+      <div className="reply-actions">
+        <IonButton
+          className="reply-send-button"
+          onClick={handleSend}
+          disabled={!reply?.trim() || !activeInquiry || typeof onSend !== "function"}
+        >
+          Send Reply
+        </IonButton>
+      </div>
 
       {error && (
         <IonText color="danger">
-          <p style={{ marginTop: 8 }}>{error}</p>
+          <p className="reply-error">{error}</p>
         </IonText>
       )}
-    </>
+    </div>
   );
 }

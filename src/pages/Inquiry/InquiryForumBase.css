@@ -215,6 +215,49 @@
   flex-shrink: 0;
 }
 
+/* Reply box */
+.reply-box {
+  margin-top: 16px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: #f5f6f8;
+  border: 1px solid rgba(10, 63, 89, 0.12);
+  border-left: 4px solid #6c7cff;
+  text-align: left;
+}
+
+.reply-textarea {
+  --background: transparent;
+  --border-radius: 10px;
+  --padding-start: 0;
+  --padding-end: 0;
+  --padding-top: 0.2rem;
+  --padding-bottom: 0.4rem;
+  background: transparent;
+  border-radius: 10px;
+  border: none;
+  color: #2c3e50;
+}
+
+.reply-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+
+.reply-send-button {
+  --border-radius: 24px;
+  --background: #0a3f59;
+  --color: #b7e0eb;
+  font-weight: 600;
+  height: 40px;
+  min-width: 140px;
+}
+
+.reply-error {
+  margin-top: 8px;
+}
+
 /* Mobile responsiveness */
 @media (max-width: 768px) {
   .forum-title {
