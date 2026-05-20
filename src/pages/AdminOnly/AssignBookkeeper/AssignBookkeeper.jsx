@@ -86,7 +86,10 @@ export default function AssignBookkeeper() {
   // Live Firestore updates
   useEffect(() => {
     const unsubClients = onSnapshot(collection(db, "clientCompanies"), (snap) => {
-      setClients(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
+      const clients = snap.docs
+        .map((d) => ({ id: d.id, ...d.data() }))
+        .sort((a, b) => (a.name || "").localeCompare(b.name || ""));
+      setClients(clients);
     });
 
     const unsubBk = onSnapshot(collection(db, "users"), (snap) => {
