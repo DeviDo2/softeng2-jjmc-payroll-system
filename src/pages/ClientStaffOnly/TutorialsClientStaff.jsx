@@ -84,8 +84,8 @@ const TutorialsClientStaff = () => {
                       <div className="video-count">
                         {filteredTutorials.length}{" "}
                         {filteredTutorials.length === 1
-                          ? 'Tutorials'
-                          : 'Tutorial'}
+                          ? 'Tutorial'
+                          : 'Tutorials'}
                       </div>
                     </IonCol>
                   </IonRow>
@@ -118,7 +118,7 @@ const TutorialsClientStaff = () => {
                                 </IonCol>
                                 <IonCol size="12" sizeMd="8">
                                   <div className="video-info">
-                                    <div>
+                                    <div className="video-text">
                                       <h3 className="video-title">
                                         {item.title}
                                       </h3>
@@ -126,13 +126,17 @@ const TutorialsClientStaff = () => {
                                         {item.description}
                                       </p>
                                     </div>
-                                    <IonButton
-                                      size="small"
-                                      className="watch-btn"
-                                      onClick={() => setSelectedVideo(item)}
-                                    >
-                                      Watch Video
-                                    </IonButton>
+                                    <div className="video-cta">
+                                      <IonButton
+                                        size="small"
+                                        className="watch-btn"
+                                        onClick={() =>
+                                          setSelectedVideo(item)
+                                        }
+                                      >
+                                        Watch Video
+                                      </IonButton>
+                                    </div>
                                   </div>
                                 </IonCol>
                               </IonRow>
